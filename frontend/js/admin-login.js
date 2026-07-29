@@ -30,30 +30,30 @@
         }
     }
 
-    // ----- FORM SUBMIT (demo) -----
-    const form = document.getElementById('loginForm');
-    const signInBtn = document.getElementById('signInBtn');
+    // // ----- FORM SUBMIT (demo) -----
+    // const form = document.getElementById('loginForm');
+    // const signInBtn = document.getElementById('signInBtn');
 
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
+    // form.addEventListener('submit', function(e) {
+    //     e.preventDefault();
 
-        const originalText = signInBtn.innerHTML;
-        signInBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in…';
-        signInBtn.disabled = true;
+    //     const originalText = signInBtn.innerHTML;
+    //     signInBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in…';
+    //     signInBtn.disabled = true;
 
-        setTimeout(function() {
-            const email = document.getElementById('email').value.trim();
-            const pass = document.getElementById('password').value.trim();
+    //     setTimeout(function() {
+    //         const email = document.getElementById('email').value.trim();
+    //         const pass = document.getElementById('password').value.trim();
 
-            if (!email || !pass) {
-                alert('Please fill in both email and password.');
-            } else {
-                alert('Login successful! (demo)\nWelcome back, ' + email);
-            }
+    //         if (!email || !pass) {
+    //             alert('Please fill in both email and password.');
+    //         } else {
+    //             alert('Login successful! (demo)\nWelcome back, ' + email);
+    //         }
 
-            signInBtn.innerHTML = originalText;
-            signInBtn.disabled = false;
-        }, 1200);
-    });
+    //         signInBtn.innerHTML = originalText;
+    //         signInBtn.disabled = false;
+    //     }, 1200);
+    // });
 
 })();

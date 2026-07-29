@@ -7,15 +7,12 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-
-    <link rel="stylesheet" href="/frontend/css/admin-login.css?v=8" />
+    <link rel="stylesheet" href="/frontend/css/admin-login.css?v=9" />
 </head>
 <body>
 
     <div class="login-wrapper">
-
         <div class="login-card">
-
             <div class="card-split">
 
                 <aside class="card-art" aria-hidden="true"></aside>
@@ -26,12 +23,8 @@
                         <i class="fas fa-moon" id="toggleIcon"></i>
                     </button>
 
-                    <img
-                        src="/images/LC-STUDIO-HI-RES-LOGO-2023-redgrey.png"
-                        alt="LC Studio Logo"
-                        class="corner-logo"
-                        style="position: absolute; top: 0.6rem; right: 3rem; height: 40px; width: auto; z-index: 5; opacity: 0.8;"
-                    />
+                    <img src="/images/LC-STUDIO-HI-RES-LOGO-2023-redgrey.png" alt="LC Studio Logo" class="corner-logo"
+                         style="position: absolute; top: 0.6rem; right: 3rem; height: 24px; width: auto; z-index: 5; opacity: 0.8;">
 
                     <div class="brand-header">
                         <div class="lc-studio">LC STUDIO</div>
@@ -45,65 +38,42 @@
                         </div>
                     </div>
 
+                    <!-- LOGIN FORM -->
                     <form id="loginForm" class="space-y-3">
 
                         <div>
-                            <label for="email" class="block text-xs font-medium card-text-secondary mb-1">
-                                Email Address
-                            </label>
+                            <label for="email" class="block text-xs font-medium card-text-secondary mb-1">Email Address</label>
                             <div class="relative">
                                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 card-text-muted">
                                     <i class="fas fa-envelope text-xs"></i>
                                 </span>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    placeholder="e.g. admin@lctstudio.co.za"
-                                    required
-                                    class="form-input w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c70621] focus:border-transparent transition text-sm"
-                                />
+                                <input type="email" id="email" name="email" placeholder="e.g. admin@lctstudio.co.za" required
+                                       class="form-input w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c70621] focus:border-transparent transition text-sm">
                             </div>
                         </div>
 
                         <div>
-                            <label for="password" class="block text-xs font-medium card-text-secondary mb-1">
-                                Password
-                            </label>
+                            <label for="password" class="block text-xs font-medium card-text-secondary mb-1">Password</label>
                             <div class="relative">
                                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 card-text-muted">
                                     <i class="fas fa-lock text-xs"></i>
                                 </span>
-                                <input
-                                    type="password"
-                                    id="password"
-                                    name="password"
-                                    placeholder="Enter your password"
-                                    required
-                                    class="form-input w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c70621] focus:border-transparent transition text-sm"
-                                />
+                                <input type="password" id="password" name="password" placeholder="Enter your password" required
+                                       class="form-input w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c70621] focus:border-transparent transition text-sm">
                             </div>
                         </div>
 
                         <div class="flex items-center justify-between">
                             <label class="flex items-center space-x-2 text-sm card-text-secondary cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    id="remember"
-                                    name="remember"
-                                    class="custom-checkbox w-4 h-4 border border-gray-300 rounded focus:ring-2 focus:ring-[#c70621] transition"
-                                />
+                                <input type="checkbox" id="remember" name="remember"
+                                       class="custom-checkbox w-4 h-4 border border-gray-300 rounded focus:ring-2 focus:ring-[#c70621] transition">
                                 <span>Remember me</span>
                             </label>
                         </div>
 
-                        <button
-                            type="submit"
-                            id="signInBtn"
-                            class="btn-primary w-full text-white font-semibold py-2.5 rounded-lg transition duration-200 flex items-center justify-center gap-2 text-sm"
-                        >
-                            <i class="fas fa-sign-in-alt"></i>
-                            Sign In
+                        <button type="submit" id="signInBtn"
+                                class="btn-primary w-full text-white font-semibold py-2.5 rounded-lg transition duration-200 flex items-center justify-center gap-2 text-sm">
+                            <i class="fas fa-sign-in-alt"></i> Sign In
                         </button>
 
                         <div class="relative flex items-center my-2">
@@ -114,17 +84,13 @@
 
                         <p class="text-center text-xs card-text-muted">
                             Not authorised?
-                            <a href="#" class="link-accent font-medium hover:underline">
-                                Contact LC Studio Administrator
-                            </a>
+                            <a href="#" class="link-accent font-medium hover:underline">Contact LC Studio Administrator</a>
                         </p>
 
                     </form>
 
                     <div class="text-center mt-4 pt-3 border-t divider">
-                        <p class="text-[10px] card-text-muted tracking-widest">
-                            LC STUDIO &middot; ADMIN
-                        </p>
+                        <p class="text-[10px] card-text-muted tracking-widest">LC STUDIO &middot; ADMIN</p>
                     </div>
 
                 </section>
@@ -132,6 +98,57 @@
         </div>
     </div>
 
+    <!-- Theme toggle script (core) -->
     <script src="/frontend/js/admin-login.js"></script>
+
+    <!-- ===== AJAX login integration (no demo code) ===== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('loginForm');
+            const signInBtn = document.getElementById('signInBtn');
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+
+                if (!email || !password) {
+                    alert('Please fill in both email and password.');
+                    return;
+                }
+
+                // Show loading state
+                const originalText = signInBtn.innerHTML;
+                signInBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in…';
+                signInBtn.disabled = true;
+
+                try {
+                    // === FIXED URL ===
+                    const response = await fetch('/backend/index.php?route=login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        alert('✅ Login successful! Welcome, ' + email);
+                        // Redirect to a dashboard or admin panel
+                        // window.location.href = '/backend/index.php?route=admin';
+                    } else {
+                        alert('❌ ' + (data.error || 'Login failed. Please check your credentials.'));
+                    }
+                } catch (error) {
+                    alert('❌ An error occurred. Please try again later.');
+                } finally {
+                    signInBtn.innerHTML = originalText;
+                    signInBtn.disabled = false;
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>
