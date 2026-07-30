@@ -9,46 +9,46 @@
 }
 
 :root {
-    --background: #f9fafb;
-    --foreground: #111827;
+    --background: #f3f6fa;
+    --foreground: #0a0f1a;
     --primary: #E53E3E;
     --primary-foreground: #ffffff;
-    --secondary: #f3f4f6;
-    --secondary-foreground: #374151;
+    --secondary: #e8ecf2;
+    --secondary-foreground: #1f2937;
     --accent: #fee2e2;
-    --accent-foreground: #E53E3E;
-    --muted: #f3f4f6;
-    --muted-foreground: #6b7280;
+    --accent-foreground: #c53030;
+    --muted: #e8ecf2;
+    --muted-foreground: #4b5563;
     --card: #ffffff;
-    --card-foreground: #111827;
-    --border: #e5e7eb;
-    --input: #e5e7eb;
+    --card-foreground: #0a0f1a;
+    --border: #d1d5db;
+    --input: #d1d5db;
     --ring: #E53E3E;
     --radius: 0.5rem;
     --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
     --employed-bg: #dcfce7;
-    --employed-text: #16a34a;
-    --employed-dot: #22c55e;
+    --employed-text: #15803d;
+    --employed-dot: #16a34a;
     --not-employed-bg: #fff7ed;
-    --not-employed-text: #ea580c;
-    --not-employed-dot: #f97316;
+    --not-employed-text: #c2410c;
+    --not-employed-dot: #ea580c;
 }
 
 [data-theme="dark"] {
-    --background: #0f0f0f;
-    --foreground: #f9fafb;
+    --background: #0a0a0a;
+    --foreground: #ffffff;
     --primary: #E53E3E;
     --primary-foreground: #ffffff;
-    --secondary: #1f1f1f;
-    --secondary-foreground: #d1d5db;
+    --secondary: #181818;
+    --secondary-foreground: #e5e7eb;
     --accent: #2d1b1b;
     --accent-foreground: #f87171;
-    --muted: #1f1f1f;
-    --muted-foreground: #9ca3af;
-    --card: #1a1a1a;
-    --card-foreground: #f9fafb;
-    --border: #2d2d2d;
-    --input: #2d2d2d;
+    --muted: #181818;
+    --muted-foreground: #a3aab5;
+    --card: #141414;
+    --card-foreground: #ffffff;
+    --border: #333333;
+    --input: #333333;
     --ring: #E53E3E;
     --employed-bg: #052e16;
     --employed-text: #4ade80;
@@ -60,20 +60,20 @@
 
 /* Backwards-compatible selector for projects that toggle a `dark` class on <html> */
 .dark {
-    --background: #0f0f0f;
-    --foreground: #f9fafb;
+    --background: #0a0a0a;
+    --foreground: #ffffff;
     --primary: #E53E3E;
     --primary-foreground: #ffffff;
-    --secondary: #1f1f1f;
-    --secondary-foreground: #d1d5db;
+    --secondary: #181818;
+    --secondary-foreground: #e5e7eb;
     --accent: #2d1b1b;
     --accent-foreground: #f87171;
-    --muted: #1f1f1f;
-    --muted-foreground: #9ca3af;
-    --card: #1a1a1a;
-    --card-foreground: #f9fafb;
-    --border: #2d2d2d;
-    --input: #2d2d2d;
+    --muted: #181818;
+    --muted-foreground: #a3aab5;
+    --card: #141414;
+    --card-foreground: #ffffff;
+    --border: #333333;
+    --input: #333333;
     --ring: #E53E3E;
     --employed-bg: #052e16;
     --employed-text: #4ade80;
@@ -849,20 +849,20 @@ tr:nth-child(even):hover td {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 2px 10px;
-    border-radius: 9999px;
     font-size: 14px;
     font-weight: 500;
 }
 
 .status-employed {
-    background: var(--employed-bg);
+    background: transparent;
     color: var(--employed-text);
+    font-weight: 600;
 }
 
 .status-not-employed {
-    background: var(--not-employed-bg);
+    background: transparent;
     color: var(--not-employed-text);
+    font-weight: 600;
 }
 
 .status-dot {
@@ -892,9 +892,13 @@ tr:nth-child(even):hover td {
     color: var(--foreground);
 }
 
+.action-btn.danger {
+    color: var(--primary);
+}
+
 .action-btn.danger:hover {
     background: color-mix(in srgb, var(--primary) 10%, transparent);
-    color: var(--primary);
+    color: #c53030;
 }
 
 .action-btn svg { flex-shrink: 0; }
