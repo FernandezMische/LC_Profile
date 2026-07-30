@@ -3,152 +3,137 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LC Studio · Admin Login</title>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <link rel="stylesheet" href="/frontend/css/admin-login.css?v=9" />
+    <title>TraineeHub — Sign In</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <style>
+        /* Font face definitions moved inline to ensure they load */
+        @font-face {
+            font-family: 'Brandon Grotesque';
+            src: url('/fonts/brandon-grotesque-light-58a8a4b38001d.otf') format('opentype');
+            font-weight: 300;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Brandon Grotesque';
+            src: url('/fonts/brandon-grotesque-regular-italic-58a8a456c4724.otf') format('opentype');
+            font-weight: 400;
+            font-style: italic;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Brandon Grotesque';
+            src: url('/fonts/brandon-grotesque-medium-italic-58a8a3c40866a.otf') format('opentype');
+            font-weight: 500;
+            font-style: italic;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Brandon Grotesque';
+            src: url('/fonts/brandon-grotesque-bold-italic-58a8a48221563.otf') format('opentype');
+            font-weight: 700;
+            font-style: italic;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Brandon Grotesque';
+            src: url('/fonts/brandon-grotesque-black-58a8a3e824392.otf') format('opentype');
+            font-weight: 900;
+            font-style: normal;
+            font-display: swap;
+        }
+    </style>
 </head>
 <body>
+    <main class="auth-page">
+        <!-- Theme Toggle with SVG -->
+        <button id="themeToggle" class="auth-theme-toggle" aria-label="Toggle theme">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="themeIcon">
+                <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/>
+            </svg>
+        </button>
 
-    <div class="login-wrapper">
-        <div class="login-card">
-            <div class="card-split">
+        <section class="auth-shell card-surface">
+            <header class="auth-brand">
+                <!-- Inline SVG Logo -->
+                <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" class="auth-logo">
+                    <rect width="44" height="44" rx="10" fill="#E53E3E"/>
+                    <path d="M13 29V15H16.6L21.4 22.6L26.2 15H29.8V29H26.8V19.8L22.4 26.8H20.4L16 19.8V29H13Z" fill="white"/>
+                    <rect x="31" y="15" width="3" height="14" rx="1.5" fill="white"/>
+                </svg>
+                <h1>TraineeHub</h1>
+            </header>
+            <p class="auth-intro">Sign in to manage your trainee programme</p>
+            <p class="auth-error" id="loginError" role="alert"></p>
 
-                <aside class="card-art" aria-hidden="true"></aside>
+            <form id="loginForm" novalidate>
+                <label for="email">Email address</label>
+                <input class="input-base" id="email" type="email" placeholder="nash@traineehub.co.za" autocomplete="email" required />
+                <p class="auth-field-error" id="emailError"></p>
 
-                <section class="card-form">
-
-                    <button id="themeToggle" class="toggle-track" aria-label="Toggle dark/light mode">
-                        <i class="fas fa-moon" id="toggleIcon"></i>
+                <label for="password">Password</label>
+                <div class="auth-password-wrap">
+                    <input class="input-base" id="password" type="password" placeholder="••••••••••••" autocomplete="current-password" required minlength="6" />
+                    <button type="button" id="passwordToggle" aria-label="Show password">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="eyeIcon">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
                     </button>
+                </div>
+                <p class="auth-field-error" id="passwordError"></p>
 
-                    <img src="/images/LC-STUDIO-HI-RES-LOGO-2023-redgrey.png" alt="LC Studio Logo" class="corner-logo"
-                         style="position: absolute; top: 0.6rem; right: 3rem; height: 24px; width: auto; z-index: 5; opacity: 0.8;">
+                <div class="auth-options">
+                    <label class="auth-remember">
+                        <input id="remember" type="checkbox" />
+                        <span>Remember me</span>
+                    </label>
+                    <button type="button" class="auth-link">Forgot password?</button>
+                </div>
 
-                    <div class="brand-header">
-                        <div class="lc-studio">LC STUDIO</div>
-                        <div class="tagline">Coding the Future</div>
-                        <div class="admin-sub">ADMIN</div>
-                        <div class="sub-heading">LC STUDIO ADMIN</div>
-                        <div class="main-title">Admin Login</div>
-                        <div class="description">
-                            Secure access to the LC Studio<br />
-                            Trainee Library Admin Panel.
-                        </div>
+                <button class="btn-primary auth-submit" id="signInBtn" type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                        <polyline points="10 17 15 12 10 7"/>
+                        <line x1="15" x2="3" y1="12" y2="12"/>
+                    </svg>
+                    <span>Sign In</span>
+                </button>
+            </form>
+
+            <aside class="demo-card">
+                <div class="demo-heading">
+                    <strong>Demo Account</strong>
+                    <button type="button" id="autofillBtn">Autofill</button>
+                </div>
+                <div class="demo-row">
+                    <div>
+                        <small>Email</small>
+                        <b>nash@traineehub.co.za</b>
                     </div>
-
-                    <!-- LOGIN FORM -->
-                    <form id="loginForm" class="space-y-3">
-
-                        <div>
-                            <label for="email" class="block text-xs font-medium card-text-secondary mb-1">Email Address</label>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 card-text-muted">
-                                    <i class="fas fa-envelope text-xs"></i>
-                                </span>
-                                <input type="email" id="email" name="email" placeholder="e.g. admin@lctstudio.co.za" required
-                                       class="form-input w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c70621] focus:border-transparent transition text-sm">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label for="password" class="block text-xs font-medium card-text-secondary mb-1">Password</label>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 card-text-muted">
-                                    <i class="fas fa-lock text-xs"></i>
-                                </span>
-                                <input type="password" id="password" name="password" placeholder="Enter your password" required
-                                       class="form-input w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c70621] focus:border-transparent transition text-sm">
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between">
-                            <label class="flex items-center space-x-2 text-sm card-text-secondary cursor-pointer">
-                                <input type="checkbox" id="remember" name="remember"
-                                       class="custom-checkbox w-4 h-4 border border-gray-300 rounded focus:ring-2 focus:ring-[#c70621] transition">
-                                <span>Remember me</span>
-                            </label>
-                        </div>
-
-                        <button type="submit" id="signInBtn"
-                                class="btn-primary w-full text-white font-semibold py-2.5 rounded-lg transition duration-200 flex items-center justify-center gap-2 text-sm">
-                            <i class="fas fa-sign-in-alt"></i> Sign In
-                        </button>
-
-                        <div class="relative flex items-center my-2">
-                            <div class="flex-grow border-t divider"></div>
-                            <span class="mx-4 text-xs card-text-muted font-medium">OR</span>
-                            <div class="flex-grow border-t divider"></div>
-                        </div>
-
-                        <p class="text-center text-xs card-text-muted">
-                            Not authorised?
-                            <a href="#" class="link-accent font-medium hover:underline">Contact LC Studio Administrator</a>
-                        </p>
-
-                    </form>
-
-                    <div class="text-center mt-4 pt-3 border-t divider">
-                        <p class="text-[10px] card-text-muted tracking-widest">LC STUDIO &middot; ADMIN</p>
+                    <button type="button" class="copy-btn" data-copy="nash@traineehub.co.za" aria-label="Copy email">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="demo-row">
+                    <div>
+                        <small>Password</small>
+                        <b>TraineeHub@2026</b>
                     </div>
-
-                </section>
-            </div>
-        </div>
-    </div>
-
-    <!-- Theme toggle script (core) -->
-    <script src="/frontend/js/admin-login.js"></script>
-
-    <!-- ===== AJAX login integration (no demo code) ===== -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('loginForm');
-            const signInBtn = document.getElementById('signInBtn');
-
-            form.addEventListener('submit', async function(e) {
-                e.preventDefault();
-
-                const email = document.getElementById('email').value.trim();
-                const password = document.getElementById('password').value;
-
-                if (!email || !password) {
-                    alert('Please fill in both email and password.');
-                    return;
-                }
-
-                // Show loading state
-                const originalText = signInBtn.innerHTML;
-                signInBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in…';
-                signInBtn.disabled = true;
-
-                try {
-                    // === FIXED URL ===
-                    const response = await fetch('/backend/index.php?route=login', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, password })
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok) {
-                        alert('✅ Login successful! Welcome, ' + email);
-                        // Redirect to a dashboard or admin panel
-                        // window.location.href = '/backend/index.php?route=admin';
-                    } else {
-                        alert('❌ ' + (data.error || 'Login failed. Please check your credentials.'));
-                    }
-                } catch (error) {
-                    alert('❌ An error occurred. Please try again later.');
-                } finally {
-                    signInBtn.innerHTML = originalText;
-                    signInBtn.disabled = false;
-                }
-            });
-        });
-    </script>
-
+                    <button type="button" class="copy-btn" data-copy="TraineeHub@2026" aria-label="Copy password">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                    </button>
+                </div>
+            </aside>
+        </section>
+        <p class="auth-copyright">© 2026 TraineeHub. All rights reserved.</p>
+    </main>
+    <script src="../js/admin-login.js"></script>
 </body>
 </html>
