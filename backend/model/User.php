@@ -14,6 +14,7 @@ class User {
     public function verifyPassword($plain, $hash) {
         return password_verify($plain, $hash);
     }
+    //create a new user with email and password
     public function createUser($email, $plainPassword) {
         $hash = password_hash($plainPassword, PASSWORD_DEFAULT);
         $stmt = $this->pdo->prepare("INSERT INTO users (email, password_hash) VALUES (:email, :hash)");

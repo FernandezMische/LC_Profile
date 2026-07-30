@@ -13,6 +13,7 @@ class AuthController {
             echo json_encode(['error' => 'Method not allowed']);
             return;
         }
+        //get email and password from the index.php request
         $input = json_decode(file_get_contents('php://input'), true);
         if (!$input || !isset($input['email']) || !isset($input['password'])) {
             http_response_code(400);
@@ -21,14 +22,15 @@ class AuthController {
         }
         $email = trim($input['email']);
         $password = $input['password'];
-
+       //check if the user exists and the password is correct
         $user = $this->userModel->findByEmail($email);
+        //if no user is found or the password is incorrect, return an error
         if (!$user || !$this->userModel->verifyPassword($password, $user['password_hash'])) {
             http_response_code(401);
             echo json_encode(['error' => 'Invalid credentials']);
             return;
         }
-
+      //success start session
         session_start();
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_email'] = $user['email'];
