@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trainee Library · LC Studio</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <div class="custom-cursor" aria-hidden="true"></div>
+    <div class="custom-cursor-ring" aria-hidden="true"></div>
+
+    <header class="site-header">
+        <a class="brand" href="#home" aria-label="LC Studio Home">
+            <img src="../../images/LC-STUDIO-HI-RES-LOGO-2023-redgrey (1).png" alt="LC Studio Logo">
+        </a>
+
+        <button id="themeToggle" class="theme-toggle" type="button" aria-pressed="false">
+            <i class="fa-solid fa-sun" aria-hidden="true"></i>
+            <span>Light Mode</span>
+        </button>
+    </header>
+
+    <main id="home">
+
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <p class="eyebrow">
+                    OUR TRAINEES
+                </p>
+
+                <h1>
+                    THE NEXT GENERATION OF
+                    <br>
+                    <span>CREATIVE</span>
+                    BUILDERS.
+                </h1>
+
+                <p class="intro">
+                    We're building more than projects. We're building people.
+                    Meet the talented interns solving real problems, growing
+                    their skills and shaping the future with us.
+                </p>
+
+                <a href="#trainees" class="hero-button">
+                    Meet our trainees
+                    <i class="fa-solid fa-arrow-down"></i>
+                </a>
+
+            </div>
+
+        </section>
+
+        <section class="trainee-section" id="trainees">
+
+            <header class="section-heading">
+
+                <div>
+
+                    <p class="eyebrow">
+                        THE PEOPLE BEHIND THE WORK
+                    </p>
+
+                    <h2>
+                        MEET OUR
+                        <span>TRAINEES.</span>
+                    </h2>
+
+                </div>
+
+                <p>
+                    Explore the talented people building their careers at LC
+                    Studio.
+                </p>
+
+            </header>
+
+            <div class="filter-row">
+
+                <label class="search-box">
+
+                    <input
+                        id="searchInput"
+                        type="search"
+                        placeholder="Search trainee..."
+                    >
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                </label>
+
+                <div class="filter-select">
+
+                    <select id="statusFilter" class="native-select" tabindex="-1" aria-hidden="true">
+                        <option value="all">All Statuses</option>
+                        <option value="freelance">Available to Freelance</option>
+                        <option value="opportunities">Open to Opportunities</option>
+                        <option value="employed">Employed</option>
+                    </select>
+
+                    <button class="filter-select-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+                        <span>All Statuses</span>
+                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+
+                    <div class="filter-select-menu" role="listbox" aria-label="Filter by availability">
+                        <button type="button" role="option" aria-selected="true" data-value="all">All Statuses</button>
+                        <button type="button" role="option" data-value="freelance">Available to Freelance</button>
+                        <button type="button" role="option" data-value="opportunities">Open to Opportunities</button>
+                        <button type="button" role="option" data-value="employed">Employed</button>
+                    </div>
+
+                </div>
+
+                <div class="filter-select">
+
+                    <select id="sortSelect" class="native-select" tabindex="-1" aria-hidden="true">
+                        <option value="recent">Recently Added</option>
+                        <option value="name">Name (A-Z)</option>
+                        <option value="cohort">Cohort</option>
+                    </select>
+
+                    <button class="filter-select-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+                        <span>Recently Added</span>
+                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+
+                    <div class="filter-select-menu" role="listbox" aria-label="Sort trainees">
+                        <button type="button" role="option" aria-selected="true" data-value="recent">Recently Added</button>
+                        <button type="button" role="option" data-value="name">Name (A-Z)</button>
+                        <button type="button" role="option" data-value="cohort">Cohort</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="loading" class="loading">
+                Loading trainees...
+            </div>
+
+            <section
+                id="traineeGrid"
+                class="grid">
+            </section>
+
+            <p
+                id="emptyState"
+                class="empty-state"
+                hidden>
+
+                No trainees found.
+
+            </p>
+
+        </section>
+
+    </main>
+
+    <div
+        class="modal-overlay"
+        id="profileModal"
+        aria-hidden="true">
+
+        <article
+            class="profile-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modalName"
+            tabindex="-1">
+
+            <button
+                id="modalClose"
+                class="modal-close"
+                aria-label="Close profile">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+            <div
+                id="modalVisual"
+                class="modal-visual">
+            </div>
+
+            <div class="modal-body">
+
+                <h2 id="modalName"></h2>
+
+                <p id="modalRole"></p>
+
+                <p id="modalCohort"></p>
+
+                <div class="modal-statuses" aria-label="Availability status">
+                    <span data-status="employed">Employed</span>
+                    <span data-status="freelance">Available to Freelance</span>
+                    <span data-status="opportunities">Open to Opportunities</span>
+                </div>
+
+                <div class="modal-rule"></div>
+
+                <div class="social-links">
+
+                    <a
+                        id="linkedinLink"
+                        href="#"
+                        target="_blank"
+                        aria-label="LinkedIn">
+
+                        <i class="fa-brands fa-linkedin-in"></i>
+
+                    </a>
+
+                    <a
+                        id="githubLink"
+                        href="#"
+                        target="_blank"
+                        aria-label="GitHub">
+
+                        <i class="fa-brands fa-github"></i>
+
+                    </a>
+
+                    <a
+                        id="portfolioLink"
+                        href="#"
+                        target="_blank"
+                        aria-label="Portfolio">
+
+                        <i class="fa-solid fa-globe"></i>
+
+                    </a>
+
+                    <a
+                        id="emailLink"
+                        href="#"
+                        aria-label="Email">
+
+                        <i class="fa-regular fa-envelope"></i>
+
+                    </a>
+
+                </div>
+
+                <p class="download-label">
+                    DOWNLOAD CV
+                </p>
+
+                <button
+                    id="modalDownload"
+                    class="modal-download">
+
+                    <i class="fa-solid fa-download"></i>
+
+                    Download PDF
+
+                </button>
+
+            </div>
+
+        </article>
+
+    </div>
+
+    <footer class="site-footer">
+
+        <img
+            src="../../images/LC-STUDIO-HI-RES-LOGO-2023-redgrey (1).png"
+            alt="LC Studio Logo">
+
+        <span>
+            LC Studio ©2024
+        </span>
+
+        <span>
+            NPO – 086-084
+        </span>
+
+    </footer>
+
+    <script src="../js/script.js"></script>
+
+</body>
+</html>
