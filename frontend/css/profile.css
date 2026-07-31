@@ -627,6 +627,36 @@ input, select, textarea { font-family: inherit; }
     color: var(--foreground);
 }
 
+/* Admin management search and pagination */
+#adminSearch {
+    width: 100%;
+    max-width: 420px;
+    padding: 10px 14px;
+    border: 1px solid var(--input);
+    border-radius: 8px;
+    background: var(--card);
+    color: var(--foreground);
+    font: inherit;
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+#adminSearch::placeholder { color: var(--muted-foreground); }
+#adminSearch:focus { border-color: var(--ring); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 20%, transparent); }
+
+#adminPagination button {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 9px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--card);
+    color: var(--foreground);
+    cursor: pointer;
+}
+
+#adminPagination button:disabled { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); cursor: default; }
+
 /* Hover state for elements using hover:bg-muted class */
 .hover\:bg-muted:hover {
     background: var(--muted);

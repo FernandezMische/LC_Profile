@@ -306,6 +306,15 @@ body {
     opacity: 0.7;
 }
 
+.login-error {
+    color: #f51c26;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    min-height: 18px;
+    text-align: center;
+}
+
 /* ===== RED BUTTON ===== */
 .btn-primary {
     background-color: #c70621 !important;

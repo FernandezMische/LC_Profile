@@ -6,6 +6,38 @@
 (function () {
     'use strict';
 
+    // ---- Session guard: redirect to login if not authenticated ----
+     function requireAuth() {
+        fetch('/backend/index.php?route=check', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+            if (!data.authenticated) {
+                window.location.href = 'admin-login.html';
+            }
+        })
+        .catch(function () {
+            window.location.href = 'admin-login.html';
+        });
+    }
+
+    // ---- Logout: destroy the server-side session, then redirect ----
+    function logout() {
+        fetch('/backend/index.php?route=logout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(function () {
+            window.location.href = 'admin-login.html';
+        })
+        .catch(function () {
+            // Even if the request fails, still send the user to the login page
+            window.location.href = 'admin-login.html';
+        });
+    }
+
     // ============================================================
     // DATA
     // ============================================================
@@ -559,8 +591,11 @@
     // INIT
     // ============================================================
     function init() {
+        requireAuth(); // redirect to login if not authenticated
         initTheme();
         if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+        var logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) logoutBtn.addEventListener('click', logout);
         populateCohortSelects();
         renderTable();
         if (tbody) tbody.addEventListener('click', handleTableClick);

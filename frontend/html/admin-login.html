@@ -27,19 +27,14 @@
                          style="position: absolute; top: 0.6rem; right: 3rem; height: 50px; width: auto; z-index: 5; opacity: 0.8;">
 
                     <div class="brand-header">
-                        <div class="lc-studio">LC STUDIO</div>
-                        <div class="tagline">Coding the Future</div>
-                        <div class="admin-sub">ADMIN</div>
-                        <div class="sub-heading">LC STUDIO ADMIN</div>
                         <div class="main-title">Admin Login</div>
                         <div class="description">
-                            Secure access to the LC Studio<br />
-                            Trainee Library Admin Panel.
+                            Secure access to the LC Studio Trainee Library.
                         </div>
                     </div>
 
                     <!-- LOGIN FORM -->
-                    <form id="loginForm" class="space-y-3">
+                    <form id="loginForm" class="space-y-2">
 
                         <div>
                             <label for="email" class="block text-xs font-medium card-text-secondary mb-1">Email Address</label>
@@ -50,6 +45,7 @@
                                 <input type="email" id="email" name="email" placeholder="e.g. admin@lctstudio.co.za" required
                                        class="form-input w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c70621] focus:border-transparent transition text-sm">
                             </div>
+                            <div class="error-text" id="emailError" style="color:#f51c26;font-size:12px;margin-top:4px;min-height:14px;"></div>
                         </div>
 
                         <div>
@@ -59,33 +55,20 @@
                                     <i class="fas fa-lock text-xs"></i>
                                 </span>
                                 <input type="password" id="password" name="password" placeholder="Enter your password" required
-                                       class="form-input w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c70621] focus:border-transparent transition text-sm">
+                                       class="form-input w-full pl-10 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c70621] focus:border-transparent transition text-sm">
+                                <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer" style="background:none;border:none;color:var(--muted-foreground,#9ca3af);z-index:6;" aria-label="Toggle password visibility">
+                                    <i class="fas fa-eye" id="eyeIcon"></i>
+                                </button>
                             </div>
+                            <div class="error-text" id="passwordError" style="color:#f51c26;font-size:12px;margin-top:4px;min-height:14px;"></div>
                         </div>
 
-                        <div class="flex items-center justify-between">
-                            <label class="flex items-center space-x-2 text-sm card-text-secondary cursor-pointer">
-                                <input type="checkbox" id="remember" name="remember"
-                                       class="custom-checkbox w-4 h-4 border border-gray-300 rounded focus:ring-2 focus:ring-[#c70621] transition">
-                                <span>Remember me</span>
-                            </label>
-                        </div>
+                        <div id="loginError" class="login-error" role="alert"></div>
 
                         <button type="submit" id="signInBtn"
                                 class="btn-primary w-full text-white font-semibold py-2.5 rounded-lg transition duration-200 flex items-center justify-center gap-2 text-sm">
                             <i class="fas fa-sign-in-alt"></i> Sign In
                         </button>
-
-                        <div class="relative flex items-center my-2">
-                            <div class="flex-grow border-t divider"></div>
-                            <span class="mx-4 text-xs card-text-muted font-medium">OR</span>
-                            <div class="flex-grow border-t divider"></div>
-                        </div>
-
-                        <p class="text-center text-xs card-text-muted">
-                            Not authorised?
-                            <a href="#" class="link-accent font-medium hover:underline">Contact LC Studio Administrator</a>
-                        </p>
 
                     </form>
 
@@ -98,67 +81,7 @@
         </div>
     </div>
 
-    <!-- Theme toggle script (core) -->
-    <script src="/frontend/js/admin-login.js"></script>
-
-    <!-- ===== AJAX login with console debugging ===== -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('loginForm');
-            const signInBtn = document.getElementById('signInBtn');
-
-            form.addEventListener('submit', async function(e) {
-                e.preventDefault();
-
-                const email = document.getElementById('email').value.trim();
-                const password = document.getElementById('password').value;
-
-                if (!email || !password) {
-                    alert('Please fill in both email and password.');
-                    return;
-                }
-
-                const originalText = signInBtn.innerHTML;
-                signInBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in…';
-                signInBtn.disabled = true;
-
-                try {
-                    const response = await fetch('/backend/index.php?route=login', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, password })
-                    });
-
-                    // 📋 CONSOLE DEBUGGING
-                    console.log('📡 Status:', response.status);
-                    const rawText = await response.text();
-                    console.log('📄 Raw response:', rawText);
-
-                    let data;
-                    try {
-                        data = JSON.parse(rawText);
-                    } catch (parseError) {
-                        console.error('❌ Invalid JSON from server:', rawText);
-                        alert('❌ Server returned invalid JSON. Check console (F12) for details.');
-                        throw parseError;
-                    }
-
-                    if (response.ok) {
-                        alert('✅ Login successful! Welcome, ' + email);
-                        window.location.href = 'admin-management.html';
-                    } else {
-                        alert('❌ ' + (data.error || 'Login failed.'));
-                    }
-                } catch (error) {
-                    console.error('❌ Fetch error:', error);
-                    alert('❌ An error occurred. Check console (F12) for details.');
-                } finally {
-                    signInBtn.innerHTML = originalText;
-                    signInBtn.disabled = false;
-                }
-            });
-        });
-    </script>
+    <script src="/frontend/js/admin-login.js?v=10"></script>
 
 </body>
 </html>

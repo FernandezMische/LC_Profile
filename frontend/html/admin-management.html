@@ -39,10 +39,10 @@
                 <button class="theme-btn p-2 rounded-lg transition-colors duration-150" id="themeToggle" aria-label="Toggle theme">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide text-muted-foreground" aria-hidden="true" id="themeIcon"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
                 </button>
-                <a href="admin-login.html" class="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-150 px-2 py-1.5 rounded-lg hover:bg-muted">
+                <button type="button" id="logoutBtn" class="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-150 px-2 py-1.5 rounded-lg hover:bg-muted" style="background:none;border:none;cursor:pointer;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out" aria-hidden="true"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>
                     <span class="hidden sm:inline">Logout</span>
-                </a>
+                </button>
             </div>
         </div>
     </header>
@@ -60,6 +60,11 @@
                 Add Admin
             </button>
         </div>
+        <div class="mb-4">
+            <label for="adminSearch" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">Search administrators</label>
+            <input type="search" id="adminSearch" placeholder="Search by name or email" class="w-full" autocomplete="off" />
+        </div>
+        <p id="adminLoadError" class="error-text" role="alert" hidden></p>
 
         <!-- Admin table -->
         <div class="card-surface rounded-2xl overflow-hidden">
@@ -67,9 +72,7 @@
                 <table class="w-full min-w-[700px]">
                     <thead>
                         <tr class="border-b border-border">
-                            <th class="text-left px-4 sm:px-6 py-3 muted-label">Name</th>
                             <th class="text-left px-4 py-3 muted-label show-sm">Email</th>
-                            <th class="text-left px-4 py-3 muted-label show-md">Role</th>
                             <th class="text-left px-4 py-3 muted-label show-lg">Added On</th>
                             <th class="text-left px-4 sm:px-6 py-3 muted-label"></th>
                         </tr>
@@ -85,6 +88,7 @@
                 <p>Add one to get started.</p>
             </div>
         </div>
+        <nav id="adminPagination" class="flex items-center gap-2 mt-4" aria-label="Administrator pages"></nav>
     </main>
 
     <!-- MODAL: Add Admin -->
@@ -98,11 +102,6 @@
             </div>
             <form id="addAdminForm">
                 <div class="modal-body">
-                    <div class="modal-field">
-                        <label>Full Name <span class="required">*</span></label>
-                        <input type="text" id="adminName" placeholder="e.g. Jane Smith" />
-                        <div class="error-text" id="adminNameError"></div>
-                    </div>
                     <div class="modal-field">
                         <label>Email Address <span class="required">*</span></label>
                         <input type="email" id="adminEmail" placeholder="e.g. jane@traineehub.co.za" />
@@ -118,24 +117,12 @@
                         </div>
                         <div class="error-text" id="adminPasswordError"></div>
                     </div>
-                    <div class="modal-field">
-                        <label>Role <span class="required">*</span></label>
-                        <select id="adminRole">
-                            <option value="Admin">Admin</option>
-                            <option value="Super Admin">Super Admin</option>
-                            <option value="Viewer">Viewer</option>
-                        </select>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-ghost" id="cancelAddAdminBtn">Cancel</button>
                     <button type="submit" class="btn-primary-sm" id="submitAddAdminBtn">Add Admin</button>
                 </div>
             </form>
-        </div>
-                </div>
-            </form>
-        </div>
     </div>
 
     <!-- TOAST CONTAINER -->
