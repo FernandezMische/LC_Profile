@@ -5,10 +5,11 @@
 
 (function () {
     'use strict';
+    var csrfToken = '';
 
     // ---- Session guard: redirect to login if not authenticated ----
      function requireAuth() {
-        fetch('/backend/index.php?route=check', {
+        return fetch('/backend/index.php?route=check', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         })
@@ -16,10 +17,16 @@
         .then(function (data) {
             if (!data.authenticated) {
                 window.location.href = 'admin-login.html';
+                return false;
             }
+            csrfToken = data.csrfToken || '';
+            var currentAdmin = document.getElementById('currentAdminEmail');
+            if (currentAdmin) currentAdmin.textContent = data.email || 'Administrator';
+            return true;
         })
         .catch(function () {
             window.location.href = 'admin-login.html';
+            return false;
         });
     }
 
@@ -27,7 +34,7 @@
     function logout() {
         fetch('/backend/index.php?route=logout', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken }
         })
         .then(function () {
             window.location.href = 'admin-login.html';

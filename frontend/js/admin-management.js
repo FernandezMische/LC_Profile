@@ -66,7 +66,7 @@
   }
   function init() {
     setTheme(localStorage.getItem('traineehub-theme') === 'dark' ? 'dark' : 'light');
-    api('check').then(function (data) { if (!data.authenticated) throw new Error(); csrfToken = data.csrfToken; load(1); }).catch(function () { window.location.href = 'admin-login.html'; });
+    api('check').then(function (data) { if (!data.authenticated) throw new Error(); csrfToken = data.csrfToken; text($('currentAdminEmail'), data.email || 'Administrator'); load(1); }).catch(function () { window.location.href = 'admin-login.html'; });
     $('openAddAdminBtn').addEventListener('click', function () { form.reset(); modal.classList.add('open'); });
     $('closeAddAdminBtn').addEventListener('click', function () { modal.classList.remove('open'); });
     $('cancelAddAdminBtn').addEventListener('click', function () { modal.classList.remove('open'); });

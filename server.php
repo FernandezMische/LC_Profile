@@ -1,7 +1,7 @@
 <?php
 
 // Strip query string from the URI to get the clean path
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$uri = rawurldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 
 // ──────────────────────────────────────────────────────────────
 // 0. Session-based authentication guard for admin pages
