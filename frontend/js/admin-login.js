@@ -104,7 +104,7 @@
 
             setTimeout(function () {
                 if (email.value === DEMO.email && password.value === DEMO.password) {
-                    window.location.href = '../../index.html';
+                    window.location.href = 'admin-management.html';
                     return;
                 }
                 if (loginError) {

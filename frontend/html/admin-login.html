@@ -145,6 +145,7 @@
 
                     if (response.ok) {
                         alert('✅ Login successful! Welcome, ' + email);
+                        window.location.href = 'admin-management.html';
                     } else {
                         alert('❌ ' + (data.error || 'Login failed.'));
                     }

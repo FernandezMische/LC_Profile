@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="frontend/css/style.css" />
+    <link rel="stylesheet" href="../css/profile.css" />
 </head>
 <body class="min-h-screen bg-background transition-colors duration-300">
     <!-- TOP BAR -->
@@ -26,10 +26,10 @@
             </div>
 
             <nav class="topbar-nav">
-                <a href="index.html" class="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg transition-colors duration-150 bg-primary/10 text-primary font-medium">
+                <a href="profile.html" class="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg transition-colors duration-150 bg-primary/10 text-primary font-medium">
                     <span>Dashboard</span>
                 </a>
-                <a href="frontend/html/admin-management.html" class="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg transition-colors duration-150 text-muted-foreground hover:text-foreground hover:bg-muted">
+                <a href="admin-management.html" class="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg transition-colors duration-150 text-muted-foreground hover:text-foreground hover:bg-muted">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
                     <span>Admins</span>
                 </a>
@@ -39,7 +39,7 @@
                 <button class="theme-btn p-2 rounded-lg transition-colors duration-150" id="themeToggle" aria-label="Toggle theme">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide text-muted-foreground" aria-hidden="true" id="themeIcon"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
                 </button>
-                <a href="frontend/html/admin-login.html" class="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-150 px-2 py-1.5 rounded-lg hover:bg-muted">
+                <a href="admin-login.html" class="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-150 px-2 py-1.5 rounded-lg hover:bg-muted">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out" aria-hidden="true"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>
                     <span class="hidden sm:inline">Logout</span>
                 </a>
@@ -334,6 +334,6 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- External JavaScript -->
-    <script src="frontend/js/script.js"></script>
+    <script src="../js/profile.js"></script>
 </body>
 </html>
