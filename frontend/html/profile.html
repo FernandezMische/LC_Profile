@@ -20,7 +20,7 @@
                     <rect x="31" y="15" width="3" height="14" rx="1.5" fill="white"/>
                 </svg>
                 <div class="flex items-center gap-1.5 min-w-0">
-                    <span class="font-semibold text-sm text-foreground whitespace-nowrap">Nash</span>
+                    <span class="font-semibold text-sm text-foreground whitespace-nowrap" id="currentAdminEmail">Administrator</span>
                     <span class="text-xs text-muted-foreground hidden sm:inline">· Administrator</span>
                 </div>
             </div>
@@ -39,10 +39,10 @@
                 <button class="theme-btn p-2 rounded-lg transition-colors duration-150" id="themeToggle" aria-label="Toggle theme">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide text-muted-foreground" aria-hidden="true" id="themeIcon"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
                 </button>
-                <a href="admin-login.html" class="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-150 px-2 py-1.5 rounded-lg hover:bg-muted">
+                <button type="button" id="logoutBtn" class="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-150 px-2 py-1.5 rounded-lg hover:bg-muted" style="background:none;border:none;cursor:pointer;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out" aria-hidden="true"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>
                     <span class="hidden sm:inline">Logout</span>
-                </a>
+                </button>
             </div>
         </div>
     </header>
