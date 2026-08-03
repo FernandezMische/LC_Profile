@@ -203,24 +203,7 @@ h3 {
 
     padding: 90px clamp(24px, 7vw, 112px);
 
-    background:
-
-        linear-gradient(
-            90deg,
-            rgba(7,8,8,1) 0%,
-            rgba(7,8,8,.95) 38%,
-            rgba(7,8,8,.35) 70%,
-            rgba(7,8,8,1) 100%
-        ),
-
-        linear-gradient(
-            90deg,
-            transparent 40%,
-            rgba(120,0,0,.45) 40% 60%,
-            rgba(0,68,88,.45) 60%
-        ),
-
-        url("../../images/foreshore-grey.jpg");
+    background: url("../../images/1920x1080-LCS-BANNER.png");
 
     background-size: cover;
     background-position: center;
@@ -950,7 +933,7 @@ h3 {
             rgba(9,9,9,.92),
             rgba(9,9,9,.55)
         ),
-        url("../../images/street1-red.jpg");
+        url("../../images/003.png");
 
     background-size: cover;
     background-position: center;
