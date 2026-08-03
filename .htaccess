@@ -1,0 +1,26 @@
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Do not allow the protected source files to bypass the PHP login guard.
+    RewriteRule ^frontend/html/profile\.html$ / [R=302,L]
+    RewriteRule ^frontend/html/admin-management\.html$ /admin-management [R=302,L]
+
+    # Keep the public CSS and JavaScript URLs used by the clean page routes.
+    RewriteRule ^css/(.*)$ frontend/css/$1 [L]
+    RewriteRule ^js/(.*)$ frontend/js/$1 [L]
+
+    # Serve real files and folders normally (including /backend/ API requests).
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # All clean page URLs are handled by the PHP router below.
+    RewriteRule ^ index.php [L,QSA]
+</IfModule>
+
+<FilesMatch "^(?:\.env|\.gitignore)$">
+    Require all denied
+</FilesMatch>
