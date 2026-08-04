@@ -5,7 +5,7 @@ DirectoryIndex index.php
     RewriteEngine On
 
     # Do not allow the protected source files to bypass the PHP login guard.
-    RewriteRule ^frontend/html/profile\.html$ / [R=302,L]
+    RewriteRule ^frontend/html/profile\.html$ /profiles [R=302,L]
     RewriteRule ^frontend/html/admin-management\.html$ /admin-management [R=302,L]
 
     # Keep the public CSS and JavaScript URLs used by the clean page routes.
