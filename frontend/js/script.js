@@ -10,8 +10,8 @@
         document.body.dataset.theme = theme;
         themeToggle.setAttribute("aria-pressed", String(isLight));
         themeToggle.innerHTML = isLight
-            ? '<i class="fa-solid fa-moon" aria-hidden="true"></i><span>Dark Mode</span>'
-            : '<i class="fa-solid fa-sun" aria-hidden="true"></i><span>Light Mode</span>';
+            ? '<span>Dark Mode</span>'
+            : '<span>Light Mode</span>';
 
     };
 
