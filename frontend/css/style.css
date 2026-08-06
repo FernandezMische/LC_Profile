@@ -316,6 +316,7 @@ h3 {
     padding: 16px 24px;
 
     border: 1px solid #f51c26;
+    border-radius: 6px;
 
     color: white;
 
@@ -1084,10 +1085,10 @@ h3 {
     inset: 0;
 
     display: none;
-
-    place-items: center;
-
-    padding: 20px;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(12px, 2.2vh, 24px);
+    overflow-y: auto;
 
     background: rgba(0,0,0,.75);
 
@@ -1110,9 +1111,11 @@ h3 {
 .profile-modal {
 
     position: relative;
-
-    width: min(560px,100%);
-
+    display: flex;
+    flex-direction: column;
+    width: min(580px, calc(100vw - 24px));
+    max-width: 100%;
+    max-height: min(90vh, 860px);
     overflow: hidden;
 
     border-radius: 12px;
@@ -1131,7 +1134,8 @@ h3 {
 
 .modal-visual {
 
-    height: 340px;
+    height: clamp(220px, 32vh, 340px);
+    min-height: 220px;
 
     background-size: cover;
 
@@ -1207,13 +1211,15 @@ h3 {
 
 .modal-body {
 
-    padding: 28px;
+    flex: 1 1 auto;
+    padding: clamp(22px, 2.4vh, 28px);
+    overflow-y: auto;
 
 }
 
 .modal-body h2 {
 
-    font-size: 38px;
+    font-size: clamp(26px, 3.2vw, 38px);
 
     font-weight: 800;
 
@@ -1611,15 +1617,14 @@ h3 {
 
     .profile-modal {
 
-        width: 100%;
-
-        max-width: 500px;
+        width: min(100%, calc(100vw - 20px));
+        max-height: 92vh;
 
     }
 
     .modal-visual {
 
-        height: 280px;
+        height: clamp(220px, 30vh, 280px);
 
     }
 
@@ -1631,8 +1636,23 @@ h3 {
 
     .modal-body h2 {
 
-        font-size: 30px;
+        font-size: clamp(24px, 4vw, 30px);
 
+    }
+
+}
+
+@media (max-height: 700px) {
+
+    .profile-modal {
+
+        max-height: 92vh;
+
+    }
+
+    .modal-visual {
+
+        height: clamp(180px, 24vh, 240px);
     }
 
 }
