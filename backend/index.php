@@ -2,6 +2,15 @@
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
 
+// Allow avatar uploads (base64 JSON payloads) without HTTP 413 errors.
+// These runtime settings cover the PHP built-in server (server.php),
+// while .htaccess covers Apache in production.
+ini_set('post_max_size', '16M');
+ini_set('upload_max_filesize', '8M');
+ini_set('max_execution_time', '60');
+ini_set('max_input_time', '60');
+ini_set('memory_limit', '128M');
+
 header("Content-Type: application/json");
 require_once __DIR__ . '/controller/AuthController.php';
 require_once __DIR__ . '/controller/TraineeController.php';

@@ -107,7 +107,7 @@ body {
     content: '';
     position: absolute;
     inset: -20px;
-    background-image: url('/images/foreshore-grey.jpg');
+    background-image: url('../../images/foreshore-grey.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -155,7 +155,7 @@ body {
    ============================================================ */
 .card-art {
     width: 44%;
-    background-image: url('/images/foreshore-grey.jpg');
+    background-image: url('../../images/foreshore-grey.jpg');
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;

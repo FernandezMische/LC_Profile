@@ -623,15 +623,41 @@
         inputEl.addEventListener('change', function (e) {
             var file = e.target.files[0];
             if (!file) return;
+            // Validate the file is an image and within a reasonable size
+            if (!/^image\/(jpeg|png|webp)$/i.test(file.type)) {
+                showToast('Please choose a JPG, PNG or WEBP image.', 'error');
+                inputEl.value = '';
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Image must be smaller than 5MB.', 'error');
+                inputEl.value = '';
+                return;
+            }
+            // Resize image on client to avoid HTTP 413 (Payload Too Large) errors
             var reader = new FileReader();
             reader.onload = function (ev) {
-                var dataUrl = ev.target.result;
-                if (previewEl) { previewEl.src = dataUrl; previewEl.style.display = 'block'; }
-                var p = areaEl.querySelector('p');
-                var i = areaEl.querySelector('i');
-                if (p) p.style.display = 'none';
-                if (i) i.style.display = 'none';
-                if (callback) callback(dataUrl);
+                var img = new Image();
+                img.onload = function () {
+                    var MAX_SIZE = 300;
+                    var canvas = document.createElement('canvas');
+                    var w = img.width, h = img.height;
+                    if (w > MAX_SIZE || h > MAX_SIZE) {
+                        if (w > h) { h = Math.round(h * MAX_SIZE / w); w = MAX_SIZE; }
+                        else { w = Math.round(w * MAX_SIZE / h); h = MAX_SIZE; }
+                    }
+                    canvas.width = w; canvas.height = h;
+                    var ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    var dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    if (previewEl) { previewEl.src = dataUrl; previewEl.style.display = 'block'; }
+                    var p = areaEl.querySelector('p');
+                    var i = areaEl.querySelector('i');
+                    if (p) p.style.display = 'none';
+                    if (i) i.style.display = 'none';
+                    if (callback) callback(dataUrl);
+                };
+                img.src = ev.target.result;
             };
             reader.readAsDataURL(file);
         });
