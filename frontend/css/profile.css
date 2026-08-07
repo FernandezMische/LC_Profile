@@ -610,6 +610,26 @@ input, select, textarea { font-family: inherit; }
 .btn-primary-sm:hover { background-color: #c53030; }
 .btn-primary-sm:disabled { opacity: 0.6; cursor: not-allowed; }
 
+/* Delete confirm button (danger) */
+.btn-delete {
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: none;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-delete:hover { background-color: #c53030; }
+.btn-delete:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-delete svg { flex-shrink: 0; }
+
 /* Theme toggle button */
 .theme-btn {
     background: transparent;
@@ -1150,6 +1170,45 @@ tr:nth-child(even):hover td {
     margin-top: 24px;
     padding-top: 20px;
     border-top: 1px solid var(--border);
+}
+
+/* Compact confirm-delete modal */
+.modal-card-sm {
+    max-width: 420px;
+}
+
+.delete-modal-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 0;
+}
+
+.delete-modal-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: color-mix(in srgb, var(--primary) 12%, transparent);
+    color: var(--primary);
+}
+
+.delete-modal-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--foreground);
+}
+
+.delete-modal-text strong {
+    font-weight: 600;
+    color: var(--foreground);
+}
+
+#deleteModal .modal-footer {
+    margin-top: 16px;
 }
 
 /* Image upload */

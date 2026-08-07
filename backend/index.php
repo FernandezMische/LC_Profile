@@ -4,8 +4,10 @@ ini_set('display_errors', '0');
 
 header("Content-Type: application/json");
 require_once __DIR__ . '/controller/AuthController.php';
+require_once __DIR__ . '/controller/TraineeController.php';
 try {
     $auth = new AuthController();
+    $trainees = new TraineeController();
     $route = $_GET['route'] ?? '';
     switch ($route) {
     case 'login':
@@ -28,6 +30,24 @@ try {
         break;
     case 'delete-admin':
         $auth->deleteAdmin();
+        break;
+    case 'trainees-public':
+        $trainees->publicList();
+        break;
+    case 'trainees':
+        $trainees->list();
+        break;
+    case 'cohorts':
+        $trainees->cohorts();
+        break;
+    case 'trainee-create':
+        $trainees->create();
+        break;
+    case 'trainee-update':
+        $trainees->update();
+        break;
+    case 'trainee-delete':
+        $trainees->delete();
         break;
         default:
             http_response_code(404);

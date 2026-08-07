@@ -7,10 +7,17 @@
     'use strict';
     var csrfToken = '';
 
+    function buildApiUrl(route) {
+        var url = new URL('backend/index.php', window.location.href);
+        url.searchParams.set('route', route);
+        return url.toString();
+    }
+
     // ---- Session guard: redirect to login if not authenticated ----
      function requireAuth() {
-        return fetch('/backend/index.php?route=check', {
+        return fetch(buildApiUrl('check'), {
             method: 'GET',
+            credentials: 'same-origin',
             headers: { 'Content-Type': 'application/json' }
         })
         .then(function (res) { return res.json(); })
@@ -32,8 +39,9 @@
 
     // ---- Logout: destroy the server-side session, then redirect ----
     function logout() {
-        fetch('/backend/index.php?route=logout', {
+        fetch(buildApiUrl('logout'), {
             method: 'POST',
+            credentials: 'same-origin',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken }
         })
         .then(function () {
@@ -42,6 +50,39 @@
         .catch(function () {
             // Even if the request fails, still send the user to the login page
             window.location.href = 'admin-login.html';
+        });
+    }
+
+    function api(route, method, body) {
+        return fetch(buildApiUrl(route), {
+            method: method || 'GET',
+            credentials: 'same-origin',
+            headers: method === 'GET' ? {} : { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+            body: body ? JSON.stringify(body) : undefined
+        }).then(function (response) {
+            return response.text().then(function (text) {
+                var data = {};
+                if (text) {
+                    try { data = JSON.parse(text); } catch (e) { data = {}; }
+                }
+                if (!response.ok) throw new Error(data.error || data.message || 'Request failed');
+                return data;
+            });
+        });
+    }
+
+    function loadTrainees() {
+        return Promise.all([api('trainees'), api('cohorts')]).then(function (results) {
+            trainees = results[0].trainees || [];
+            availableCohorts = (results[1].cohorts || []).map(function (value) {
+                var cohort = parseInt(value, 10);
+                return Number.isNaN(cohort) ? null : cohort;
+            }).filter(function (value) { return value !== null; });
+            currentPage = 1;
+            populateCohortSelects();
+            renderTable();
+        }).catch(function (error) {
+            showToast(error.message || 'Could not load trainees.', 'error');
         });
     }
 
@@ -80,7 +121,9 @@
     // ============================================================
     // STATE
     // ============================================================
-    var trainees = JSON.parse(JSON.stringify(INITIAL_TRAINEES));
+    // Dashboard data is always loaded from MySQL through the protected API.
+    var trainees = [];
+    var availableCohorts = [];
     var searchTerm = '';
     var cohortFilter = 'all';
     var statusFilter = 'all';
@@ -119,6 +162,7 @@
     var addName = $('addName');
     var addTitle = $('addTitle');
     var addCohort = $('addCohort');
+    var addStatus = $('addStatus');
     var addCvLink = $('addCvLink');
     var addPortfolioLink = $('addPortfolioLink');
     var addLinkedIn = $('addLinkedIn');
@@ -135,6 +179,7 @@
     var editName = $('editName');
     var editTitle = $('editTitle');
     var editCohort = $('editCohort');
+    var editStatus = $('editStatus');
     var editCvLink = $('editCvLink');
     var editPortfolioLink = $('editPortfolioLink');
     var editLinkedIn = $('editLinkedIn');
@@ -145,6 +190,13 @@
     var editImageInput = $('editImageInput');
     var editImagePreview = $('editImagePreview');
     var editImageUploadArea = $('editImageUploadArea');
+
+    var deleteModal = $('deleteModal');
+    var closeDeleteBtn = $('closeDeleteBtn');
+    var cancelDeleteBtn = $('cancelDeleteBtn');
+    var confirmDeleteBtn = $('confirmDeleteBtn');
+    var deleteTraineeName = $('deleteTraineeName');
+    var pendingDeleteId = null;
 
     // ============================================================
     // THEME with icon swap
@@ -241,9 +293,34 @@
     }
 
     function getCohorts() {
-        var unique = {};
-        trainees.forEach(function (t) { unique[t.cohort] = true; });
+        var unique = { 13: true, 14: true, 15: true, 16: true, 17: true };
+        availableCohorts.forEach(function (value) {
+            var cohort = parseInt(value, 10);
+            if (!Number.isNaN(cohort)) unique[cohort] = true;
+        });
+        trainees.forEach(function (t) {
+            var cohort = parseInt(t.cohort, 10);
+            if (!Number.isNaN(cohort)) unique[cohort] = true;
+        });
         return Object.keys(unique).map(Number).sort(function (a, b) { return a - b; });
+    }
+
+    function buildCohortOptions(selectEl, selectedValue) {
+        if (!selectEl) return;
+        var cohorts = getCohorts();
+        selectEl.innerHTML = '<option value="">Select cohort</option>';
+        cohorts.forEach(function (c) {
+            var opt = document.createElement('option');
+            opt.value = String(c);
+            opt.textContent = 'Cohort ' + c;
+            if (String(selectedValue) === String(c)) opt.selected = true;
+            selectEl.appendChild(opt);
+        });
+        if (selectedValue === null || selectedValue === undefined || selectedValue === '') {
+            selectEl.value = '';
+        } else {
+            selectEl.value = String(selectedValue);
+        }
     }
 
     function getFiltered() {
@@ -260,22 +337,22 @@
         return 'https://i.pravatar.cc/40?img=' + (Math.floor(Math.random() * 70) + 1);
     }
 
+    // MySQL returns integer IDs while data-* attributes and mock IDs are strings.
+    // Always compare as strings so edit/delete actions locate the right trainee.
+    function findTraineeById(id) {
+        for (var i = 0; i < trainees.length; i++) {
+            if (String(trainees[i].id) === String(id)) return trainees[i];
+        }
+        return null;
+    }
+
     // ============================================================
     // RENDER
     // ============================================================
     function populateCohortSelects() {
         var cohorts = getCohorts();
-        var selects = [addCohort, editCohort];
-        selects.forEach(function (sel) {
-            if (!sel) return;
-            sel.innerHTML = '<option value="">Select cohort</option>';
-            cohorts.forEach(function (c) {
-                var opt = document.createElement('option');
-                opt.value = String(c);
-                opt.textContent = 'Cohort ' + c;
-                sel.appendChild(opt);
-            });
-        });
+        buildCohortOptions(addCohort, addCohort && addCohort.value ? addCohort.value : '');
+        buildCohortOptions(editCohort, editCohort && editCohort.value ? editCohort.value : '');
         if (cohortFilterEl) {
             cohortFilterEl.innerHTML = '<option value="all">All Cohorts</option>';
             cohorts.forEach(function (c) {
@@ -395,22 +472,32 @@
     // CRUD
     // ============================================================
     function deleteTrainee(id) {
-        var deleted = null;
-        for (var i = 0; i < trainees.length; i++) {
-            if (trainees[i].id === id) { deleted = trainees[i]; break; }
-        }
+        var deleted = findTraineeById(id);
         if (!deleted) return;
-        trainees = trainees.filter(function (t) { return t.id !== id; });
-        renderTable();
+        pendingDeleteId = String(id);
+        if (deleteTraineeName) deleteTraineeName.textContent = deleted.name;
+        if (deleteModal) deleteModal.classList.add('open');
+    }
 
-        showToast(deleted.name + ' was removed.', 'info', function () {
-            var insertIdx = -1;
-            for (var j = 0; j < INITIAL_TRAINEES.length; j++) {
-                if (INITIAL_TRAINEES[j].id === id) { insertIdx = j; break; }
-            }
-            if (insertIdx >= 0) { trainees.splice(Math.min(insertIdx, trainees.length), 0, deleted); }
-            else { trainees.unshift(deleted); }
-            renderTable();
+    function closeDeleteModal() {
+        if (deleteModal) deleteModal.classList.remove('open');
+        pendingDeleteId = null;
+    }
+
+    function confirmDeleteTrainee() {
+        if (!pendingDeleteId) return;
+        var id = pendingDeleteId;
+        var deleted = findTraineeById(id);
+        if (!deleted) { closeDeleteModal(); return; }
+        if (confirmDeleteBtn) confirmDeleteBtn.disabled = true;
+        api('trainee-delete', 'POST', { id: id }).then(function () {
+            closeDeleteModal();
+            showToast(deleted.name + ' was removed.', 'success');
+            return loadTrainees();
+        }).catch(function (error) {
+            showToast(error.message || 'Could not delete trainee.', 'error');
+        }).then(function () {
+            if (confirmDeleteBtn) confirmDeleteBtn.disabled = false;
         });
     }
 
@@ -419,7 +506,7 @@
         var name = addName.value.trim();
         var title = addTitle.value.trim();
         var cohort = addCohort.value;
-        var employed = document.querySelector('input[name="addEmployed"]:checked');
+        var status = addStatus ? addStatus.value : 'freelance';
         var errors = false;
 
         if (!name) { addNameError.textContent = 'Name is required'; errors = true; } else { addNameError.textContent = ''; }
@@ -432,46 +519,37 @@
             name: name,
             title: title,
             subtitle: title,
-            cohort: parseInt(cohort),
-            employed: employed ? employed.value === 'yes' : true,
+            cohort: parseInt(cohort, 10),
+            status: status,
             avatar: addAvatarDataUrl || '',
             cvLink: addCvLink.value.trim(),
             portfolioLink: addPortfolioLink.value.trim(),
             linkedIn: addLinkedIn.value.trim(),
             github: addGithub.value.trim()
         };
-        trainees.unshift(newTrainee);
-        renderTable();
-        closeAddModal();
-        showToast(name + ' has been added successfully.', 'success');
-        addForm.reset();
-        addAvatarDataUrl = '';
-        if (imagePreview) { imagePreview.style.display = 'none'; imagePreview.src = ''; }
-        var up = imageUploadArea ? imageUploadArea.querySelector('p') : null;
-        var ui = imageUploadArea ? imageUploadArea.querySelector('i') : null;
-        if (up) up.style.display = 'block';
-        if (ui) ui.style.display = 'block';
+        api('trainee-create', 'POST', newTrainee).then(function () {
+            closeAddModal();
+            showToast(name + ' has been added successfully.', 'success');
+            addForm.reset(); addAvatarDataUrl = '';
+            if (imagePreview) { imagePreview.style.display = 'none'; imagePreview.src = ''; }
+            return loadTrainees();
+        }).catch(function (error) { showToast(error.message || 'Could not add trainee.', 'error'); });
     }
 
     function openEditModal(id) {
-        var trainee = null;
-        for (var i = 0; i < trainees.length; i++) {
-            if (trainees[i].id === id) { trainee = trainees[i]; break; }
-        }
+        var trainee = findTraineeById(id);
         if (!trainee) return;
 
         editId.value = trainee.id;
         editName.value = trainee.name;
         editTitle.value = trainee.title;
-        editCohort.value = String(trainee.cohort);
+        buildCohortOptions(editCohort, trainee.cohort);
         editCvLink.value = trainee.cvLink || '';
         editPortfolioLink.value = trainee.portfolioLink || '';
         editLinkedIn.value = trainee.linkedIn || '';
         editGithub.value = trainee.github || '';
 
-        document.querySelectorAll('input[name="editEmployed"]').forEach(function (r) {
-            r.checked = (r.value === 'yes') === trainee.employed;
-        });
+        if (editStatus) editStatus.value = trainee.status || (trainee.employed ? 'employed' : 'freelance');
 
         editAvatarDataUrl = trainee.avatar || '';
         if (editImagePreview && editAvatarDataUrl) {
@@ -489,18 +567,6 @@
         editTitleError.textContent = '';
         editCohortError.textContent = '';
 
-        var cohorts = getCohorts();
-        if (cohorts.indexOf(trainee.cohort) < 0) cohorts.push(trainee.cohort);
-        cohorts.sort(function (a, b) { return a - b; });
-        editCohort.innerHTML = '<option value="">Select cohort</option>';
-        cohorts.forEach(function (c) {
-            var opt = document.createElement('option');
-            opt.value = String(c);
-            opt.textContent = 'Cohort ' + c;
-            if (c === trainee.cohort) opt.selected = true;
-            editCohort.appendChild(opt);
-        });
-
         if (editModal) editModal.classList.add('open');
     }
 
@@ -510,7 +576,7 @@
         var name = editName.value.trim();
         var title = editTitle.value.trim();
         var cohort = editCohort.value;
-        var employed = document.querySelector('input[name="editEmployed"]:checked');
+        var status = editStatus ? editStatus.value : 'freelance';
         var errors = false;
 
         if (!name) { editNameError.textContent = 'Name is required'; errors = true; } else { editNameError.textContent = ''; }
@@ -518,25 +584,14 @@
         if (!cohort) { editCohortError.textContent = 'Cohort is required'; errors = true; } else { editCohortError.textContent = ''; }
         if (errors) return;
 
-        for (var i = 0; i < trainees.length; i++) {
-            if (trainees[i].id === id) {
-                trainees[i].name = name;
-                trainees[i].title = title;
-                trainees[i].subtitle = title;
-                trainees[i].cohort = parseInt(cohort);
-                trainees[i].employed = employed ? employed.value === 'yes' : true;
-                trainees[i].avatar = editAvatarDataUrl || trainees[i].avatar || '';
-                trainees[i].cvLink = editCvLink.value.trim();
-                trainees[i].portfolioLink = editPortfolioLink.value.trim();
-                trainees[i].linkedIn = editLinkedIn.value.trim();
-                trainees[i].github = editGithub.value.trim();
-                break;
-            }
-        }
-        renderTable();
-        closeEditModal();
-        showToast(name + '\'s profile has been updated.', 'success');
+        var updatedTrainee = { id: String(id), name: name, title: title, cohort: parseInt(cohort, 10), status: status,
+            avatar: editAvatarDataUrl || traineeAvatar(id), cvLink: editCvLink.value.trim(), portfolioLink: editPortfolioLink.value.trim(), linkedIn: editLinkedIn.value.trim(), github: editGithub.value.trim() };
+        api('trainee-update', 'POST', updatedTrainee).then(function () {
+            closeEditModal(); showToast(name + '\'s profile has been updated.', 'success'); return loadTrainees();
+        }).catch(function (error) { showToast(error.message || 'Could not update trainee.', 'error'); });
     }
+
+    function traineeAvatar(id) { var trainee = findTraineeById(id); return trainee ? trainee.avatar || '' : ''; }
 
     // ============================================================
     // MODAL CONTROLS
@@ -598,7 +653,7 @@
     // INIT
     // ============================================================
     function init() {
-        requireAuth(); // redirect to login if not authenticated
+        requireAuth().then(function (authenticated) { if (authenticated) loadTrainees(); });
         initTheme();
         if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
         var logoutBtn = document.getElementById('logoutBtn');
@@ -617,6 +672,10 @@
         if (closeEditBtn) closeEditBtn.addEventListener('click', closeEditModal);
         if (cancelEditBtn) cancelEditBtn.addEventListener('click', closeEditModal);
         if (editModal) editModal.addEventListener('click', function (e) { if (e.target === editModal) closeEditModal(); });
+        if (closeDeleteBtn) closeDeleteBtn.addEventListener('click', closeDeleteModal);
+        if (cancelDeleteBtn) cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+        if (confirmDeleteBtn) confirmDeleteBtn.addEventListener('click', confirmDeleteTrainee);
+        if (deleteModal) deleteModal.addEventListener('click', function (e) { if (e.target === deleteModal) closeDeleteModal(); });
         if (addForm) addForm.addEventListener('submit', handleAddTrainee);
         if (editForm) editForm.addEventListener('submit', handleEditTrainee);
         setupImageUpload(imageInput, imagePreview, imageUploadArea, function (dataUrl) { addAvatarDataUrl = dataUrl; });

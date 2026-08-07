@@ -10,8 +10,8 @@
         document.body.dataset.theme = theme;
         themeToggle.setAttribute("aria-pressed", String(isLight));
         themeToggle.innerHTML = isLight
-            ? '<i class="fa-solid fa-moon" aria-hidden="true"></i><span>Dark Mode</span>'
-            : '<i class="fa-solid fa-sun" aria-hidden="true"></i><span>Light Mode</span>';
+            ? '<span>Dark Mode</span>'
+            : '<span>Light Mode</span>';
 
     };
 
@@ -66,7 +66,7 @@
 
     }
 
-    const trainees = [
+    let trainees = [
         {
             first: "Zahraa",
             last: "Thompson",
@@ -251,7 +251,7 @@
 
         grid.innerHTML = items.map((t) => `
 
-        <article class="trainee-card" data-name="${t.first} ${t.last}">
+        <article class="trainee-card" data-id="${t.id}">
 
             <div
                 class="card-image"
@@ -274,7 +274,7 @@
 
                 <button
                     class="view-profile-btn"
-                    data-name="${t.first} ${t.last}">
+                    data-id="${t.id}">
 
                     View Profile
 
@@ -341,10 +341,10 @@
 
     }
 
-    function openProfile(name) {
+    function openProfile(id) {
 
         const trainee = trainees.find(
-            t => `${t.first} ${t.last}` === name
+            t => String(t.id) === String(id)
         );
 
         if (!trainee) return;
@@ -418,7 +418,7 @@
 
         if (!button) return;
 
-        openProfile(button.dataset.name);
+        openProfile(button.dataset.id);
 
     });
 
@@ -452,10 +452,21 @@
 
     sortSelect.addEventListener("change", updateGrid);
 
-    setTimeout(() => {
+    async function loadTrainees() {
+        try {
+            const response = await fetch('/backend/index.php?route=trainees-public');
+            const data = await response.json();
+            if (!response.ok || !data.success) throw new Error(data.error || 'Could not load trainees');
+            trainees = data.trainees;
+            updateGrid();
+        } catch (error) {
+            grid.innerHTML = '';
+            emptyState.hidden = false;
+            emptyState.textContent = 'Trainees are temporarily unavailable.';
+            loading.style.display = 'none';
+        }
+    }
 
-        updateGrid();
-
-    }, 300);
+    loadTrainees();
 
 })();
