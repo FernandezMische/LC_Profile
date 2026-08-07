@@ -347,6 +347,8 @@
             t => `${t.first} ${t.last}` === name
         );
 
+        document.body.style.overflow = "hidden";
+
         if (!trainee) return;
 
         document.getElementById("modalVisual").style.backgroundImage =
@@ -409,6 +411,7 @@
 
         modal.classList.remove("show");
         modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
 
     }
 
