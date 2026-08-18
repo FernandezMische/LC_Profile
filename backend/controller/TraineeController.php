@@ -70,13 +70,26 @@ class TraineeController {
         $input = $input === null ? $this->input() : $input;
         $name = trim((string) $this->value($input, ['name'], '')); $title = trim((string) $this->value($input, ['title'], ''));
         $cohort = filter_var($this->value($input, ['cohort'], ''), FILTER_VALIDATE_INT);
-        $status = $this->value($input, ['status'], (($this->value($input, ['employed'], false) === true) ? 'employed' : 'freelance'));
-        if ($name === '' || mb_strlen($name) > 150 || $title === '' || mb_strlen($title) > 150 || !$cohort || $cohort > 9999 || !in_array($status, ['freelance', 'opportunities', 'employed'], true)) { $this->error('Please provide a valid name, title, cohort and status'); return null; }
+        $statusValue = $this->value($input, ['status'], (($this->value($input, ['employed'], false) === true) ? 'employed' : 'freelance'));
+        $statusList = $this->normalizeStatusList($statusValue);
+        if ($name === '' || mb_strlen($name) > 150 || $title === '' || mb_strlen($title) > 150 || !$cohort || $cohort > 9999 || count($statusList) === 0) { $this->error('Please provide a valid name, title, cohort and status'); return null; }
+        $status = implode(',', $statusList);
         $avatar = (string) $this->value($input, ['avatar'], '');
         if ($avatar !== '' && (!preg_match('#^data:image/(?:jpeg|png|webp);base64,#', $avatar) || strlen($avatar) > 7000000)) { $this->error('Photo must be a JPG, PNG or WEBP image smaller than 5MB'); return null; }
         $links = ['cv' => ['cv', 'cvLink', 'cv_link'], 'portfolio' => ['portfolio', 'portfolioLink', 'portfolio_link'], 'linkedin' => ['linkedin', 'linkedIn', 'linkedin_link'], 'github' => ['github', 'githubLink', 'github_link']]; $data = ['name' => $name, 'title' => $title, 'cohort' => $cohort, 'status' => $status, 'avatar' => $avatar];
         foreach ($links as $column => $keys) { $value = trim((string) $this->value($input, $keys, '')); if ($value !== '' && (!filter_var($value, FILTER_VALIDATE_URL) || strlen($value) > 2048)) { $this->error('Please provide valid links'); return null; } $data[$column] = $value ?: null; }
         return $data;
+    }
+    private function normalizeStatusList($statusValue) {
+        $allowed = ['freelance', 'opportunities', 'employed'];
+        $items = is_array($statusValue) ? $statusValue : preg_split('/[|,]/', (string) $statusValue);
+        $values = [];
+        foreach ((array) $items as $value) {
+            $item = strtolower(trim((string) $value));
+            if ($item === '' || !in_array($item, $allowed, true)) continue;
+            if (!in_array($item, $values, true)) $values[] = $item;
+        }
+        return $values;
     }
     private function error($message) { http_response_code(400); echo json_encode(['error' => $message]); }
 }

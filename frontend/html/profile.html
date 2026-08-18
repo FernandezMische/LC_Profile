@@ -105,11 +105,26 @@
                 <select class="filter-select" id="cohortFilter" aria-label="Filter by cohort">
                     <option value="all" selected>All Cohorts</option>
                 </select>
-                <select class="filter-select" id="statusFilter" aria-label="Filter by employment status">
-                    <option value="all" selected>All Employment Status</option>
-                    <option value="employed">Currently Employed</option>
-                    <option value="not-employed">Not Employed</option>
-                </select>
+                <div class="multi-select" id="statusFilterWrap">
+                    <button type="button" class="multi-select-trigger" id="statusFilterTrigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Filter by employment status">
+                        <span class="multi-select-label" id="statusFilterLabel">All Statuses</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="multi-select-chevron" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="multi-select-menu" id="statusFilterMenu">
+                        <label class="multi-option">
+                            <input type="checkbox" class="status-option" value="freelance" />
+                            <span class="multi-option-label">Available to Freelance</span>
+                        </label>
+                        <label class="multi-option">
+                            <input type="checkbox" class="status-option" value="opportunities" />
+                            <span class="multi-option-label">Open to Opportunities</span>
+                        </label>
+                        <label class="multi-option">
+                            <input type="checkbox" class="status-option" value="employed" />
+                            <span class="multi-option-label">Currently Employed</span>
+                        </label>
+                    </div>
+                </div>
                 <button class="filter-reset" id="resetBtn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
                     Reset
@@ -185,11 +200,15 @@
                         </div>
                         <div class="modal-field">
                             <label>Status <span class="required">*</span></label>
-                            <select id="addStatus">
-                                <option value="freelance">Available to Freelance</option>
-                                <option value="opportunities">Open to Opportunities</option>
-                                <option value="employed">Currently Employed</option>
-                            </select>
+                            <div class="status-multi-select" data-status-group="add">
+                                <div class="status-ms-list">
+                                    <label class="status-ms-option"><input type="checkbox" class="modal-status-option" data-group="add" value="freelance" /><span>Available to Freelance</span></label>
+                                    <label class="status-ms-option"><input type="checkbox" class="modal-status-option" data-group="add" value="opportunities" /><span>Open to Opportunities</span></label>
+                                    <label class="status-ms-option"><input type="checkbox" class="modal-status-option" data-group="add" value="employed" /><span>Currently Employed</span></label>
+                                </div>
+                            </div>
+                            <input type="hidden" id="addStatus" value="" />
+                            <div class="error-text" id="addStatusError"></div>
                         </div>
                     </div>
 
@@ -281,11 +300,15 @@
                         </div>
                         <div class="modal-field">
                             <label>Status <span class="required">*</span></label>
-                            <select id="editStatus">
-                                <option value="freelance">Available to Freelance</option>
-                                <option value="opportunities">Open to Opportunities</option>
-                                <option value="employed">Currently Employed</option>
-                            </select>
+                            <div class="status-multi-select" data-status-group="edit">
+                                <div class="status-ms-list">
+                                    <label class="status-ms-option"><input type="checkbox" class="modal-status-option" data-group="edit" value="freelance" /><span>Available to Freelance</span></label>
+                                    <label class="status-ms-option"><input type="checkbox" class="modal-status-option" data-group="edit" value="opportunities" /><span>Open to Opportunities</span></label>
+                                    <label class="status-ms-option"><input type="checkbox" class="modal-status-option" data-group="edit" value="employed" /><span>Currently Employed</span></label>
+                                </div>
+                            </div>
+                            <input type="hidden" id="editStatus" value="" />
+                            <div class="error-text" id="editStatusError"></div>
                         </div>
                     </div>
 

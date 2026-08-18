@@ -33,8 +33,8 @@
     empty.style.display = admins.length ? 'none' : 'block';
     admins.forEach(function (admin) {
       var row = document.createElement('tr');
-      var email = document.createElement('td'); email.className = 'show-sm'; text(email, admin.email);
-      var date = document.createElement('td'); date.className = 'show-lg'; text(date, admin.created_at ? new Date(admin.created_at).toLocaleDateString() : '');
+      var email = document.createElement('td'); email.className = 'show-sm'; email.setAttribute('data-label', 'Email'); text(email, admin.email);
+      var date = document.createElement('td'); date.className = 'show-lg'; date.setAttribute('data-label', 'Added On'); text(date, admin.created_at ? new Date(admin.created_at).toLocaleDateString() : '');
       var actions = document.createElement('td'), remove = document.createElement('button'); actions.style.textAlign = 'right'; remove.className = 'action-btn danger'; text(remove, 'Remove'); remove.addEventListener('click', function () { removeAdmin(admin); }); actions.appendChild(remove);
       row.append(email, date, actions); tbody.appendChild(row);
     });
