@@ -583,13 +583,15 @@
         if (editImagePreview && editAvatarDataUrl) {
             editImagePreview.src = editAvatarDataUrl;
             editImagePreview.style.display = 'block';
+            editImageUploadArea.classList.add('is-previewing');
         } else if (editImagePreview) {
             editImagePreview.style.display = 'none';
+            editImageUploadArea.classList.remove('is-previewing');
         }
         var up = editImageUploadArea ? editImageUploadArea.querySelector('p') : null;
-        var ui = editImageUploadArea ? editImageUploadArea.querySelector('i') : null;
-        if (up) up.style.display = 'none';
-        if (ui) ui.style.display = 'none';
+        var ui = editImageUploadArea ? editImageUploadArea.querySelector('.upload-icon') : null;
+        if (up) up.style.display = editAvatarDataUrl ? 'none' : 'block';
+        if (ui) ui.style.display = editAvatarDataUrl ? 'none' : 'block';
 
         editNameError.textContent = '';
         editTitleError.textContent = '';
@@ -646,8 +648,9 @@
         addStatusError.textContent = '';
         resetModalStatusSelection('add');
         if (imagePreview) { imagePreview.style.display = 'none'; imagePreview.src = ''; }
+        if (imageUploadArea) imageUploadArea.classList.remove('is-previewing');
         var up = imageUploadArea ? imageUploadArea.querySelector('p') : null;
-        var ui = imageUploadArea ? imageUploadArea.querySelector('i') : null;
+        var ui = imageUploadArea ? imageUploadArea.querySelector('.upload-icon') : null;
         if (up) up.style.display = 'block';
         if (ui) ui.style.display = 'block';
         if (addModal) addModal.classList.add('open');
@@ -691,12 +694,15 @@
                     canvas.width = w; canvas.height = h;
                     var ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, w, h);
-                    var dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    // Preserve PNG alpha so cut-out portraits can sit over the buildings background.
+                    var outputType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+                    var dataUrl = canvas.toDataURL(outputType, outputType === 'image/jpeg' ? 0.7 : undefined);
                     if (previewEl) { previewEl.src = dataUrl; previewEl.style.display = 'block'; }
                     var p = areaEl.querySelector('p');
-                    var i = areaEl.querySelector('i');
+                    var i = areaEl.querySelector('.upload-icon');
                     if (p) p.style.display = 'none';
                     if (i) i.style.display = 'none';
+                    areaEl.classList.add('is-previewing');
                     if (callback) callback(dataUrl);
                 };
                 img.src = ev.target.result;

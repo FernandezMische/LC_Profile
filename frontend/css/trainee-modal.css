@@ -1,0 +1,159 @@
+/* Add/Edit trainee forms: keep the long form readable and contained. */
+
+#addModal .modal-card,
+#editModal .modal-card {
+    width: min(760px, 100%);
+    padding: 0;
+    overflow: hidden;
+}
+
+#addModal .modal-header,
+#editModal .modal-header {
+    margin: 0;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+#addModal .modal-card > form,
+#editModal .modal-card > form {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(90vh - 69px);
+}
+
+#addModal .modal-body,
+#editModal .modal-body {
+    padding: 22px 24px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+#addModal .modal-field > label,
+#editModal .modal-field > label {
+    margin-bottom: 6px;
+}
+
+#addModal .modal-field input,
+#addModal .modal-field select,
+#editModal .modal-field input,
+#editModal .modal-field select {
+    min-height: 40px;
+}
+
+#addModal .modal-footer,
+#editModal .modal-footer {
+    margin: 0;
+    padding: 16px 24px;
+    background: var(--card);
+    border-top: 1px solid var(--border);
+}
+
+#addModal .image-upload,
+#editModal .image-upload {
+    width: 100%;
+    height: 132px;
+    border: 1px dashed color-mix(in srgb, var(--primary) 45%, var(--border));
+    background-image: url('../../images/001.png');
+    background-size: cover;
+    background-position: center 42%;
+}
+
+#addModal .image-upload:hover,
+#editModal .image-upload:hover {
+    border-color: var(--primary);
+}
+
+#addModal .image-upload .upload-icon,
+#addModal .image-upload p,
+#editModal .image-upload .upload-icon,
+#editModal .image-upload p {
+    color: #fff;
+}
+
+.status-multi-select {
+    min-height: 40px;
+    padding: 6px;
+    border: 1px solid var(--input);
+    border-radius: 8px;
+    background: var(--background);
+}
+
+.status-multi-select:focus-within {
+    border-color: var(--ring);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 25%, transparent);
+}
+
+.status-ms-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.status-ms-option {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 6px;
+    min-height: 28px;
+    margin: 0 !important;
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted-foreground) !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    cursor: pointer;
+}
+
+.status-ms-option:has(input:checked) {
+    border-color: color-mix(in srgb, var(--primary) 55%, var(--border));
+    background: color-mix(in srgb, var(--primary) 10%, transparent);
+    color: var(--foreground) !important;
+}
+
+.status-ms-option input {
+    width: 14px !important;
+    height: 14px;
+    margin: 0;
+    accent-color: var(--primary);
+}
+
+@media (max-width: 640px) {
+    #addModal,
+    #editModal {
+        padding: 0;
+        align-items: flex-end;
+    }
+
+    #addModal .modal-card,
+    #editModal .modal-card {
+        width: 100%;
+        max-height: 94vh;
+        border-radius: 16px 16px 0 0;
+    }
+
+    #addModal .modal-header,
+    #editModal .modal-header,
+    #addModal .modal-body,
+    #editModal .modal-body,
+    #addModal .modal-footer,
+    #editModal .modal-footer {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    #addModal .modal-card > form,
+    #editModal .modal-card > form {
+        max-height: calc(94vh - 65px);
+    }
+
+    #addModal .modal-body,
+    #editModal .modal-body {
+        padding-top: 16px;
+        padding-bottom: 16px;
+    }
+
+    #addModal .image-upload,
+    #editModal .image-upload {
+        height: 112px;
+    }
+}

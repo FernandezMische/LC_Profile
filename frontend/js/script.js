@@ -143,13 +143,17 @@
 
         emptyState.hidden = true;
 
-        grid.innerHTML = items.map((t) => `
+        grid.innerHTML = items.map((t) => {
+            const portrait = t.image
+                ? `<img class="card-portrait" src="${t.image}" alt="${t.first} ${t.last}">`
+                : "";
+
+            return `
 
         <article class="trainee-card" data-id="${t.id}">
 
-            <div
-                class="card-image"
-                style="background-image:url('${t.image}')">
+            <div class="card-image">
+                ${portrait}
             </div>
 
             <div class="card-details">
@@ -180,7 +184,8 @@
 
         </article>
 
-        `).join("");
+        `;
+        }).join("");
 
     }
 
@@ -241,8 +246,13 @@
         document.body.style.top = `-${window.scrollY}px`;
         document.body.dataset.scrollY = String(window.scrollY);
 
-        document.getElementById("modalVisual").style.backgroundImage =
-            `url('${trainee.image}')`;
+        const modalPortrait = document.getElementById("modalPortrait");
+        if (trainee.image) {
+            modalPortrait.src = trainee.image;
+        } else {
+            modalPortrait.removeAttribute("src");
+        }
+        modalPortrait.alt = `${trainee.first} ${trainee.last}`;
 
         document.getElementById("modalName").innerHTML =
             `${trainee.first}<br><span>${trainee.last}</span>`;
@@ -336,8 +346,6 @@
     });
 
     search.addEventListener("input", updateGrid);
-
-    statusFilter.addEventListener("change", updateGrid);
 
     sortSelect.addEventListener("change", updateGrid);
 
