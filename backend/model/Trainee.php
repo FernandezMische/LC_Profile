@@ -6,10 +6,19 @@ class Trainee {
 
     public function __construct() {
         $this->pdo = getDBConnection();
+        $this->ensureProfileImageColumn();
+    }
+
+    private function ensureProfileImageColumn() {
+        $column = $this->pdo->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'trainees' AND COLUMN_NAME = 'profile_image_data'");
+        $column->execute();
+        if (!(int) $column->fetchColumn()) {
+            $this->pdo->exec('ALTER TABLE trainees ADD COLUMN profile_image_data MEDIUMTEXT NULL AFTER avatar_data');
+        }
     }
 
     public function getAll() {
-        $stmt = $this->pdo->query("SELECT id, full_name AS name, title, cohort, status, avatar_data AS avatar,
+        $stmt = $this->pdo->query("SELECT id, full_name AS name, title, cohort, status, avatar_data AS avatar, profile_image_data AS profileImage,
             cv_link AS cvLink, portfolio_link AS portfolioLink, linkedin_link AS linkedIn, github_link AS github,
             (status = 'employed') AS employed
             FROM trainees ORDER BY created_at DESC, id DESC");
@@ -37,7 +46,7 @@ class Trainee {
     }
 
     public function getPublic() {
-        $stmt = $this->pdo->query("SELECT id, full_name, title, cohort, status, avatar_data,
+        $stmt = $this->pdo->query("SELECT id, full_name, title, cohort, status, avatar_data, profile_image_data,
             cv_link, portfolio_link, linkedin_link, github_link
             FROM trainees ORDER BY created_at DESC, id DESC");
         $rows = $stmt->fetchAll();
@@ -47,7 +56,7 @@ class Trainee {
                 'id' => (int) $row['id'],
                 'first' => $name[0] ?? '', 'last' => $name[1] ?? '',
                 'role' => $row['title'], 'cohort' => (int) $row['cohort'], 'status' => $row['status'],
-                'image' => $row['avatar_data'] ?: '', 'cv' => $row['cv_link'] ?: '#',
+                'image' => $row['avatar_data'] ?: '', 'profileImage' => $row['profile_image_data'] ?: ($row['avatar_data'] ?: ''), 'cv' => $row['cv_link'] ?: '#',
                 'portfolio' => $row['portfolio_link'] ?: '#', 'linkedin' => $row['linkedin_link'] ?: '#',
                 'github' => $row['github_link'] ?: '#', 'email' => '#'
             ];
@@ -56,8 +65,8 @@ class Trainee {
 
     public function create($data) {
         $stmt = $this->pdo->prepare('INSERT INTO trainees
-            (full_name, title, cohort, status, avatar_data, cv_link, portfolio_link, linkedin_link, github_link)
-            VALUES (:name, :title, :cohort, :status, :avatar, :cv, :portfolio, :linkedin, :github)');
+            (full_name, title, cohort, status, avatar_data, profile_image_data, cv_link, portfolio_link, linkedin_link, github_link)
+            VALUES (:name, :title, :cohort, :status, :avatar, :profileImage, :cv, :portfolio, :linkedin, :github)');
         $stmt->execute($data);
         return (int) $this->pdo->lastInsertId();
     }
@@ -65,7 +74,7 @@ class Trainee {
     public function update($id, $data) {
         $data['id'] = $id;
         $stmt = $this->pdo->prepare('UPDATE trainees SET full_name = :name, title = :title, cohort = :cohort,
-            status = :status, avatar_data = :avatar, cv_link = :cv, portfolio_link = :portfolio,
+            status = :status, avatar_data = :avatar, profile_image_data = :profileImage, cv_link = :cv, portfolio_link = :portfolio,
             linkedin_link = :linkedin, github_link = :github WHERE id = :id');
         $stmt->execute($data);
         return $stmt->rowCount() > 0;

@@ -59,3 +59,54 @@
 [Fri Aug 21 10:22:44 2026] [::1]:53246 Accepted
 [Fri Aug 21 10:22:45 2026] [::1]:53246 [200]: GET /backend/index.php?route=trainees-public
 [Fri Aug 21 10:22:45 2026] [::1]:53246 Closing
+[Fri Aug 21 10:24:27 2026] [::1]:52266 Accepted
+[Fri Aug 21 10:24:27 2026] [::1]:52266 Closing
+[Fri Aug 21 10:24:27 2026] [::1]:55233 Accepted
+[Fri Aug 21 10:24:27 2026] [::1]:55233 [200]: GET /backend/index.php?route=trainees-public
+[Fri Aug 21 10:24:27 2026] [::1]:55233 Closing
+[Fri Aug 21 11:34:15 2026] [::1]:53470 Accepted
+[Fri Aug 21 11:34:16 2026] [::1]:53470 Closing
+[Fri Aug 21 11:34:16 2026] [::1]:64571 Accepted
+[Fri Aug 21 11:34:17 2026] [::1]:64571 [200]: GET /backend/index.php?route=trainees-public
+[Fri Aug 21 11:34:17 2026] [::1]:64571 Closing
+[Fri Aug 21 11:38:46 2026] [::1]:53798 Accepted
+[Fri Aug 21 11:38:46 2026] [::1]:53798 Closing
+[Fri Aug 21 11:38:46 2026] [::1]:53799 Accepted
+[Fri Aug 21 11:38:46 2026] [::1]:53799 Closing
+[Fri Aug 21 11:39:30 2026] [::1]:62989 Accepted
+[Fri Aug 21 11:39:30 2026] [::1]:62989 Closing
+[Fri Aug 21 11:39:30 2026] [::1]:49345 Accepted
+[Fri Aug 21 11:39:30 2026] [::1]:49345 Closing
+[Fri Aug 21 11:39:30 2026] [::1]:51557 Accepted
+[Fri Aug 21 11:39:30 2026] [::1]:51557 [200]: GET /backend/index.php?route=trainees-public
+[Fri Aug 21 11:39:30 2026] [::1]:51557 Closing
+[Fri Aug 21 11:41:50 2026] [::1]:57377 Accepted
+[Fri Aug 21 11:41:50 2026] [::1]:57377 Closing
+[Fri Aug 21 11:42:13 2026] [::1]:53943 Accepted
+[Fri Aug 21 11:42:13 2026] [::1]:53943 Closing
+[Fri Aug 21 11:42:13 2026] [::1]:58016 Accepted
+[Fri Aug 21 11:42:13 2026] [::1]:58016 Closing
+[Fri Aug 21 11:42:13 2026] [::1]:50552 Accepted
+[Fri Aug 21 11:42:14 2026] [::1]:50552 [200]: GET /backend/index.php?route=trainees-public
+[Fri Aug 21 11:42:14 2026] [::1]:50552 Closing
+[Fri Aug 21 11:44:17 2026] [::1]:56095 Accepted
+[Fri Aug 21 11:44:17 2026] [::1]:56095 Closing
+[Fri Aug 21 11:44:17 2026] [::1]:56096 Accepted
+[Fri Aug 21 11:44:17 2026] [::1]:56096 Closing
+[Fri Aug 21 11:44:26 2026] [::1]:57323 Accepted
+[Fri Aug 21 11:44:26 2026] [::1]:57323 Closing
+[Fri Aug 21 11:44:26 2026] [::1]:63547 Accepted
+[Fri Aug 21 11:44:26 2026] [::1]:63547 Closing
+[Fri Aug 21 11:44:26 2026] [::1]:64154 Accepted
+[Fri Aug 21 11:44:26 2026] [::1]:64154 [200]: GET /backend/index.php?route=trainees-public
+[Fri Aug 21 11:44:26 2026] [::1]:64154 Closing
+[Fri Aug 21 12:16:39 2026] [::1]:50545 Accepted
+[Fri Aug 21 12:16:39 2026] [::1]:50545 [200]: GET /backend/index.php?route=trainees-public
+[Fri Aug 21 12:16:39 2026] [::1]:50545 Closing
+[Fri Aug 21 12:16:47 2026] [::1]:50552 Accepted
+[Fri Aug 21 12:16:47 2026] [::1]:50552 [200]: GET /backend/index.php?route=trainees-public
+[Fri Aug 21 12:16:47 2026] [::1]:50552 Closing
+[Fri Aug 21 12:16:48 2026] [::1]:50555 Accepted
+[Fri Aug 21 12:16:48 2026] PHP Warning:  session_start(): open(C:\xampp\tmp\sess_e5foh1vr75gfps4nhbp3k3rcvs, O_RDWR) failed: Permission denied (13) in C:\Users\Zahraa Thompson\Desktop\LC_Profile\backend\config\database.php on line 56
+[Fri Aug 21 12:16:48 2026] PHP Warning:  session_start(): Failed to read session data: files (path: C:\xampp\tmp) in C:\Users\Zahraa Thompson\Desktop\LC_Profile\backend\config\database.php on line 56
+[Fri Aug 21 12:16:48 2026] [::1]:50555 Closing

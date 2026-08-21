@@ -84,7 +84,7 @@
 
         return {
             grid: override?.grid || trainee.image || "/images/001.png",
-            profile: override?.profile || trainee.image || "/images/001.png"
+            profile: override?.profile || trainee.profileImage || trainee.image || "/images/001.png"
         };
     }
 

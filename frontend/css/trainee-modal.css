@@ -58,6 +58,14 @@
     background-position: center 42%;
 }
 
+.image-upload-row {
+    align-items: stretch;
+}
+
+.image-upload-row .modal-field {
+    flex: 1 1 0;
+}
+
 #addModal .image-upload:hover,
 #editModal .image-upload:hover {
     border-color: var(--primary);
