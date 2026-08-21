@@ -69,6 +69,25 @@
     // Trainees are loaded exclusively from the database via the API.
     let trainees = [];
 
+    // A profile can supply separate artwork for its card and full profile view.
+    // Other trainees continue to use the image stored with their profile.
+    const profileImageOverrides = {
+        "Gazelle Pearson": {
+            grid: "/images/gazelle-cartoon.png",
+            profile: "/images/gazelle-profile.jpeg"
+        }
+    };
+
+    function imagesFor(trainee) {
+        const name = `${trainee.first} ${trainee.last}`.trim();
+        const override = profileImageOverrides[name];
+
+        return {
+            grid: override?.grid || trainee.image || "/images/001.png",
+            profile: override?.profile || trainee.image || "/images/001.png"
+        };
+    }
+
     const grid = document.getElementById("traineeGrid");
     const search = document.getElementById("searchInput");
     const sortSelect = document.getElementById("sortSelect");
@@ -144,16 +163,15 @@
         emptyState.hidden = true;
 
         grid.innerHTML = items.map((t) => {
-            const portrait = t.image
-                ? `<img class="card-portrait" src="${t.image}" alt="${t.first} ${t.last}">`
-                : "";
+            const images = imagesFor(t);
 
             return `
 
         <article class="trainee-card" data-id="${t.id}">
 
             <div class="card-image">
-                ${portrait}
+                <img class="card-portrait card-portrait-grid" src="${images.grid}" alt="Illustrated portrait of ${t.first} ${t.last}">
+                <img class="card-portrait card-portrait-hover" src="${images.profile}" alt="Photo of ${t.first} ${t.last}">
             </div>
 
             <div class="card-details">
@@ -247,11 +265,7 @@
         document.body.dataset.scrollY = String(window.scrollY);
 
         const modalPortrait = document.getElementById("modalPortrait");
-        if (trainee.image) {
-            modalPortrait.src = trainee.image;
-        } else {
-            modalPortrait.removeAttribute("src");
-        }
+        modalPortrait.src = imagesFor(trainee).profile;
         modalPortrait.alt = `${trainee.first} ${trainee.last}`;
 
         document.getElementById("modalName").innerHTML =

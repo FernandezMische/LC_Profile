@@ -1,0 +1,61 @@
+[Fri Aug 21 10:11:28 2026] PHP 8.2.12 Development Server (http://localhost:8000) started
+[Fri Aug 21 10:11:29 2026] [::1]:58902 Accepted
+[Fri Aug 21 10:11:29 2026] [::1]:58902 Closing
+[Fri Aug 21 10:12:56 2026] [::1]:63965 Accepted
+[Fri Aug 21 10:12:56 2026] [::1]:63965 Closing
+[Fri Aug 21 10:13:04 2026] [::1]:57494 Accepted
+[Fri Aug 21 10:13:04 2026] [::1]:57494 Closing
+[Fri Aug 21 10:13:04 2026] [::1]:57001 Accepted
+[Fri Aug 21 10:13:04 2026] [::1]:55709 Accepted
+[Fri Aug 21 10:13:04 2026] [::1]:58520 Accepted
+[Fri Aug 21 10:13:04 2026] [::1]:57001 Closing
+[Fri Aug 21 10:13:04 2026] [::1]:55709 Closing
+[Fri Aug 21 10:13:04 2026] [::1]:58520 Closing
+[Fri Aug 21 10:13:04 2026] [::1]:51625 Accepted
+[Fri Aug 21 10:13:04 2026] [::1]:51625 Closing
+[Fri Aug 21 10:13:04 2026] [::1]:65231 Accepted
+[Fri Aug 21 10:13:04 2026] [::1]:65231 Closing
+[Fri Aug 21 10:13:04 2026] [::1]:56288 Accepted
+[Fri Aug 21 10:13:04 2026] [::1]:57266 Accepted
+[Fri Aug 21 10:13:04 2026] [::1]:56288 Closing
+[Fri Aug 21 10:13:05 2026] [::1]:57266 [200]: GET /backend/index.php?route=trainees-public
+[Fri Aug 21 10:13:05 2026] [::1]:57266 Closing
+[Fri Aug 21 10:13:05 2026] [::1]:52122 Accepted
+[Fri Aug 21 10:13:05 2026] [::1]:52122 Closing
+[Fri Aug 21 10:16:35 2026] [::1]:49752 Accepted
+[Fri Aug 21 10:16:36 2026] [::1]:49752 [200]: GET /backend/index.php?route=trainees-public
+[Fri Aug 21 10:16:36 2026] [::1]:49752 Closing
+[Fri Aug 21 10:17:29 2026] [::1]:49942 Accepted
+[Fri Aug 21 10:17:29 2026] [::1]:49942 Closing
+[Fri Aug 21 10:17:29 2026] [::1]:49943 Accepted
+[Fri Aug 21 10:17:29 2026] [::1]:49943 Closing
+[Fri Aug 21 10:17:29 2026] [::1]:49944 Accepted
+[Fri Aug 21 10:17:29 2026] [::1]:49944 Closing
+[Fri Aug 21 10:17:56 2026] [::1]:53941 Accepted
+[Fri Aug 21 10:17:56 2026] [::1]:53941 Closing
+[Fri Aug 21 10:17:56 2026] [::1]:58428 Accepted
+[Fri Aug 21 10:17:56 2026] [::1]:53408 Accepted
+[Fri Aug 21 10:17:56 2026] [::1]:58428 Closing
+[Fri Aug 21 10:17:56 2026] [::1]:53408 Closing
+[Fri Aug 21 10:17:56 2026] [::1]:58805 Accepted
+[Fri Aug 21 10:17:56 2026] [::1]:58805 [200]: GET /backend/index.php?route=trainees-public
+[Fri Aug 21 10:17:56 2026] [::1]:58805 Closing
+[Fri Aug 21 10:17:56 2026] [::1]:63980 Accepted
+[Fri Aug 21 10:17:56 2026] [::1]:63106 Accepted
+[Fri Aug 21 10:17:56 2026] [::1]:63980 Closing
+[Fri Aug 21 10:17:56 2026] [::1]:63106 Closing
+[Fri Aug 21 10:20:43 2026] [::1]:61254 Accepted
+[Fri Aug 21 10:20:43 2026] [::1]:61254 Closing
+[Fri Aug 21 10:20:43 2026] [::1]:49634 Accepted
+[Fri Aug 21 10:20:44 2026] [::1]:49634 [200]: GET /backend/index.php?route=trainees-public
+[Fri Aug 21 10:20:44 2026] [::1]:49634 Closing
+[Fri Aug 21 10:21:43 2026] [::1]:61713 Accepted
+[Fri Aug 21 10:21:43 2026] [::1]:61713 Closing
+[Fri Aug 21 10:21:43 2026] [::1]:50565 Accepted
+[Fri Aug 21 10:21:43 2026] [::1]:50565 [200]: GET /backend/index.php?route=trainees-public
+[Fri Aug 21 10:21:43 2026] [::1]:50565 Closing
+[Fri Aug 21 10:22:44 2026] [::1]:63967 Accepted
+[Fri Aug 21 10:22:44 2026] [::1]:63967 Closing
+[Fri Aug 21 10:22:44 2026] [::1]:53246 Accepted
+[Fri Aug 21 10:22:45 2026] [::1]:53246 [200]: GET /backend/index.php?route=trainees-public
+[Fri Aug 21 10:22:45 2026] [::1]:53246 Closing
