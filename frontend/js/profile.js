@@ -97,7 +97,9 @@
     var selectedStatuses = [];
     var currentPage = 1;
     var addAvatarDataUrl = '';
+    var addProfileImageDataUrl = '';
     var editAvatarDataUrl = '';
+    var editProfileImageDataUrl = '';
     var ROWS_PER_PAGE = 8;
 
     // ============================================================
@@ -147,6 +149,9 @@
     var imageInput = $('imageInput');
     var imagePreview = $('imagePreview');
     var imageUploadArea = $('imageUploadArea');
+    var profileImageInput = $('profileImageInput');
+    var profileImagePreview = $('profileImagePreview');
+    var profileImageUploadArea = $('profileImageUploadArea');
 
     var editForm = $('editTraineeForm');
     var editId = $('editId');
@@ -165,6 +170,9 @@
     var editImageInput = $('editImageInput');
     var editImagePreview = $('editImagePreview');
     var editImageUploadArea = $('editImageUploadArea');
+    var editProfileImageInput = $('editProfileImageInput');
+    var editProfileImagePreview = $('editProfileImagePreview');
+    var editProfileImageUploadArea = $('editProfileImageUploadArea');
 
     var deleteModal = $('deleteModal');
     var closeDeleteBtn = $('closeDeleteBtn');
@@ -537,6 +545,7 @@
         if (!title) { addTitleError.textContent = 'Title is required'; errors = true; } else { addTitleError.textContent = ''; }
         if (!cohort) { addCohortError.textContent = 'Cohort is required'; errors = true; } else { addCohortError.textContent = ''; }
         if (!status) { addStatusError.textContent = 'Select at least one status'; errors = true; } else { addStatusError.textContent = ''; }
+        if (!addAvatarDataUrl || !addProfileImageDataUrl) { showToast('Upload both a grid illustration and a profile photo.', 'error'); errors = true; }
         if (errors) return;
 
         var newTrainee = {
@@ -546,6 +555,7 @@
             cohort: parseInt(cohort, 10),
             status: status,
             avatar: addAvatarDataUrl || '',
+            profileImage: addProfileImageDataUrl || '',
             cvLink: addCvLink.value.trim(),
             portfolioLink: addPortfolioLink.value.trim(),
             linkedIn: addLinkedIn.value.trim(),
@@ -554,8 +564,9 @@
         api('trainee-create', 'POST', newTrainee).then(function () {
             closeAddModal();
             showToast(name + ' has been added successfully.', 'success');
-            addForm.reset(); addAvatarDataUrl = '';
+            addForm.reset(); addAvatarDataUrl = ''; addProfileImageDataUrl = '';
             if (imagePreview) { imagePreview.style.display = 'none'; imagePreview.src = ''; }
+            if (profileImagePreview) { profileImagePreview.style.display = 'none'; profileImagePreview.src = ''; }
             return loadTrainees();
         }).catch(function (error) { showToast(error.message || 'Could not add trainee.', 'error'); });
     }
@@ -580,6 +591,7 @@
         syncModalStatusSelection('edit');
 
         editAvatarDataUrl = trainee.avatar || '';
+        editProfileImageDataUrl = trainee.profileImage || trainee.avatar || '';
         if (editImagePreview && editAvatarDataUrl) {
             editImagePreview.src = editAvatarDataUrl;
             editImagePreview.style.display = 'block';
@@ -592,6 +604,7 @@
         var ui = editImageUploadArea ? editImageUploadArea.querySelector('.upload-icon') : null;
         if (up) up.style.display = editAvatarDataUrl ? 'none' : 'block';
         if (ui) ui.style.display = editAvatarDataUrl ? 'none' : 'block';
+        setImagePreview(editProfileImagePreview, editProfileImageUploadArea, editProfileImageDataUrl);
 
         editNameError.textContent = '';
         editTitleError.textContent = '';
@@ -624,16 +637,29 @@
         if (!title) { editTitleError.textContent = 'Title is required'; errors = true; } else { editTitleError.textContent = ''; }
         if (!cohort) { editCohortError.textContent = 'Cohort is required'; errors = true; } else { editCohortError.textContent = ''; }
         if (!status) { editStatusError.textContent = 'Select at least one status'; errors = true; } else { editStatusError.textContent = ''; }
+        if (!editAvatarDataUrl || !editProfileImageDataUrl) { showToast('Both images are required.', 'error'); errors = true; }
         if (errors) return;
 
         var updatedTrainee = { id: String(id), name: name, title: title, cohort: parseInt(cohort, 10), status: status,
-            avatar: editAvatarDataUrl || traineeAvatar(id), cvLink: editCvLink.value.trim(), portfolioLink: editPortfolioLink.value.trim(), linkedIn: editLinkedIn.value.trim(), github: editGithub.value.trim() };
+            avatar: editAvatarDataUrl || traineeAvatar(id), profileImage: editProfileImageDataUrl || traineeProfileImage(id), cvLink: editCvLink.value.trim(), portfolioLink: editPortfolioLink.value.trim(), linkedIn: editLinkedIn.value.trim(), github: editGithub.value.trim() };
         api('trainee-update', 'POST', updatedTrainee).then(function () {
             closeEditModal(); showToast(name + '\'s profile has been updated.', 'success'); return loadTrainees();
         }).catch(function (error) { showToast(error.message || 'Could not update trainee.', 'error'); });
     }
 
     function traineeAvatar(id) { var trainee = findTraineeById(id); return trainee ? trainee.avatar || '' : ''; }
+    function traineeProfileImage(id) { var trainee = findTraineeById(id); return trainee ? trainee.profileImage || trainee.avatar || '' : ''; }
+
+    function setImagePreview(previewEl, areaEl, dataUrl) {
+        if (!previewEl || !areaEl) return;
+        previewEl.src = dataUrl || '';
+        previewEl.style.display = dataUrl ? 'block' : 'none';
+        areaEl.classList.toggle('is-previewing', Boolean(dataUrl));
+        var label = areaEl.querySelector('p');
+        var icon = areaEl.querySelector('.upload-icon');
+        if (label) label.style.display = dataUrl ? 'none' : 'block';
+        if (icon) icon.style.display = dataUrl ? 'none' : 'block';
+    }
 
     // ============================================================
     // MODAL CONTROLS
@@ -642,12 +668,14 @@
         populateCohortSelects();
         addForm.reset();
         addAvatarDataUrl = '';
+        addProfileImageDataUrl = '';
         addNameError.textContent = '';
         addTitleError.textContent = '';
         addCohortError.textContent = '';
         addStatusError.textContent = '';
         resetModalStatusSelection('add');
         if (imagePreview) { imagePreview.style.display = 'none'; imagePreview.src = ''; }
+        setImagePreview(profileImagePreview, profileImageUploadArea, '');
         if (imageUploadArea) imageUploadArea.classList.remove('is-previewing');
         var up = imageUploadArea ? imageUploadArea.querySelector('p') : null;
         var ui = imageUploadArea ? imageUploadArea.querySelector('.upload-icon') : null;
@@ -799,7 +827,9 @@
         setupStatusMultiSelect('add');
         setupStatusMultiSelect('edit');
         setupImageUpload(imageInput, imagePreview, imageUploadArea, function (dataUrl) { addAvatarDataUrl = dataUrl; });
+        setupImageUpload(profileImageInput, profileImagePreview, profileImageUploadArea, function (dataUrl) { addProfileImageDataUrl = dataUrl; });
         setupImageUpload(editImageInput, editImagePreview, editImageUploadArea, function (dataUrl) { editAvatarDataUrl = dataUrl; });
+        setupImageUpload(editProfileImageInput, editProfileImagePreview, editProfileImageUploadArea, function (dataUrl) { editProfileImageDataUrl = dataUrl; });
         console.log('TraineeHub Dashboard initialized.');
     }
 

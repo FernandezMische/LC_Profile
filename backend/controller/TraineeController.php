@@ -75,8 +75,11 @@ class TraineeController {
         if ($name === '' || mb_strlen($name) > 150 || $title === '' || mb_strlen($title) > 150 || !$cohort || $cohort > 9999 || count($statusList) === 0) { $this->error('Please provide a valid name, title, cohort and status'); return null; }
         $status = implode(',', $statusList);
         $avatar = (string) $this->value($input, ['avatar'], '');
+        $profileImage = (string) $this->value($input, ['profileImage', 'profile_image'], $avatar);
+        if ($avatar === '' || $profileImage === '') { $this->error('Both a grid illustration and profile photo are required'); return null; }
         if ($avatar !== '' && (!preg_match('#^data:image/(?:jpeg|png|webp);base64,#', $avatar) || strlen($avatar) > 7000000)) { $this->error('Photo must be a JPG, PNG or WEBP image smaller than 5MB'); return null; }
-        $links = ['cv' => ['cv', 'cvLink', 'cv_link'], 'portfolio' => ['portfolio', 'portfolioLink', 'portfolio_link'], 'linkedin' => ['linkedin', 'linkedIn', 'linkedin_link'], 'github' => ['github', 'githubLink', 'github_link']]; $data = ['name' => $name, 'title' => $title, 'cohort' => $cohort, 'status' => $status, 'avatar' => $avatar];
+        if ($profileImage !== '' && (!preg_match('#^data:image/(?:jpeg|png|webp);base64,#', $profileImage) || strlen($profileImage) > 7000000)) { $this->error('Profile photo must be a JPG, PNG or WEBP image smaller than 5MB'); return null; }
+        $links = ['cv' => ['cv', 'cvLink', 'cv_link'], 'portfolio' => ['portfolio', 'portfolioLink', 'portfolio_link'], 'linkedin' => ['linkedin', 'linkedIn', 'linkedin_link'], 'github' => ['github', 'githubLink', 'github_link']]; $data = ['name' => $name, 'title' => $title, 'cohort' => $cohort, 'status' => $status, 'avatar' => $avatar, 'profileImage' => $profileImage];
         foreach ($links as $column => $keys) { $value = trim((string) $this->value($input, $keys, '')); if ($value !== '' && (!filter_var($value, FILTER_VALIDATE_URL) || strlen($value) > 2048)) { $this->error('Please provide valid links'); return null; } $data[$column] = $value ?: null; }
         return $data;
     }
