@@ -13,9 +13,11 @@ ini_set('memory_limit', '128M');
 header("Content-Type: application/json");
 require_once __DIR__ . '/controller/AuthController.php';
 require_once __DIR__ . '/controller/TraineeController.php';
+require_once __DIR__ . '/controller/DeveloperController.php';
 try {
     $auth = new AuthController();
     $trainees = new TraineeController();
+    $developers = new DeveloperController();
     $route = $_GET['route'] ?? '';
     switch ($route) {
     case 'login':
@@ -41,6 +43,9 @@ try {
         break;
     case 'trainees-public':
         $trainees->publicList();
+        break;
+    case 'developers-public':
+        $developers->publicList();
         break;
     case 'trainees':
         $trainees->list();

@@ -255,6 +255,12 @@ h3 {
 
 }
 
+.developer-hero {
+    min-height: 46vh;
+    padding-top: 92px;
+    padding-bottom: 56px;
+}
+
 .eyebrow {
 
     margin-bottom: 18px;
@@ -963,6 +969,22 @@ h3 {
 
 }
 
+.developer-card-description {
+    display: block;
+    margin-top: 8px;
+    color: #999;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.developer-modal-description {
+    color: #d8d8d8;
+    font-size: 15px;
+    line-height: 1.5;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+}
+
 .cohort {
 
     display: block;
@@ -1487,6 +1509,12 @@ h3 {
 
         padding: 80px 32px;
 
+    }
+
+    .developer-hero {
+        min-height: 50vh;
+        padding-top: 90px;
+        padding-bottom: 56px;
     }
 
     .hero h1 {
