@@ -80,6 +80,35 @@ class Trainee {
         return $stmt->rowCount() > 0;
     }
 
+    public function updateDetails($id, $data) {
+        $data['id'] = $id;
+        $stmt = $this->pdo->prepare('UPDATE trainees SET full_name = :name, title = :title, cohort = :cohort,
+            status = :status WHERE id = :id');
+        $stmt->execute($data);
+        return $stmt->rowCount() > 0;
+    }
+
+    public function updateLinks($id, $data) {
+        $data['id'] = $id;
+        $stmt = $this->pdo->prepare('UPDATE trainees SET cv_link = :cv, portfolio_link = :portfolio,
+            linkedin_link = :linkedin, github_link = :github WHERE id = :id');
+        $stmt->execute($data);
+        return $stmt->rowCount() > 0;
+    }
+
+    public function updateImages($id, $data) {
+        $fields = [];
+        $params = ['id' => $id];
+        foreach ($data as $column => $value) {
+            $field = $column === 'profileImage' ? 'profile_image_data' : 'avatar_data';
+            $fields[] = $field . ' = :' . $column;
+            $params[$column] = $value;
+        }
+        $stmt = $this->pdo->prepare('UPDATE trainees SET ' . implode(', ', $fields) . ' WHERE id = :id');
+        $stmt->execute($params);
+        return $stmt->rowCount() > 0;
+    }
+
     public function delete($id) {
         $stmt = $this->pdo->prepare('DELETE FROM trainees WHERE id = :id');
         $stmt->execute(['id' => $id]);

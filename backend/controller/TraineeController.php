@@ -19,9 +19,26 @@ class TraineeController {
 
     public function create() {
         if (!$this->requireAdmin() || !$this->requirePostCsrf()) return;
-        $data = $this->validatedInput(); if ($data === null) return;
+        $data = $this->validatedInput(null, false); if ($data === null) return;
         $id = $this->model->create($data);
         http_response_code(201); echo json_encode(['success' => true, 'id' => $id]);
+    }
+
+    public function updateImages() {
+        if (!$this->requireAdmin() || !$this->requirePostCsrf()) return;
+        $input = $this->input(); $id = $this->normalizeId($input);
+        if (!$id || $id < 1) { $this->error('A valid trainee ID is required'); return; }
+        $images = [];
+        foreach (['avatar' => 'avatar', 'profileImage' => 'profileImage'] as $key => $column) {
+            if (!array_key_exists($key, $input)) continue;
+            $image = (string) $input[$key];
+            if (!preg_match('#^data:image/(?:jpeg|png|webp);base64,#', $image) || strlen($image) > 7000000) {
+                $this->error($key === 'avatar' ? 'Grid Illustration file too large or invalid.' : 'Profile Photo file too large or invalid.'); return;
+            }
+            $images[$column] = $image;
+        }
+        if (count($images) === 0) { $this->error('At least one image is required'); return; }
+        $this->model->updateImages($id, $images); echo json_encode(['success' => true]);
     }
 
     public function update() {
@@ -30,6 +47,24 @@ class TraineeController {
         if (!$id || $id < 1) { $this->error('A valid trainee ID is required'); return; }
         $data = $this->validatedInput($input); if ($data === null) return;
         $this->model->update($id, $data); echo json_encode(['success' => true]);
+    }
+
+    public function updateDetails() {
+        if (!$this->requireAdmin() || !$this->requirePostCsrf()) return;
+        $input = $this->input(); $id = $this->normalizeId($input);
+        if (!$id || $id < 1) { $this->error('A valid trainee ID is required'); return; }
+        $data = $this->validatedInput($input, false); if ($data === null) return;
+        unset($data['avatar'], $data['profileImage'], $data['cv'], $data['portfolio'], $data['linkedin'], $data['github']);
+        $this->model->updateDetails($id, $data); echo json_encode(['success' => true]);
+    }
+
+    public function updateLinks() {
+        if (!$this->requireAdmin() || !$this->requirePostCsrf()) return;
+        $input = $this->input(); $id = $this->normalizeId($input);
+        if (!$id || $id < 1) { $this->error('A valid trainee ID is required'); return; }
+        $links = $this->validatedLinks($input);
+        if ($links === null) return;
+        $this->model->updateLinks($id, $links); echo json_encode(['success' => true]);
     }
 
     public function delete() {
@@ -66,7 +101,22 @@ class TraineeController {
         }
         return $default;
     }
-    private function validatedInput($input = null) {
+    private function normalizeLink($value) {
+        $link = trim((string) $value);
+        if ($link !== '' && !preg_match('#^[a-z][a-z0-9+.-]*://#i', $link)) $link = 'https://' . $link;
+        return $link;
+    }
+    private function validatedLinks($input) {
+        $links = ['cv' => ['cv', 'cvLink', 'cv_link'], 'portfolio' => ['portfolio', 'portfolioLink', 'portfolio_link'], 'linkedin' => ['linkedin', 'linkedIn', 'linkedin_link'], 'github' => ['github', 'githubLink', 'github_link']];
+        $data = [];
+        foreach ($links as $column => $keys) {
+            $value = $this->normalizeLink($this->value($input, $keys, ''));
+            if ($value !== '' && (!filter_var($value, FILTER_VALIDATE_URL) || strlen($value) > 2048)) { $this->error('Please provide valid links'); return null; }
+            $data[$column] = $value ?: null;
+        }
+        return $data;
+    }
+    private function validatedInput($input = null, $requireImages = true) {
         $input = $input === null ? $this->input() : $input;
         $name = trim((string) $this->value($input, ['name'], '')); $title = trim((string) $this->value($input, ['title'], ''));
         $cohort = filter_var($this->value($input, ['cohort'], ''), FILTER_VALIDATE_INT);
@@ -76,11 +126,13 @@ class TraineeController {
         $status = implode(',', $statusList);
         $avatar = (string) $this->value($input, ['avatar'], '');
         $profileImage = (string) $this->value($input, ['profileImage', 'profile_image'], $avatar);
-        if ($avatar === '' || $profileImage === '') { $this->error('Both a grid illustration and profile photo are required'); return null; }
+        if ($requireImages && ($avatar === '' || $profileImage === '')) { $this->error('Both a grid illustration and profile photo are required'); return null; }
         if ($avatar !== '' && (!preg_match('#^data:image/(?:jpeg|png|webp);base64,#', $avatar) || strlen($avatar) > 7000000)) { $this->error('Photo must be a JPG, PNG or WEBP image smaller than 5MB'); return null; }
         if ($profileImage !== '' && (!preg_match('#^data:image/(?:jpeg|png|webp);base64,#', $profileImage) || strlen($profileImage) > 7000000)) { $this->error('Profile photo must be a JPG, PNG or WEBP image smaller than 5MB'); return null; }
-        $links = ['cv' => ['cv', 'cvLink', 'cv_link'], 'portfolio' => ['portfolio', 'portfolioLink', 'portfolio_link'], 'linkedin' => ['linkedin', 'linkedIn', 'linkedin_link'], 'github' => ['github', 'githubLink', 'github_link']]; $data = ['name' => $name, 'title' => $title, 'cohort' => $cohort, 'status' => $status, 'avatar' => $avatar, 'profileImage' => $profileImage];
-        foreach ($links as $column => $keys) { $value = trim((string) $this->value($input, $keys, '')); if ($value !== '' && (!filter_var($value, FILTER_VALIDATE_URL) || strlen($value) > 2048)) { $this->error('Please provide valid links'); return null; } $data[$column] = $value ?: null; }
+        $data = ['name' => $name, 'title' => $title, 'cohort' => $cohort, 'status' => $status, 'avatar' => $avatar, 'profileImage' => $profileImage];
+        $linkData = $this->validatedLinks($input);
+        if ($linkData === null) return null;
+        $data = array_merge($data, $linkData);
         return $data;
     }
     private function normalizeStatusList($statusValue) {

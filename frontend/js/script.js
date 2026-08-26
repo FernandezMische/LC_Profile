@@ -69,22 +69,10 @@
     // Trainees are loaded exclusively from the database via the API.
     let trainees = [];
 
-    // A profile can supply separate artwork for its card and full profile view.
-    // Other trainees continue to use the image stored with their profile.
-    const profileImageOverrides = {
-        "Gazelle Pearson": {
-            grid: "/images/gazelle-cartoon.png",
-            profile: "/images/gazelle-profile.jpeg"
-        }
-    };
-
     function imagesFor(trainee) {
-        const name = `${trainee.first} ${trainee.last}`.trim();
-        const override = profileImageOverrides[name];
-
         return {
-            grid: override?.grid || trainee.image || "/images/001.png",
-            profile: override?.profile || trainee.profileImage || trainee.image || "/images/001.png"
+            grid: trainee.image || "/images/001.png",
+            profile: trainee.profileImage || trainee.image || "/images/001.png"
         };
     }
 
@@ -285,9 +273,6 @@
 
         document.getElementById("portfolioLink").href =
             trainee.portfolio;
-
-        document.getElementById("emailLink").href =
-            trainee.email;
 
         document.getElementById("modalDownload").onclick = () => {
 

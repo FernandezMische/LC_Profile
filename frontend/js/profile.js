@@ -53,7 +53,7 @@
         });
     }
 
-    function api(route, method, body) {
+    function api(route, method, body, fallbackMessage) {
         return fetch(buildApiUrl(route), {
             method: method || 'GET',
             credentials: 'same-origin',
@@ -65,9 +65,18 @@
                 if (text) {
                     try { data = JSON.parse(text); } catch (e) { data = {}; }
                 }
-                if (!response.ok) throw new Error(data.error || data.message || 'Request failed');
+                if (!response.ok) {
+                    var message = data.error || data.message || fallbackMessage || 'Request failed';
+                    if (response.status === 413) message = fallbackMessage || 'Request is too large.';
+                    var error = new Error(message);
+                    error.status = response.status;
+                    throw error;
+                }
                 return data;
             });
+        }).catch(function (error) {
+            if (error && error.status) throw error;
+            throw new Error(fallbackMessage || 'Request failed. Please try again.');
         });
     }
 
@@ -100,6 +109,8 @@
     var addProfileImageDataUrl = '';
     var editAvatarDataUrl = '';
     var editProfileImageDataUrl = '';
+    var editAvatarChanged = false;
+    var editProfileImageChanged = false;
     var ROWS_PER_PAGE = 8;
 
     // ============================================================
@@ -273,6 +284,24 @@
 
     function displayValue(value) {
         return String(value).trim();
+    }
+
+    function normalizeLink(value) {
+        var link = String(value || '').trim();
+        if (link && !/^[a-z][a-z0-9+.-]*:\/\//i.test(link)) link = 'https://' + link;
+        return link;
+    }
+
+    function linksAreValid(links) {
+        return Object.keys(links).every(function (key) {
+            if (!links[key]) return true;
+            try {
+                var url = new URL(links[key]);
+                return Boolean(url.hostname);
+            } catch (e) {
+                return false;
+            }
+        });
     }
 
     function parseStatusValues(value) {
@@ -553,15 +582,23 @@
             title: title,
             subtitle: title,
             cohort: parseInt(cohort, 10),
-            status: status,
-            avatar: addAvatarDataUrl || '',
-            profileImage: addProfileImageDataUrl || '',
-            cvLink: addCvLink.value.trim(),
-            portfolioLink: addPortfolioLink.value.trim(),
-            linkedIn: addLinkedIn.value.trim(),
-            github: addGithub.value.trim()
+            status: status
         };
-        api('trainee-create', 'POST', newTrainee).then(function () {
+        var links = {
+            cvLink: normalizeLink(addCvLink.value),
+            portfolioLink: normalizeLink(addPortfolioLink.value),
+            linkedIn: normalizeLink(addLinkedIn.value),
+            github: normalizeLink(addGithub.value)
+        };
+        if (!linksAreValid(links)) { showToast('Links are not valid. Please check each URL.', 'error'); return; }
+        api('trainee-create', 'POST', newTrainee).then(function (result) {
+            return api('trainee-update-images', 'POST', { id: result.id, avatar: addAvatarDataUrl }, 'Grid Illustration file too large.').then(function () {
+                return api('trainee-update-images', 'POST', { id: result.id, profileImage: addProfileImageDataUrl }, 'Profile Photo file too large.').then(function () { return result; });
+            });
+        }, function (error) { throw new Error(error.message || 'Trainee details could not be saved.'); }).then(function (result) {
+            var hasLinks = Object.keys(links).some(function (key) { return links[key] !== ''; });
+            return hasLinks ? api('trainee-update-links', 'POST', { id: result.id, cvLink: links.cvLink, portfolioLink: links.portfolioLink, linkedIn: links.linkedIn, github: links.github }, 'Links could not be saved. Please check that the links are valid.') : result;
+        }).then(function () {
             closeAddModal();
             showToast(name + ' has been added successfully.', 'success');
             addForm.reset(); addAvatarDataUrl = ''; addProfileImageDataUrl = '';
@@ -592,6 +629,8 @@
 
         editAvatarDataUrl = trainee.avatar || '';
         editProfileImageDataUrl = trainee.profileImage || trainee.avatar || '';
+        editAvatarChanged = false;
+        editProfileImageChanged = false;
         if (editImagePreview && editAvatarDataUrl) {
             editImagePreview.src = editAvatarDataUrl;
             editImagePreview.style.display = 'block';
@@ -640,9 +679,17 @@
         if (!editAvatarDataUrl || !editProfileImageDataUrl) { showToast('Both images are required.', 'error'); errors = true; }
         if (errors) return;
 
-        var updatedTrainee = { id: String(id), name: name, title: title, cohort: parseInt(cohort, 10), status: status,
-            avatar: editAvatarDataUrl || traineeAvatar(id), profileImage: editProfileImageDataUrl || traineeProfileImage(id), cvLink: editCvLink.value.trim(), portfolioLink: editPortfolioLink.value.trim(), linkedIn: editLinkedIn.value.trim(), github: editGithub.value.trim() };
-        api('trainee-update', 'POST', updatedTrainee).then(function () {
+        var updatedTrainee = { id: String(id), name: name, title: title, cohort: parseInt(cohort, 10), status: status };
+        var links = { cvLink: normalizeLink(editCvLink.value), portfolioLink: normalizeLink(editPortfolioLink.value), linkedIn: normalizeLink(editLinkedIn.value), github: normalizeLink(editGithub.value) };
+        if (!linksAreValid(links)) { showToast('Links are not valid. Please check each URL.', 'error'); return; }
+        api('trainee-update-details', 'POST', updatedTrainee, 'Profile details could not be saved.').then(function () {
+            var imageRequests = [];
+            if (editAvatarChanged) imageRequests.push(api('trainee-update-images', 'POST', { id: id, avatar: editAvatarDataUrl }, 'Grid Illustration file too large.'));
+            if (editProfileImageChanged) imageRequests.push(api('trainee-update-images', 'POST', { id: id, profileImage: editProfileImageDataUrl }, 'Profile Photo file too large.'));
+            return Promise.all(imageRequests);
+        }).then(function () {
+            return api('trainee-update-links', 'POST', { id: id, cvLink: links.cvLink, portfolioLink: links.portfolioLink, linkedIn: links.linkedIn, github: links.github }, 'Links could not be saved. Please check that the links are valid.');
+        }).then(function () {
             closeEditModal(); showToast(name + '\'s profile has been updated.', 'success'); return loadTrainees();
         }).catch(function (error) { showToast(error.message || 'Could not update trainee.', 'error'); });
     }
@@ -703,37 +750,21 @@
                 return;
             }
             if (file.size > 5 * 1024 * 1024) {
-                showToast('Image must be smaller than 5MB.', 'error');
+                showToast(inputEl === imageInput || inputEl === editImageInput ? 'Grid Illustration file too large. Maximum size is 5MB.' : 'Profile Photo file too large. Maximum size is 5MB.', 'error');
                 inputEl.value = '';
                 return;
             }
-            // Resize image on client to avoid HTTP 413 (Payload Too Large) errors
+            // Store the original data URL so uploads keep their source quality and dimensions.
             var reader = new FileReader();
             reader.onload = function (ev) {
-                var img = new Image();
-                img.onload = function () {
-                    var MAX_SIZE = 300;
-                    var canvas = document.createElement('canvas');
-                    var w = img.width, h = img.height;
-                    if (w > MAX_SIZE || h > MAX_SIZE) {
-                        if (w > h) { h = Math.round(h * MAX_SIZE / w); w = MAX_SIZE; }
-                        else { w = Math.round(w * MAX_SIZE / h); h = MAX_SIZE; }
-                    }
-                    canvas.width = w; canvas.height = h;
-                    var ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, w, h);
-                    // Preserve PNG alpha so cut-out portraits can sit over the buildings background.
-                    var outputType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
-                    var dataUrl = canvas.toDataURL(outputType, outputType === 'image/jpeg' ? 0.7 : undefined);
-                    if (previewEl) { previewEl.src = dataUrl; previewEl.style.display = 'block'; }
-                    var p = areaEl.querySelector('p');
-                    var i = areaEl.querySelector('.upload-icon');
-                    if (p) p.style.display = 'none';
-                    if (i) i.style.display = 'none';
-                    areaEl.classList.add('is-previewing');
-                    if (callback) callback(dataUrl);
-                };
-                img.src = ev.target.result;
+                var dataUrl = ev.target.result;
+                if (previewEl) { previewEl.src = dataUrl; previewEl.style.display = 'block'; }
+                var p = areaEl.querySelector('p');
+                var i = areaEl.querySelector('.upload-icon');
+                if (p) p.style.display = 'none';
+                if (i) i.style.display = 'none';
+                areaEl.classList.add('is-previewing');
+                if (callback) callback(dataUrl);
             };
             reader.readAsDataURL(file);
         });
@@ -828,8 +859,8 @@
         setupStatusMultiSelect('edit');
         setupImageUpload(imageInput, imagePreview, imageUploadArea, function (dataUrl) { addAvatarDataUrl = dataUrl; });
         setupImageUpload(profileImageInput, profileImagePreview, profileImageUploadArea, function (dataUrl) { addProfileImageDataUrl = dataUrl; });
-        setupImageUpload(editImageInput, editImagePreview, editImageUploadArea, function (dataUrl) { editAvatarDataUrl = dataUrl; });
-        setupImageUpload(editProfileImageInput, editProfileImagePreview, editProfileImageUploadArea, function (dataUrl) { editProfileImageDataUrl = dataUrl; });
+        setupImageUpload(editImageInput, editImagePreview, editImageUploadArea, function (dataUrl) { editAvatarDataUrl = dataUrl; editAvatarChanged = true; });
+        setupImageUpload(editProfileImageInput, editProfileImagePreview, editProfileImageUploadArea, function (dataUrl) { editProfileImageDataUrl = dataUrl; editProfileImageChanged = true; });
         console.log('TraineeHub Dashboard initialized.');
     }
 
