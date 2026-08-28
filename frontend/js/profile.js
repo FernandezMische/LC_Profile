@@ -54,11 +54,12 @@
     }
 
     function api(route, method, body, fallbackMessage) {
+        var isFormData = body instanceof FormData;
         return fetch(buildApiUrl(route), {
             method: method || 'GET',
             credentials: 'same-origin',
-            headers: method === 'GET' ? {} : { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
-            body: body ? JSON.stringify(body) : undefined
+            headers: method === 'GET' ? {} : Object.assign({ 'X-CSRF-Token': csrfToken }, isFormData ? {} : { 'Content-Type': 'application/json' }),
+            body: body ? (isFormData ? body : JSON.stringify(body)) : undefined
         }).then(function (response) {
             return response.text().then(function (text) {
                 var data = {};
@@ -87,7 +88,6 @@
                 var cohort = parseInt(value, 10);
                 return Number.isNaN(cohort) ? null : cohort;
             }).filter(function (value) { return value !== null; });
-            currentPage = 1;
             populateCohortSelects();
             renderTable();
         }).catch(function (error) {
@@ -365,22 +365,28 @@
         return Object.keys(unique).map(Number).sort(function (a, b) { return a - b; });
     }
 
-    function buildCohortOptions(selectEl, selectedValue) {
-        if (!selectEl) return;
+    // Display a cohort under the "Cohort XX" ruling: pad single digits with a
+    // leading zero (e.g. 1 -> "01", 17 -> "17") while leaving multi-digit
+    // values intact (e.g. 134 -> "134").
+    function formatCohort(value) {
+        var n = parseInt(value, 10);
+        if (Number.isNaN(n) || n < 0) return '';
+        return String(n).padStart(2, '0');
+    }
+
+    // Populates the shared <datalist> used by the add/edit cohort inputs. The
+    // input is free-typed (so brand-new cohorts like 18 can be entered before
+    // anyone belongs to them), but existing cohorts appear as suggestions.
+    function populateCohortSuggestions() {
+        var list = document.getElementById('cohortSuggestions');
+        if (!list) return;
         var cohorts = getCohorts();
-        selectEl.innerHTML = '<option value="">Select cohort</option>';
+        list.innerHTML = '';
         cohorts.forEach(function (c) {
             var opt = document.createElement('option');
-            opt.value = String(c);
-            opt.textContent = 'Cohort ' + c;
-            if (String(selectedValue) === String(c)) opt.selected = true;
-            selectEl.appendChild(opt);
+            opt.value = formatCohort(c);
+            list.appendChild(opt);
         });
-        if (selectedValue === null || selectedValue === undefined || selectedValue === '') {
-            selectEl.value = '';
-        } else {
-            selectEl.value = String(selectedValue);
-        }
     }
 
     function getFiltered() {
@@ -410,14 +416,16 @@
     // ============================================================
     function populateCohortSelects() {
         var cohorts = getCohorts();
-        buildCohortOptions(addCohort, addCohort && addCohort.value ? addCohort.value : '');
-        buildCohortOptions(editCohort, editCohort && editCohort.value ? editCohort.value : '');
+        // The add/edit cohort inputs are free-typed text fields backed by a
+        // datalist of existing cohorts, so they need no option-building here —
+        // just refresh the shared suggestion list.
+        populateCohortSuggestions();
         if (cohortFilterEl) {
             cohortFilterEl.innerHTML = '<option value="all">All Cohorts</option>';
             cohorts.forEach(function (c) {
                 var opt = document.createElement('option');
                 opt.value = String(c);
-                opt.textContent = 'Cohort ' + c;
+                opt.textContent = 'Cohort ' + formatCohort(c);
                 cohortFilterEl.appendChild(opt);
             });
         }
@@ -474,7 +482,7 @@
                     '<div><div class="trainee-name">' + displayName + '</div><div class="trainee-subtitle">' + displayTitle + '</div></div>' +
                     '</div></td>' +
                     '<td data-label="Title">' + displayTitle + '</td>' +
-                    '<td data-label="Cohort">' + t.cohort + '</td>' +
+                    '<td data-label="Cohort">' + formatCohort(t.cohort) + '</td>' +
                     '<td data-label="Status"><span class="status-badge ' + statusClass + '">' +
                     '<span class="status-dot ' + statusValue + '"></span>' +
                     statusText + '</span></td>' +
@@ -566,35 +574,39 @@
         e.preventDefault();
         var name = addName.value.trim();
         var title = addTitle.value.trim();
-        var cohort = addCohort.value;
+        var cohort = addCohort.value.trim();
         var status = addStatus ? serializeStatusValues(addStatus.value) : '';
         var errors = false;
 
         if (!name) { addNameError.textContent = 'Name is required'; errors = true; } else { addNameError.textContent = ''; }
         if (!title) { addTitleError.textContent = 'Title is required'; errors = true; } else { addTitleError.textContent = ''; }
-        if (!cohort) { addCohortError.textContent = 'Cohort is required'; errors = true; } else { addCohortError.textContent = ''; }
+        if (!cohort) { addCohortError.textContent = 'Cohort is required'; errors = true; }
+        else if (!/^\d+$/.test(cohort)) { addCohortError.textContent = 'Please enter a valid cohort number (e.g. 17)'; errors = true; }
+        else { addCohortError.textContent = ''; }
         if (!status) { addStatusError.textContent = 'Select at least one status'; errors = true; } else { addStatusError.textContent = ''; }
         if (!addAvatarDataUrl || !addProfileImageDataUrl) { showToast('Upload both a grid illustration and a profile photo.', 'error'); errors = true; }
         if (errors) return;
 
-        var newTrainee = {
-            name: name,
-            title: title,
-            subtitle: title,
-            cohort: parseInt(cohort, 10),
-            status: status
-        };
+        var newTrainee = new FormData();
+        newTrainee.append('name', name);
+        newTrainee.append('title', title);
+        newTrainee.append('cohort', parseInt(cohort, 10));
+        newTrainee.append('status', status);
         var links = {
             cvLink: normalizeLink(addCvLink.value),
             portfolioLink: normalizeLink(addPortfolioLink.value),
             linkedIn: normalizeLink(addLinkedIn.value),
             github: normalizeLink(addGithub.value)
         };
+        newTrainee.append('cvLink', links.cvLink);
+        newTrainee.append('portfolioLink', links.portfolioLink);
+        newTrainee.append('linkedIn', links.linkedIn);
+        newTrainee.append('github', links.github);
+        newTrainee.append('avatar', addAvatarDataUrl);
+        newTrainee.append('profileImage', addProfileImageDataUrl);
         if (!linksAreValid(links)) { showToast('Links are not valid. Please check each URL.', 'error'); return; }
-        api('trainee-create', 'POST', newTrainee).then(function (result) {
-            return api('trainee-update-images', 'POST', { id: result.id, avatar: addAvatarDataUrl }, 'Grid Illustration file too large.').then(function () {
-                return api('trainee-update-images', 'POST', { id: result.id, profileImage: addProfileImageDataUrl }, 'Profile Photo file too large.').then(function () { return result; });
-            });
+        api('trainee-create', 'POST', newTrainee, 'Trainee could not be created.').then(function (result) {
+            return result;
         }, function (error) { throw new Error(error.message || 'Trainee details could not be saved.'); }).then(function (result) {
             var hasLinks = Object.keys(links).some(function (key) { return links[key] !== ''; });
             return hasLinks ? api('trainee-update-links', 'POST', { id: result.id, cvLink: links.cvLink, portfolioLink: links.portfolioLink, linkedIn: links.linkedIn, github: links.github }, 'Links could not be saved. Please check that the links are valid.') : result;
@@ -615,7 +627,7 @@
         editId.value = trainee.id;
         editName.value = trainee.name;
         editTitle.value = trainee.title;
-        buildCohortOptions(editCohort, trainee.cohort);
+        editCohort.value = trainee.cohort != null && trainee.cohort !== '' ? formatCohort(trainee.cohort) : '';
         editCvLink.value = trainee.cvLink || '';
         editPortfolioLink.value = trainee.portfolioLink || '';
         editLinkedIn.value = trainee.linkedIn || '';
@@ -668,13 +680,15 @@
         var id = editId.value;
         var name = editName.value.trim();
         var title = editTitle.value.trim();
-        var cohort = editCohort.value;
+        var cohort = editCohort.value.trim();
         var status = editStatus ? serializeStatusValues(editStatus.value) : '';
         var errors = false;
 
         if (!name) { editNameError.textContent = 'Name is required'; errors = true; } else { editNameError.textContent = ''; }
         if (!title) { editTitleError.textContent = 'Title is required'; errors = true; } else { editTitleError.textContent = ''; }
-        if (!cohort) { editCohortError.textContent = 'Cohort is required'; errors = true; } else { editCohortError.textContent = ''; }
+        if (!cohort) { editCohortError.textContent = 'Cohort is required'; errors = true; }
+        else if (!/^\d+$/.test(cohort)) { editCohortError.textContent = 'Please enter a valid cohort number (e.g. 17)'; errors = true; }
+        else { editCohortError.textContent = ''; }
         if (!status) { editStatusError.textContent = 'Select at least one status'; errors = true; } else { editStatusError.textContent = ''; }
         if (!editAvatarDataUrl || !editProfileImageDataUrl) { showToast('Both images are required.', 'error'); errors = true; }
         if (errors) return;
@@ -684,8 +698,18 @@
         if (!linksAreValid(links)) { showToast('Links are not valid. Please check each URL.', 'error'); return; }
         api('trainee-update-details', 'POST', updatedTrainee, 'Profile details could not be saved.').then(function () {
             var imageRequests = [];
-            if (editAvatarChanged) imageRequests.push(api('trainee-update-images', 'POST', { id: id, avatar: editAvatarDataUrl }, 'Grid Illustration file too large.'));
-            if (editProfileImageChanged) imageRequests.push(api('trainee-update-images', 'POST', { id: id, profileImage: editProfileImageDataUrl }, 'Profile Photo file too large.'));
+            if (editAvatarChanged) {
+                var avatarUpload = new FormData();
+                avatarUpload.append('id', id);
+                avatarUpload.append('avatar', editAvatarDataUrl);
+                imageRequests.push(api('trainee-update-images', 'POST', avatarUpload, 'Grid Illustration file too large.'));
+            }
+            if (editProfileImageChanged) {
+                var profileUpload = new FormData();
+                profileUpload.append('id', id);
+                profileUpload.append('profileImage', editProfileImageDataUrl);
+                imageRequests.push(api('trainee-update-images', 'POST', profileUpload, 'Profile Photo file too large.'));
+            }
             return Promise.all(imageRequests);
         }).then(function () {
             return api('trainee-update-links', 'POST', { id: id, cvLink: links.cvLink, portfolioLink: links.portfolioLink, linkedIn: links.linkedIn, github: links.github }, 'Links could not be saved. Please check that the links are valid.');
@@ -764,7 +788,7 @@
                 if (p) p.style.display = 'none';
                 if (i) i.style.display = 'none';
                 areaEl.classList.add('is-previewing');
-                if (callback) callback(dataUrl);
+                if (callback) callback(file);
             };
             reader.readAsDataURL(file);
         });

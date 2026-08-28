@@ -206,9 +206,8 @@
                     <div class="modal-row">
                         <div class="modal-field">
                             <label>Cohort <span class="required">*</span></label>
-                            <select id="addCohort">
-                                <option value="">Select cohort</option>
-                            </select>
+                            <input type="text" id="addCohort" list="cohortSuggestions" inputmode="numeric" placeholder="e.g. 17" autocomplete="off" />
+                            <datalist id="cohortSuggestions"></datalist>
                             <div class="error-text" id="addCohortError"></div>
                         </div>
                         <div class="modal-field">
@@ -317,9 +316,7 @@
                     <div class="modal-row">
                         <div class="modal-field">
                             <label>Cohort <span class="required">*</span></label>
-                            <select id="editCohort">
-                                <option value="">Select cohort</option>
-                            </select>
+                            <input type="text" id="editCohort" list="cohortSuggestions" inputmode="numeric" placeholder="e.g. 17" autocomplete="off" />
                             <div class="error-text" id="editCohortError"></div>
                         </div>
                         <div class="modal-field">

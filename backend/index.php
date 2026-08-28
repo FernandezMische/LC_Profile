@@ -2,7 +2,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
 
-// Allow full-quality avatar uploads (base64 JSON payloads) without HTTP 413 errors.
+// Allow image uploads without HTTP 413 errors.
 // .htaccess applies the same limits when Apache handles the request.
 ini_set('post_max_size', '32M');
 ini_set('upload_max_filesize', '16M');

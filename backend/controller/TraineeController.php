@@ -20,25 +20,69 @@ class TraineeController {
     public function create() {
         if (!$this->requireAdmin() || !$this->requirePostCsrf()) return;
         $data = $this->validatedInput(null, false); if ($data === null) return;
+        if (!isset($_FILES['avatar'], $_FILES['profileImage'])) {
+            $this->error('Both a grid illustration and a profile photo are required'); return;
+        }
         $id = $this->model->create($data);
+        try {
+            $images = $this->saveUploadedImages($id, $_FILES);
+            $this->model->updateImages($id, $images);
+        } catch (InvalidArgumentException $e) {
+            $this->model->delete($id);
+            $this->removeStoredImages($id);
+            $this->error($e->getMessage()); return;
+        } catch (Throwable $e) {
+            $this->model->delete($id);
+            $this->removeStoredImages($id);
+            throw $e;
+        }
         http_response_code(201); echo json_encode(['success' => true, 'id' => $id]);
     }
 
     public function updateImages() {
         if (!$this->requireAdmin() || !$this->requirePostCsrf()) return;
-        $input = $this->input(); $id = $this->normalizeId($input);
+        $input = $_POST; $id = $this->normalizeId($input);
         if (!$id || $id < 1) { $this->error('A valid trainee ID is required'); return; }
-        $images = [];
-        foreach (['avatar' => 'avatar', 'profileImage' => 'profileImage'] as $key => $column) {
-            if (!array_key_exists($key, $input)) continue;
-            $image = (string) $input[$key];
-            if (!preg_match('#^data:image/(?:jpeg|png|webp);base64,#', $image) || strlen($image) > 7000000) {
-                $this->error($key === 'avatar' ? 'Grid Illustration file too large or invalid.' : 'Profile Photo file too large or invalid.'); return;
-            }
-            $images[$column] = $image;
+        try {
+            $images = $this->saveUploadedImages($id, $_FILES);
+        } catch (InvalidArgumentException $e) {
+            $this->error($e->getMessage()); return;
         }
-        if (count($images) === 0) { $this->error('At least one image is required'); return; }
-        $this->model->updateImages($id, $images); echo json_encode(['success' => true]);
+        try {
+            $this->model->updateImages($id, $images);
+        } catch (Throwable $e) {
+            throw $e;
+        }
+        $this->removeStoredImages($id, array_values($images));
+        echo json_encode(['success' => true, 'images' => $images]);
+    }
+
+    private function saveUploadedImages($id, $files) {
+        $uploads = ['avatar' => 'avatar', 'profileImage' => 'profileImage'];
+        $images = [];
+        $directory = __DIR__ . '/../../images/trainees';
+        if (!is_dir($directory) && !mkdir($directory, 0755, true)) {
+            throw new RuntimeException('The image upload directory is not available.');
+        }
+        foreach ($uploads as $key => $column) {
+            if (!isset($files[$key])) continue;
+            $file = $files[$key];
+            if ($file['error'] !== UPLOAD_ERR_OK || $file['size'] > 5 * 1024 * 1024) {
+                throw new InvalidArgumentException($key === 'avatar' ? 'Grid Illustration file is too large or invalid.' : 'Profile Photo file is too large or invalid.');
+            }
+            $imageInfo = @getimagesize($file['tmp_name']);
+            $mimeTypes = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+            $mime = $imageInfo['mime'] ?? '';
+            if (!$imageInfo || !isset($mimeTypes[$mime])) {
+                throw new InvalidArgumentException($key === 'avatar' ? 'Grid Illustration must be a JPG, PNG or WEBP image.' : 'Profile Photo must be a JPG, PNG or WEBP image.');
+            }
+            $filename = (int) $id . '-' . $key . '.' . $mimeTypes[$mime];
+            $path = $directory . '/' . $filename;
+            if (!move_uploaded_file($file['tmp_name'], $path)) throw new RuntimeException('The image could not be saved.');
+            $images[$column] = '/images/trainees/' . $filename;
+        }
+        if (count($images) === 0) throw new InvalidArgumentException('At least one image is required');
+        return $images;
     }
 
     public function update() {
@@ -72,6 +116,7 @@ class TraineeController {
         $input = $this->input(); $id = $this->normalizeId($input);
         if (!$id || $id < 1) { $this->error('A valid trainee ID is required'); return; }
         if (!$this->model->delete($id)) { http_response_code(404); echo json_encode(['error' => 'Trainee not found']); return; }
+        $this->removeStoredImages($id);
         echo json_encode(['success' => true]);
     }
 
@@ -84,7 +129,11 @@ class TraineeController {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo json_encode(['error' => 'Method not allowed']); return false; }
         return requireCsrfToken();
     }
-    private function input() { $input = json_decode(file_get_contents('php://input'), true); return is_array($input) ? $input : []; }
+    private function input() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST)) return $_POST;
+        $input = json_decode(file_get_contents('php://input'), true);
+        return is_array($input) ? $input : [];
+    }
     private function normalizeId($input) {
         foreach (['id', 'traineeId', 'trainee_id'] as $key) {
             if (array_key_exists($key, $input) && $input[$key] !== '') {
@@ -124,12 +173,7 @@ class TraineeController {
         $statusList = $this->normalizeStatusList($statusValue);
         if ($name === '' || mb_strlen($name) > 150 || $title === '' || mb_strlen($title) > 150 || !$cohort || $cohort > 9999 || count($statusList) === 0) { $this->error('Please provide a valid name, title, cohort and status'); return null; }
         $status = implode(',', $statusList);
-        $avatar = (string) $this->value($input, ['avatar'], '');
-        $profileImage = (string) $this->value($input, ['profileImage', 'profile_image'], $avatar);
-        if ($requireImages && ($avatar === '' || $profileImage === '')) { $this->error('Both a grid illustration and profile photo are required'); return null; }
-        if ($avatar !== '' && (!preg_match('#^data:image/(?:jpeg|png|webp);base64,#', $avatar) || strlen($avatar) > 7000000)) { $this->error('Photo must be a JPG, PNG or WEBP image smaller than 5MB'); return null; }
-        if ($profileImage !== '' && (!preg_match('#^data:image/(?:jpeg|png|webp);base64,#', $profileImage) || strlen($profileImage) > 7000000)) { $this->error('Profile photo must be a JPG, PNG or WEBP image smaller than 5MB'); return null; }
-        $data = ['name' => $name, 'title' => $title, 'cohort' => $cohort, 'status' => $status, 'avatar' => $avatar, 'profileImage' => $profileImage];
+        $data = ['name' => $name, 'title' => $title, 'cohort' => $cohort, 'status' => $status];
         $linkData = $this->validatedLinks($input);
         if ($linkData === null) return null;
         $data = array_merge($data, $linkData);
@@ -145,6 +189,13 @@ class TraineeController {
             if (!in_array($item, $values, true)) $values[] = $item;
         }
         return $values;
+    }
+    private function removeStoredImages($id, $keep = []) {
+        $directory = __DIR__ . '/../../images/trainees';
+        foreach (glob($directory . '/' . (int) $id . '-*.{jpg,jpeg,png,webp}', GLOB_BRACE) ?: [] as $path) {
+            $url = '/images/trainees/' . basename($path);
+            if (!in_array($url, $keep, true) && is_file($path)) unlink($path);
+        }
     }
     private function error($message) { http_response_code(400); echo json_encode(['error' => $message]); }
 }

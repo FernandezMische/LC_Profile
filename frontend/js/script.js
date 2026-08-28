@@ -76,6 +76,14 @@
         };
     }
 
+    // Display a cohort under the "Cohort XX" ruling: pad single digits with a
+    // leading zero (e.g. 1 -> "01", 17 -> "17").
+    const formatCohort = (value) => {
+        const n = parseInt(value, 10);
+        if (Number.isNaN(n) || n < 0) return "";
+        return String(n).padStart(2, "0");
+    };
+
     const grid = document.getElementById("traineeGrid");
     const search = document.getElementById("searchInput");
     const sortSelect = document.getElementById("sortSelect");
@@ -173,7 +181,7 @@
                 </span>
 
                 <span class="cohort">
-                    COHORT ${t.cohort}
+                    COHORT ${formatCohort(t.cohort)}
                 </span>
 
                 <button
@@ -263,7 +271,7 @@
             trainee.role;
 
         document.getElementById("modalCohort").textContent =
-            `COHORT ${trainee.cohort}`;
+            `COHORT ${formatCohort(trainee.cohort)}`;
 
         document.getElementById("linkedinLink").href =
             trainee.linkedin;
