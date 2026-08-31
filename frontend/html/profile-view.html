@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/images/LC%20Studio%20Logo.ico" type="image/x-icon">
     <title>Trainee Library · LC Studio</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/style.css?v=10">
 </head>
 <body>
 
@@ -105,29 +106,6 @@
 
                 <div class="filter-select">
 
-                    <select id="statusFilter" class="native-select" tabindex="-1" aria-hidden="true">
-                        <option value="all">All Statuses</option>
-                        <option value="freelance">Available to Freelance</option>
-                        <option value="opportunities">Open to Opportunities</option>
-                        <option value="employed">Employed</option>
-                    </select>
-
-                    <button class="filter-select-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
-                        <span>All Statuses</span>
-                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
-                    </button>
-
-                    <div class="filter-select-menu" role="listbox" aria-label="Filter by availability">
-                        <button type="button" role="option" aria-selected="true" data-value="all">All Statuses</button>
-                        <button type="button" role="option" data-value="freelance">Available to Freelance</button>
-                        <button type="button" role="option" data-value="opportunities">Open to Opportunities</button>
-                        <button type="button" role="option" data-value="employed">Employed</button>
-                    </div>
-
-                </div>
-
-                <div class="filter-select">
-
                     <select id="sortSelect" class="native-select" tabindex="-1" aria-hidden="true">
                         <option value="recent">Recently Added</option>
                         <option value="name">Name (A-Z)</option>
@@ -192,9 +170,8 @@
 
             </button>
 
-            <div
-                id="modalVisual"
-                class="modal-visual">
+            <div id="modalVisual" class="modal-visual">
+                <img id="modalPortrait" class="modal-portrait" alt="">
             </div>
 
             <div class="modal-body">
@@ -204,12 +181,6 @@
                 <p id="modalRole"></p>
 
                 <p id="modalCohort"></p>
-
-                <div class="modal-statuses" aria-label="Availability status">
-                    <span data-status="employed">Employed</span>
-                    <span data-status="freelance">Available to Freelance</span>
-                    <span data-status="opportunities">Open to Opportunities</span>
-                </div>
 
                 <div class="modal-rule"></div>
 
@@ -245,28 +216,15 @@
 
                     </a>
 
-                    <a
-                        id="emailLink"
-                        href="#"
-                        aria-label="Email">
-
-                        <i class="fa-regular fa-envelope"></i>
-
-                    </a>
-
                 </div>
-
-                <p class="download-label">
-                    DOWNLOAD CV
-                </p>
 
                 <button
                     id="modalDownload"
                     class="modal-download">
 
-                    <i class="fa-solid fa-download"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
 
-                    Download PDF
+                    View CV
 
                 </button>
 
@@ -292,7 +250,7 @@
 
     </footer>
 
-    <script src="../js/script.js?v=12"></script>
+    <script src="../js/script.js?v=17"></script>
 
 </body>
 </html>

@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/images/LC%20Studio%20Logo.ico" type="image/x-icon" />
     <title>TraineeHub — Trainee Management & Employment Tracking</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../css/profile.css" />
+    <link rel="stylesheet" href="../css/profile.css?v=2" />
+    <link rel="stylesheet" href="../css/trainee-modal.css?v=2" />
 </head>
 <body class="min-h-screen bg-background transition-colors duration-300">
     <!-- TOP BAR -->
@@ -15,7 +17,7 @@
         <div class="topbar-inner max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 h-14 flex items-center justify-between">
             <div class="flex items-center gap-2 shrink-0 min-w-0">
                 <svg width="36" height="36" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" class="topbar-logo" style="border-radius:8px;flex-shrink:0;">
-                    <rect width="44" height="44" rx="10" fill="#E53E3E"/>
+                    <rect width="44" height="44" rx="10" fill="#f51c26"/>
                     <path d="M13 29V15H16.6L21.4 22.6L26.2 15H29.8V29H26.8V19.8L22.4 26.8H20.4L16 19.8V29H13Z" fill="white"/>
                     <rect x="31" y="15" width="3" height="14" rx="1.5" fill="white"/>
                 </svg>
@@ -105,11 +107,26 @@
                 <select class="filter-select" id="cohortFilter" aria-label="Filter by cohort">
                     <option value="all" selected>All Cohorts</option>
                 </select>
-                <select class="filter-select" id="statusFilter" aria-label="Filter by employment status">
-                    <option value="all" selected>All Employment Status</option>
-                    <option value="employed">Currently Employed</option>
-                    <option value="not-employed">Not Employed</option>
-                </select>
+                <div class="multi-select" id="statusFilterWrap">
+                    <button type="button" class="multi-select-trigger" id="statusFilterTrigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Filter by employment status">
+                        <span class="multi-select-label" id="statusFilterLabel">All Statuses</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="multi-select-chevron" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="multi-select-menu" id="statusFilterMenu">
+                        <label class="multi-option">
+                            <input type="checkbox" class="status-option" value="freelance" />
+                            <span class="multi-option-label">Available to Freelance</span>
+                        </label>
+                        <label class="multi-option">
+                            <input type="checkbox" class="status-option" value="opportunities" />
+                            <span class="multi-option-label">Open to Opportunities</span>
+                        </label>
+                        <label class="multi-option">
+                            <input type="checkbox" class="status-option" value="employed" />
+                            <span class="multi-option-label">Currently Employed</span>
+                        </label>
+                    </div>
+                </div>
                 <button class="filter-reset" id="resetBtn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
                     Reset
@@ -152,14 +169,25 @@
             </div>
             <form id="addTraineeForm">
                 <div class="modal-body">
+                    <div class="modal-row image-upload-row">
                     <div class="modal-field">
-                        <label>Add Image <span class="required">*</span></label>
+                        <label>Grid Illustration <span class="required">*</span></label>
                         <div class="image-upload" id="imageUploadArea">
                             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="upload-icon"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
                             <p>Click to upload<br/>JPG, PNG or WEBP<br/>(Max. 5MB)</p>
                             <img id="imagePreview" style="display:none;" alt="Preview" />
                             <input type="file" id="imageInput" accept="image/jpeg,image/png,image/webp" />
                         </div>
+                    </div>
+                    <div class="modal-field">
+                        <label>Profile Photo <span class="required">*</span></label>
+                        <div class="image-upload" id="profileImageUploadArea">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="upload-icon"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                            <p>Click to upload<br/>JPG, PNG or WEBP<br/>(Max. 5MB)</p>
+                            <img id="profileImagePreview" style="display:none;" alt="Profile photo preview" />
+                            <input type="file" id="profileImageInput" accept="image/jpeg,image/png,image/webp" />
+                        </div>
+                    </div>
                     </div>
 
                     <div class="modal-row">
@@ -178,18 +206,21 @@
                     <div class="modal-row">
                         <div class="modal-field">
                             <label>Cohort <span class="required">*</span></label>
-                            <select id="addCohort">
-                                <option value="">Select cohort</option>
-                            </select>
+                            <input type="text" id="addCohort" list="cohortSuggestions" inputmode="numeric" placeholder="e.g. 17" autocomplete="off" />
+                            <datalist id="cohortSuggestions"></datalist>
                             <div class="error-text" id="addCohortError"></div>
                         </div>
                         <div class="modal-field">
                             <label>Status <span class="required">*</span></label>
-                            <select id="addStatus">
-                                <option value="freelance">Available to Freelance</option>
-                                <option value="opportunities">Open to Opportunities</option>
-                                <option value="employed">Currently Employed</option>
-                            </select>
+                            <div class="status-multi-select" data-status-group="add">
+                                <div class="status-ms-list">
+                                    <label class="status-ms-option"><input type="checkbox" class="modal-status-option" data-group="add" value="freelance" /><span>Available to Freelance</span></label>
+                                    <label class="status-ms-option"><input type="checkbox" class="modal-status-option" data-group="add" value="opportunities" /><span>Open to Opportunities</span></label>
+                                    <label class="status-ms-option"><input type="checkbox" class="modal-status-option" data-group="add" value="employed" /><span>Currently Employed</span></label>
+                                </div>
+                            </div>
+                            <input type="hidden" id="addStatus" value="" />
+                            <div class="error-text" id="addStatusError"></div>
                         </div>
                     </div>
 
@@ -197,14 +228,14 @@
                         <div class="modal-field">
                             <label>CV Link</label>
                             <div class="input-with-icon">
-                                <input type="url" id="addCvLink" placeholder="https://drive.google.com/..." />
+                                <input type="text" id="addCvLink" placeholder="https://drive.google.com/..." />
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="input-icon"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                             </div>
                         </div>
                         <div class="modal-field">
                             <label>Portfolio Link</label>
                             <div class="input-with-icon">
-                                <input type="url" id="addPortfolioLink" placeholder="https://yourportfolio.com" />
+                                <input type="text" id="addPortfolioLink" placeholder="https://yourportfolio.com" />
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="input-icon"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                             </div>
                         </div>
@@ -214,14 +245,14 @@
                         <div class="modal-field">
                             <label>LinkedIn Profile</label>
                             <div class="input-with-icon">
-                                <input type="url" id="addLinkedIn" placeholder="https://linkedin.com/in/username" />
+                                <input type="text" id="addLinkedIn" placeholder="https://linkedin.com/in/username" />
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="input-icon"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                             </div>
                         </div>
                         <div class="modal-field">
                             <label>GitHub Profile</label>
                             <div class="input-with-icon">
-                                <input type="url" id="addGithub" placeholder="https://github.com/username" />
+                                <input type="text" id="addGithub" placeholder="https://github.com/username" />
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="input-icon"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                             </div>
                         </div>
@@ -248,14 +279,25 @@
             <form id="editTraineeForm">
                 <input type="hidden" id="editId" />
                 <div class="modal-body">
+                    <div class="modal-row image-upload-row">
                     <div class="modal-field">
-                        <label>Photo</label>
+                        <label>Grid Illustration <span class="required">*</span></label>
                         <div class="image-upload" id="editImageUploadArea">
                             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="upload-icon"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
                             <p>Click to upload<br/>JPG, PNG or WEBP<br/>(Max. 5MB)</p>
                             <img id="editImagePreview" style="display:none;" alt="Preview" />
                             <input type="file" id="editImageInput" accept="image/jpeg,image/png,image/webp" />
                         </div>
+                    </div>
+                    <div class="modal-field">
+                        <label>Profile Photo <span class="required">*</span></label>
+                        <div class="image-upload" id="editProfileImageUploadArea">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="upload-icon"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2 2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                            <p>Click to upload<br/>JPG, PNG or WEBP<br/>(Max. 5MB)</p>
+                            <img id="editProfileImagePreview" style="display:none;" alt="Profile photo preview" />
+                            <input type="file" id="editProfileImageInput" accept="image/jpeg,image/png,image/webp" />
+                        </div>
+                    </div>
                     </div>
 
                     <div class="modal-row">
@@ -274,18 +316,20 @@
                     <div class="modal-row">
                         <div class="modal-field">
                             <label>Cohort <span class="required">*</span></label>
-                            <select id="editCohort">
-                                <option value="">Select cohort</option>
-                            </select>
+                            <input type="text" id="editCohort" list="cohortSuggestions" inputmode="numeric" placeholder="e.g. 17" autocomplete="off" />
                             <div class="error-text" id="editCohortError"></div>
                         </div>
                         <div class="modal-field">
                             <label>Status <span class="required">*</span></label>
-                            <select id="editStatus">
-                                <option value="freelance">Available to Freelance</option>
-                                <option value="opportunities">Open to Opportunities</option>
-                                <option value="employed">Currently Employed</option>
-                            </select>
+                            <div class="status-multi-select" data-status-group="edit">
+                                <div class="status-ms-list">
+                                    <label class="status-ms-option"><input type="checkbox" class="modal-status-option" data-group="edit" value="freelance" /><span>Available to Freelance</span></label>
+                                    <label class="status-ms-option"><input type="checkbox" class="modal-status-option" data-group="edit" value="opportunities" /><span>Open to Opportunities</span></label>
+                                    <label class="status-ms-option"><input type="checkbox" class="modal-status-option" data-group="edit" value="employed" /><span>Currently Employed</span></label>
+                                </div>
+                            </div>
+                            <input type="hidden" id="editStatus" value="" />
+                            <div class="error-text" id="editStatusError"></div>
                         </div>
                     </div>
 
@@ -293,14 +337,14 @@
                         <div class="modal-field">
                             <label>CV Link</label>
                             <div class="input-with-icon">
-                                <input type="url" id="editCvLink" placeholder="https://drive.google.com/..." />
+                                <input type="text" id="editCvLink" placeholder="https://drive.google.com/..." />
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="input-icon"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                             </div>
                         </div>
                         <div class="modal-field">
                             <label>Portfolio Link</label>
                             <div class="input-with-icon">
-                                <input type="url" id="editPortfolioLink" placeholder="https://yourportfolio.com" />
+                                <input type="text" id="editPortfolioLink" placeholder="https://yourportfolio.com" />
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="input-icon"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                             </div>
                         </div>
@@ -310,14 +354,14 @@
                         <div class="modal-field">
                             <label>LinkedIn Profile</label>
                             <div class="input-with-icon">
-                                <input type="url" id="editLinkedIn" placeholder="https://linkedin.com/in/username" />
+                                <input type="text" id="editLinkedIn" placeholder="https://linkedin.com/in/username" />
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="input-icon"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                             </div>
                         </div>
                         <div class="modal-field">
                             <label>GitHub Profile</label>
                             <div class="input-with-icon">
-                                <input type="url" id="editGithub" placeholder="https://github.com/username" />
+                                <input type="text" id="editGithub" placeholder="https://github.com/username" />
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="input-icon"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                             </div>
                         </div>
@@ -363,6 +407,6 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- External JavaScript -->
-    <script src="../js/profile.js?v=16"></script>
+    <script src="../js/profile.js?v=20"></script>
 </body>
 </html>

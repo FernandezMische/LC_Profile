@@ -34,6 +34,8 @@ $htmlPages = [
     // Public profile view. This is intentionally outside the admin guard.
     '/profile-view.html' => '/frontend/html/profile-view.html',
     '/profile-view' => '/frontend/html/profile-view.html',
+    '/developers.html' => '/frontend/html/developers.html',
+    '/developers' => '/frontend/html/developers.html',
     '/home' => '/frontend/html/profile-view.html',
     '/home.html' => '/frontend/html/profile-view.html',
 ];

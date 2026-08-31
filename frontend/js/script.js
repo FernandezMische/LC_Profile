@@ -66,117 +66,26 @@
 
     }
 
-    let trainees = [
-        {
-            first: "Zahraa",
-            last: "Thompson",
-            role: "Software Development Intern",
-            cohort: 17,
-            status: "employed",
-            image: "../../images/001.png",
-            linkedin: "#",
-            github: "#",
-            portfolio: "#",
-            email: "mailto:zahraa@email.com",
-            cv: "#"
-        },
-        {
-            first: "Sinaye",
-            last: "Dlamini",
-            role: "Frontend Dev Intern",
-            cohort: 18,
-            status: "freelance",
-            image: "../../images/002.png",
-            linkedin: "#",
-            github: "#",
-            portfolio: "#",
-            email: "mailto:sinaye@email.com",
-            cv: "#"
-        },
-        {
-            first: "Nadia",
-            last: "Patel",
-            role: "UI/UX Design Intern",
-            cohort: 16,
-            status: "employed",
-            image: "../../images/003.png",
-            linkedin: "#",
-            github: "#",
-            portfolio: "#",
-            email: "mailto:nadia@email.com",
-            cv: "#"
-        },
-        {
-            first: "Luthando",
-            last: "Mgwaza",
-            role: "Backend Dev Intern",
-            cohort: 18,
-            status: "freelance",
-            image: "../../images/004.png",
-            linkedin: "#",
-            github: "#",
-            portfolio: "#",
-            email: "mailto:luthando@email.com",
-            cv: "#"
-        },
-        {
-            first: "Jordan",
-            last: "Petersen",
-            role: "Mobile Dev Intern",
-            cohort: 17,
-            status: "opportunities",
-            image: "../../images/005.png",
-            linkedin: "#",
-            github: "#",
-            portfolio: "#",
-            email: "mailto:jordan@email.com",
-            cv: "#"
-        },
-        {
-            first: "Amina",
-            last: "Karim",
-            role: "Data Analytics Intern",
-            cohort: 16,
-            status: "employed",
-            image: "../../images/006.png",
-            linkedin: "#",
-            github: "#",
-            portfolio: "#",
-            email: "mailto:amina@email.com",
-            cv: "#"
-        },
-        {
-            first: "Luke",
-            last: "Fraser",
-            role: "DevOps Intern",
-            cohort: 18,
-            status: "opportunities",
-            image: "../../images/007.png",
-            linkedin: "#",
-            github: "#",
-            portfolio: "#",
-            email: "mailto:luke@email.com",
-            cv: "#"
-        },
-        {
-            first: "Thando",
-            last: "Nkoala",
-            role: "Content & Brand Intern",
-            cohort: 17,
-            status: "employed",
-            image: "../../images/008.png",
-            linkedin: "#",
-            github: "#",
-            portfolio: "#",
-            email: "mailto:thando@email.com",
-            cv: "#"
-        }
-    ];
+    // Trainees are loaded exclusively from the database via the API.
+    let trainees = [];
 
+    function imagesFor(trainee) {
+        return {
+            grid: trainee.image || "/images/001.png",
+            profile: trainee.profileImage || trainee.image || "/images/001.png"
+        };
+    }
+
+    // Display a cohort under the "Cohort XX" ruling: pad single digits with a
+    // leading zero (e.g. 1 -> "01", 17 -> "17").
+    const formatCohort = (value) => {
+        const n = parseInt(value, 10);
+        if (Number.isNaN(n) || n < 0) return "";
+        return String(n).padStart(2, "0");
+    };
 
     const grid = document.getElementById("traineeGrid");
     const search = document.getElementById("searchInput");
-    const statusFilter = document.getElementById("statusFilter");
     const sortSelect = document.getElementById("sortSelect");
 
     const loading = document.getElementById("loading");
@@ -249,13 +158,16 @@
 
         emptyState.hidden = true;
 
-        grid.innerHTML = items.map((t) => `
+        grid.innerHTML = items.map((t) => {
+            const images = imagesFor(t);
+
+            return `
 
         <article class="trainee-card" data-id="${t.id}">
 
-            <div
-                class="card-image"
-                style="background-image:url('${t.image}')">
+            <div class="card-image">
+                <img class="card-portrait card-portrait-grid" src="${images.grid}" alt="Illustrated portrait of ${t.first} ${t.last}">
+                <img class="card-portrait card-portrait-hover" src="${images.profile}" alt="Photo of ${t.first} ${t.last}">
             </div>
 
             <div class="card-details">
@@ -269,7 +181,7 @@
                 </span>
 
                 <span class="cohort">
-                    COHORT ${t.cohort}
+                    COHORT ${formatCohort(t.cohort)}
                 </span>
 
                 <button
@@ -286,7 +198,8 @@
 
         </article>
 
-        `).join("");
+        `;
+        }).join("");
 
     }
 
@@ -302,16 +215,6 @@
                 `${t.first} ${t.last} ${t.role}`
                     .toLowerCase()
                     .includes(query)
-            );
-
-        }
-
-        const status = statusFilter.value;
-
-        if (status !== "all") {
-
-            filtered = filtered.filter(
-                (t) => t.status === status
             );
 
         }
@@ -349,8 +252,17 @@
 
         if (!trainee) return;
 
-        document.getElementById("modalVisual").style.backgroundImage =
-            `url('${trainee.image}')`;
+        // Lock page scroll completely - set on both html and body for cross-browser support
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
+        document.body.style.position = "fixed";
+        document.body.style.width = "100%";
+        document.body.style.top = `-${window.scrollY}px`;
+        document.body.dataset.scrollY = String(window.scrollY);
+
+        const modalPortrait = document.getElementById("modalPortrait");
+        modalPortrait.src = imagesFor(trainee).profile;
+        modalPortrait.alt = `${trainee.first} ${trainee.last}`;
 
         document.getElementById("modalName").innerHTML =
             `${trainee.first}<br><span>${trainee.last}</span>`;
@@ -359,20 +271,7 @@
             trainee.role;
 
         document.getElementById("modalCohort").textContent =
-            `COHORT ${trainee.cohort}`;
-
-        const selectedStatus = trainee.status === "available"
-            ? "freelance"
-            : trainee.status;
-
-        document.querySelectorAll(".modal-statuses [data-status]").forEach((status) => {
-
-            status.classList.toggle(
-                "is-active",
-                status.dataset.status === selectedStatus
-            );
-
-        });
+            `COHORT ${formatCohort(trainee.cohort)}`;
 
         document.getElementById("linkedinLink").href =
             trainee.linkedin;
@@ -383,12 +282,9 @@
         document.getElementById("portfolioLink").href =
             trainee.portfolio;
 
-        document.getElementById("emailLink").href =
-            trainee.email;
-
         document.getElementById("modalDownload").onclick = () => {
 
-            if (trainee.cv !== "#") {
+            if (trainee.cv && trainee.cv !== "#") {
 
                 window.open(trainee.cv);
 
@@ -409,6 +305,16 @@
 
         modal.classList.remove("show");
         modal.setAttribute("aria-hidden", "true");
+
+        // Restore page scroll - unlock html and body, restore scroll position
+        document.documentElement.style.overflow = "";
+        document.body.style.overflow = "";
+        document.body.style.position = "";
+        document.body.style.width = "";
+        document.body.style.top = "";
+        const scrollY = parseInt(document.body.dataset.scrollY || "0", 10);
+        delete document.body.dataset.scrollY;
+        window.scrollTo(0, scrollY);
 
     }
 
@@ -447,8 +353,6 @@
     });
 
     search.addEventListener("input", updateGrid);
-
-    statusFilter.addEventListener("change", updateGrid);
 
     sortSelect.addEventListener("change", updateGrid);
 

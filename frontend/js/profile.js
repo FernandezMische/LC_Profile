@@ -1,6 +1,6 @@
 /**
  * TraineeHub Dashboard - Vanilla JavaScript
- * Matches React mock: TraineeDashboardClient, AddTraineeModal, EditTraineeModal, FilterBar, KpiBar, TraineeTable
+ * Data is loaded exclusively from the MySQL database via the protected API.
  */
 
 (function () {
@@ -14,7 +14,7 @@
     }
 
     // ---- Session guard: redirect to login if not authenticated ----
-     function requireAuth() {
+    function requireAuth() {
         return fetch(buildApiUrl('check'), {
             method: 'GET',
             credentials: 'same-origin',
@@ -53,21 +53,31 @@
         });
     }
 
-    function api(route, method, body) {
+    function api(route, method, body, fallbackMessage) {
+        var isFormData = body instanceof FormData;
         return fetch(buildApiUrl(route), {
             method: method || 'GET',
             credentials: 'same-origin',
-            headers: method === 'GET' ? {} : { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
-            body: body ? JSON.stringify(body) : undefined
+            headers: method === 'GET' ? {} : Object.assign({ 'X-CSRF-Token': csrfToken }, isFormData ? {} : { 'Content-Type': 'application/json' }),
+            body: body ? (isFormData ? body : JSON.stringify(body)) : undefined
         }).then(function (response) {
             return response.text().then(function (text) {
                 var data = {};
                 if (text) {
                     try { data = JSON.parse(text); } catch (e) { data = {}; }
                 }
-                if (!response.ok) throw new Error(data.error || data.message || 'Request failed');
+                if (!response.ok) {
+                    var message = data.error || data.message || fallbackMessage || 'Request failed';
+                    if (response.status === 413) message = fallbackMessage || 'Request is too large.';
+                    var error = new Error(message);
+                    error.status = response.status;
+                    throw error;
+                }
                 return data;
             });
+        }).catch(function (error) {
+            if (error && error.status) throw error;
+            throw new Error(fallbackMessage || 'Request failed. Please try again.');
         });
     }
 
@@ -78,45 +88,12 @@
                 var cohort = parseInt(value, 10);
                 return Number.isNaN(cohort) ? null : cohort;
             }).filter(function (value) { return value !== null; });
-            currentPage = 1;
             populateCohortSelects();
             renderTable();
         }).catch(function (error) {
             showToast(error.message || 'Could not load trainees.', 'error');
         });
     }
-
-    // ============================================================
-    // DATA
-    // ============================================================
-    var INITIAL_TRAINEES = [
-        { id: 'trainee-001', name: 'Zahraa Thompson', title: 'Software Developer Intern', cohort: 16, employed: true, avatar: 'https://i.pravatar.cc/40?img=47', cvLink: 'https://drive.google.com/cv-zahraa', portfolioLink: 'https://zahraa.dev', linkedIn: 'https://linkedin.com/in/zahraa-thompson', github: 'https://github.com/zahraa-thompson' },
-        { id: 'trainee-002', name: 'Sinaye Dlamini', title: 'Frontend Developer Intern', cohort: 16, employed: true, avatar: 'https://i.pravatar.cc/40?img=12', cvLink: 'https://drive.google.com/cv-sinaye', portfolioLink: 'https://sinaye.co.za', linkedIn: 'https://linkedin.com/in/sinaye-dlamini', github: 'https://github.com/sinaye-dlamini' },
-        { id: 'trainee-003', name: 'Nadia Patel', title: 'UI/UX Design Intern', cohort: 16, employed: true, avatar: 'https://i.pravatar.cc/40?img=32', cvLink: 'https://drive.google.com/cv-nadia', portfolioLink: 'https://nadiapatel.design', linkedIn: 'https://linkedin.com/in/nadia-patel', github: 'https://github.com/nadia-patel' },
-        { id: 'trainee-004', name: 'Luthando Mgwaza', title: 'Backend Developer Intern', cohort: 16, employed: true, avatar: 'https://i.pravatar.cc/40?img=11', cvLink: 'https://drive.google.com/cv-luthando', portfolioLink: 'https://luthando.dev', linkedIn: 'https://linkedin.com/in/luthando-mgwaza', github: 'https://github.com/luthando-mgwaza' },
-        { id: 'trainee-005', name: 'Jordan Petersen', title: 'Mobile Developer Intern', cohort: 17, employed: false, avatar: 'https://i.pravatar.cc/40?img=15', cvLink: '', portfolioLink: '', linkedIn: 'https://linkedin.com/in/jordan-petersen', github: 'https://github.com/jordan-petersen' },
-        { id: 'trainee-006', name: 'Amina Karim', title: 'Data Analytics Intern', cohort: 17, employed: true, avatar: 'https://i.pravatar.cc/40?img=44', cvLink: 'https://drive.google.com/cv-amina', portfolioLink: 'https://aminakarim.io', linkedIn: 'https://linkedin.com/in/amina-karim', github: 'https://github.com/amina-karim' },
-        { id: 'trainee-007', name: 'Luke Fraser', title: 'DevOps Intern', cohort: 17, employed: true, avatar: 'https://i.pravatar.cc/40?img=18', cvLink: 'https://drive.google.com/cv-luke', portfolioLink: 'https://lukefraser.dev', linkedIn: 'https://linkedin.com/in/luke-fraser', github: 'https://github.com/luke-fraser' },
-        { id: 'trainee-008', name: 'Thando Nkoala', title: 'Content & Brand Intern', cohort: 17, employed: false, avatar: 'https://i.pravatar.cc/40?img=25', cvLink: '', portfolioLink: 'https://thando.co.za', linkedIn: 'https://linkedin.com/in/thando-nkoala', github: '' },
-        { id: 'trainee-009', name: 'Kefilwe Mokoena', title: 'Product Management Intern', cohort: 15, employed: true, avatar: 'https://i.pravatar.cc/40?img=49', cvLink: 'https://drive.google.com/cv-kefilwe', portfolioLink: 'https://kefilwe.pm', linkedIn: 'https://linkedin.com/in/kefilwe-mokoena', github: '' },
-        { id: 'trainee-010', name: 'Ruan van der Berg', title: 'Cloud Infrastructure Intern', cohort: 15, employed: true, avatar: 'https://i.pravatar.cc/40?img=20', cvLink: 'https://drive.google.com/cv-ruan', portfolioLink: '', linkedIn: 'https://linkedin.com/in/ruan-vdberg', github: 'https://github.com/ruan-vdberg' },
-        { id: 'trainee-011', name: 'Fatima Al-Hassan', title: 'Cybersecurity Intern', cohort: 15, employed: false, avatar: 'https://i.pravatar.cc/40?img=36', cvLink: 'https://drive.google.com/cv-fatima', portfolioLink: '', linkedIn: 'https://linkedin.com/in/fatima-alhassan', github: 'https://github.com/fatima-alhassan' },
-        { id: 'trainee-012', name: 'Sipho Khumalo', title: 'QA Engineering Intern', cohort: 15, employed: true, avatar: 'https://i.pravatar.cc/40?img=7', cvLink: 'https://drive.google.com/cv-sipho', portfolioLink: 'https://sipho.dev', linkedIn: 'https://linkedin.com/in/sipho-khumalo', github: 'https://github.com/sipho-khumalo' },
-        { id: 'trainee-013', name: 'Priya Naidoo', title: 'Machine Learning Intern', cohort: 18, employed: false, avatar: 'https://i.pravatar.cc/40?img=39', cvLink: 'https://drive.google.com/cv-priya', portfolioLink: '', linkedIn: 'https://linkedin.com/in/priya-naidoo', github: 'https://github.com/priya-naidoo' },
-        { id: 'trainee-014', name: 'Ethan Botha', title: 'Systems Analysis Intern', cohort: 18, employed: true, avatar: 'https://i.pravatar.cc/40?img=52', cvLink: 'https://drive.google.com/cv-ethan', portfolioLink: 'https://ethanbotha.co.za', linkedIn: 'https://linkedin.com/in/ethan-botha', github: 'https://github.com/ethan-botha' },
-        { id: 'trainee-015', name: 'Nomvula Sithole', title: 'Graphic Design Intern', cohort: 18, employed: true, avatar: 'https://i.pravatar.cc/40?img=43', cvLink: 'https://drive.google.com/cv-nomvula', portfolioLink: 'https://nomvula.design', linkedIn: 'https://linkedin.com/in/nomvula-sithole', github: '' },
-        { id: 'trainee-016', name: 'Brendan Jacobs', title: 'Network Engineering Intern', cohort: 18, employed: false, avatar: 'https://i.pravatar.cc/40?img=55', cvLink: '', portfolioLink: '', linkedIn: 'https://linkedin.com/in/brendan-jacobs', github: 'https://github.com/brendan-jacobs' },
-        { id: 'trainee-017', name: 'Aisha Okonkwo', title: 'Digital Marketing Intern', cohort: 16, employed: true, avatar: 'https://i.pravatar.cc/40?img=45', cvLink: 'https://drive.google.com/cv-aisha', portfolioLink: 'https://aisha.marketing', linkedIn: 'https://linkedin.com/in/aisha-okonkwo', github: '' },
-        { id: 'trainee-018', name: 'Tebogo Ramaphosa', title: 'Business Analysis Intern', cohort: 16, employed: true, avatar: 'https://i.pravatar.cc/40?img=30', cvLink: 'https://drive.google.com/cv-tebogo', portfolioLink: '', linkedIn: 'https://linkedin.com/in/tebogo-ramaphosa', github: '' },
-        { id: 'trainee-019', name: 'Chidi Obi', title: 'Data Engineering Intern', cohort: 17, employed: false, avatar: 'https://i.pravatar.cc/40?img=13', cvLink: 'https://drive.google.com/cv-chidi', portfolioLink: 'https://chidiobi.dev', linkedIn: 'https://linkedin.com/in/chidi-obi', github: 'https://github.com/chidi-obi' },
-        { id: 'trainee-020', name: 'Liesl van Wyk', title: 'React Native Intern', cohort: 17, employed: true, avatar: 'https://i.pravatar.cc/40?img=40', cvLink: 'https://drive.google.com/cv-liesl', portfolioLink: 'https://liesl.dev', linkedIn: 'https://linkedin.com/in/liesl-van-wyk', github: 'https://github.com/liesl-van-wyk' },
-        { id: 'trainee-021', name: 'Oluwaseun Adeyemi', title: 'Full Stack Developer Intern', cohort: 15, employed: true, avatar: 'https://i.pravatar.cc/40?img=60', cvLink: 'https://drive.google.com/cv-oluwaseun', portfolioLink: 'https://seun.dev', linkedIn: 'https://linkedin.com/in/oluwaseun-adeyemi', github: 'https://github.com/oluwaseun-adeyemi' },
-        { id: 'trainee-022', name: 'Mariam Essam', title: 'Technical Writing Intern', cohort: 15, employed: false, avatar: 'https://i.pravatar.cc/40?img=33', cvLink: 'https://drive.google.com/cv-mariam', portfolioLink: 'https://mariam.writes', linkedIn: 'https://linkedin.com/in/mariam-essam', github: '' },
-        { id: 'trainee-023', name: 'Kwame Asante', title: 'Blockchain Developer Intern', cohort: 18, employed: true, avatar: 'https://i.pravatar.cc/40?img=14', cvLink: 'https://drive.google.com/cv-kwame', portfolioLink: 'https://kwame.blockchain', linkedIn: 'https://linkedin.com/in/kwame-asante', github: 'https://github.com/kwame-asante' },
-        { id: 'trainee-024', name: 'Zanele Dube', title: 'IT Support Intern', cohort: 18, employed: false, avatar: 'https://i.pravatar.cc/40?img=46', cvLink: '', portfolioLink: '', linkedIn: 'https://linkedin.com/in/zanele-dube', github: '' },
-    ];
-
-    var ROWS_PER_PAGE = 8;
 
     // ============================================================
     // STATE
@@ -126,10 +103,15 @@
     var availableCohorts = [];
     var searchTerm = '';
     var cohortFilter = 'all';
-    var statusFilter = 'all';
+    var selectedStatuses = [];
     var currentPage = 1;
     var addAvatarDataUrl = '';
+    var addProfileImageDataUrl = '';
     var editAvatarDataUrl = '';
+    var editProfileImageDataUrl = '';
+    var editAvatarChanged = false;
+    var editProfileImageChanged = false;
+    var ROWS_PER_PAGE = 8;
 
     // ============================================================
     // DOM REFS
@@ -145,7 +127,11 @@
     var statCohorts = $('statCohorts');
     var searchInput = $('searchInput');
     var cohortFilterEl = $('cohortFilter');
-    var statusFilterEl = $('statusFilter');
+    var statusFilterWrap = $('statusFilterWrap');
+    var statusFilterTrigger = $('statusFilterTrigger');
+    var statusFilterLabel = $('statusFilterLabel');
+    var statusFilterMenu = $('statusFilterMenu');
+    var statusCheckboxes = document.querySelectorAll('.status-option');
     var resetBtn = $('resetBtn');
     var openModalBtn = $('openModalBtn');
     var addModal = $('addModal');
@@ -163,6 +149,7 @@
     var addTitle = $('addTitle');
     var addCohort = $('addCohort');
     var addStatus = $('addStatus');
+    var addStatusError = $('addStatusError');
     var addCvLink = $('addCvLink');
     var addPortfolioLink = $('addPortfolioLink');
     var addLinkedIn = $('addLinkedIn');
@@ -173,6 +160,9 @@
     var imageInput = $('imageInput');
     var imagePreview = $('imagePreview');
     var imageUploadArea = $('imageUploadArea');
+    var profileImageInput = $('profileImageInput');
+    var profileImagePreview = $('profileImagePreview');
+    var profileImageUploadArea = $('profileImageUploadArea');
 
     var editForm = $('editTraineeForm');
     var editId = $('editId');
@@ -180,6 +170,7 @@
     var editTitle = $('editTitle');
     var editCohort = $('editCohort');
     var editStatus = $('editStatus');
+    var editStatusError = $('editStatusError');
     var editCvLink = $('editCvLink');
     var editPortfolioLink = $('editPortfolioLink');
     var editLinkedIn = $('editLinkedIn');
@@ -190,6 +181,9 @@
     var editImageInput = $('editImageInput');
     var editImagePreview = $('editImagePreview');
     var editImageUploadArea = $('editImageUploadArea');
+    var editProfileImageInput = $('editProfileImageInput');
+    var editProfileImagePreview = $('editProfileImagePreview');
+    var editProfileImageUploadArea = $('editProfileImageUploadArea');
 
     var deleteModal = $('deleteModal');
     var closeDeleteBtn = $('closeDeleteBtn');
@@ -292,8 +286,74 @@
         return String(value).trim();
     }
 
+    function normalizeLink(value) {
+        var link = String(value || '').trim();
+        if (link && !/^[a-z][a-z0-9+.-]*:\/\//i.test(link)) link = 'https://' + link;
+        return link;
+    }
+
+    function linksAreValid(links) {
+        return Object.keys(links).every(function (key) {
+            if (!links[key]) return true;
+            try {
+                var url = new URL(links[key]);
+                return Boolean(url.hostname);
+            } catch (e) {
+                return false;
+            }
+        });
+    }
+
+    function parseStatusValues(value) {
+        var allowed = ['freelance', 'opportunities', 'employed'];
+        var values = [];
+        var raw = Array.isArray(value) ? value : String(value || '').split(/[|,]/);
+        raw.forEach(function (entry) {
+            var item = String(entry || '').trim().toLowerCase();
+            if (!item || allowed.indexOf(item) === -1) return;
+            if (values.indexOf(item) === -1) values.push(item);
+        });
+        return values;
+    }
+
+    function serializeStatusValues(value) {
+        return parseStatusValues(value).join(',');
+    }
+
+    function getStatusLabels(values) {
+        var labels = {
+            'freelance': 'Available to Freelance',
+            'opportunities': 'Open to Opportunities',
+            'employed': 'Currently Employed'
+        };
+        return parseStatusValues(values).map(function (status) {
+            return labels[status] || status;
+        });
+    }
+
+    function syncModalStatusSelection(groupName) {
+        var wrapper = document.querySelector('.status-multi-select[data-status-group="' + groupName + '"]');
+        if (!wrapper) return;
+        var checkboxes = wrapper.querySelectorAll('.modal-status-option');
+        var selected = [];
+        checkboxes.forEach(function (checkbox) {
+            if (checkbox.checked) selected.push(checkbox.value);
+        });
+        if (groupName === 'add' && addStatus) addStatus.value = serializeStatusValues(selected);
+        if (groupName === 'edit' && editStatus) editStatus.value = serializeStatusValues(selected);
+    }
+
+    function resetModalStatusSelection(groupName) {
+        var wrapper = document.querySelector('.status-multi-select[data-status-group="' + groupName + '"]');
+        if (!wrapper) return;
+        wrapper.querySelectorAll('.modal-status-option').forEach(function (checkbox) {
+            checkbox.checked = false;
+        });
+        syncModalStatusSelection(groupName);
+    }
+
     function getCohorts() {
-        var unique = { 13: true, 14: true, 15: true, 16: true, 17: true };
+        var unique = {};
         availableCohorts.forEach(function (value) {
             var cohort = parseInt(value, 10);
             if (!Number.isNaN(cohort)) unique[cohort] = true;
@@ -305,22 +365,28 @@
         return Object.keys(unique).map(Number).sort(function (a, b) { return a - b; });
     }
 
-    function buildCohortOptions(selectEl, selectedValue) {
-        if (!selectEl) return;
+    // Display a cohort under the "Cohort XX" ruling: pad single digits with a
+    // leading zero (e.g. 1 -> "01", 17 -> "17") while leaving multi-digit
+    // values intact (e.g. 134 -> "134").
+    function formatCohort(value) {
+        var n = parseInt(value, 10);
+        if (Number.isNaN(n) || n < 0) return '';
+        return String(n).padStart(2, '0');
+    }
+
+    // Populates the shared <datalist> used by the add/edit cohort inputs. The
+    // input is free-typed (so brand-new cohorts like 18 can be entered before
+    // anyone belongs to them), but existing cohorts appear as suggestions.
+    function populateCohortSuggestions() {
+        var list = document.getElementById('cohortSuggestions');
+        if (!list) return;
         var cohorts = getCohorts();
-        selectEl.innerHTML = '<option value="">Select cohort</option>';
+        list.innerHTML = '';
         cohorts.forEach(function (c) {
             var opt = document.createElement('option');
-            opt.value = String(c);
-            opt.textContent = 'Cohort ' + c;
-            if (String(selectedValue) === String(c)) opt.selected = true;
-            selectEl.appendChild(opt);
+            opt.value = formatCohort(c);
+            list.appendChild(opt);
         });
-        if (selectedValue === null || selectedValue === undefined || selectedValue === '') {
-            selectEl.value = '';
-        } else {
-            selectEl.value = String(selectedValue);
-        }
     }
 
     function getFiltered() {
@@ -328,16 +394,15 @@
             var q = searchTerm.toLowerCase().trim();
             var matchSearch = !q || t.name.toLowerCase().includes(q) || t.title.toLowerCase().includes(q) || String(t.cohort).includes(q);
             var matchCohort = cohortFilter === 'all' || String(t.cohort) === cohortFilter;
-            var matchStatus = statusFilter === 'all' || (statusFilter === 'employed' && t.employed) || (statusFilter === 'not-employed' && !t.employed);
+            var traineeStatuses = parseStatusValues(t.status || (t.employed ? 'employed' : 'freelance'));
+            var matchStatus = selectedStatuses.length === 0 || selectedStatuses.some(function (status) {
+                return traineeStatuses.indexOf(status) !== -1;
+            });
             return matchSearch && matchCohort && matchStatus;
         });
     }
 
-    function getRandomAvatar() {
-        return 'https://i.pravatar.cc/40?img=' + (Math.floor(Math.random() * 70) + 1);
-    }
-
-    // MySQL returns integer IDs while data-* attributes and mock IDs are strings.
+    // MySQL returns integer IDs while data-* attributes are strings.
     // Always compare as strings so edit/delete actions locate the right trainee.
     function findTraineeById(id) {
         for (var i = 0; i < trainees.length; i++) {
@@ -351,14 +416,16 @@
     // ============================================================
     function populateCohortSelects() {
         var cohorts = getCohorts();
-        buildCohortOptions(addCohort, addCohort && addCohort.value ? addCohort.value : '');
-        buildCohortOptions(editCohort, editCohort && editCohort.value ? editCohort.value : '');
+        // The add/edit cohort inputs are free-typed text fields backed by a
+        // datalist of existing cohorts, so they need no option-building here —
+        // just refresh the shared suggestion list.
+        populateCohortSuggestions();
         if (cohortFilterEl) {
             cohortFilterEl.innerHTML = '<option value="all">All Cohorts</option>';
             cohorts.forEach(function (c) {
                 var opt = document.createElement('option');
                 opt.value = String(c);
-                opt.textContent = 'Cohort ' + c;
+                opt.textContent = 'Cohort ' + formatCohort(c);
                 cohortFilterEl.appendChild(opt);
             });
         }
@@ -391,9 +458,11 @@
                 '<h3>No trainees found</h3><p>Try adjusting your search or filter criteria.</p></td></tr>';
         } else {
             var html = '';
-            paginated.forEach(function (t, idx) {
-                var statusClass = t.employed ? 'status-employed' : 'status-not-employed';
-                var statusText = t.employed ? 'Currently Employed' : 'Not Employed';
+            paginated.forEach(function (t) {
+                var statusValues = parseStatusValues(t.status || (t.employed ? 'employed' : 'freelance'));
+                var statusValue = statusValues[0] || 'freelance';
+                var statusClass = 'status-' + statusValue;
+                var statusText = getStatusLabels(statusValues).join(', ') || 'Available to Freelance';
                 var initials = getInitials(t.name);
                 var displayName = displayValue(t.name);
                 var displayTitle = displayValue(t.title);
@@ -412,10 +481,10 @@
                     '<div class="trainee-avatar">' + avatarHtml + '</div>' +
                     '<div><div class="trainee-name">' + displayName + '</div><div class="trainee-subtitle">' + displayTitle + '</div></div>' +
                     '</div></td>' +
-                    '<td>' + displayTitle + '</td>' +
-                    '<td>' + t.cohort + '</td>' +
-                    '<td><span class="status-badge ' + statusClass + '">' +
-                    '<span class="status-dot ' + (t.employed ? 'employed' : 'not-employed') + '"></span>' +
+                    '<td data-label="Title">' + displayTitle + '</td>' +
+                    '<td data-label="Cohort">' + formatCohort(t.cohort) + '</td>' +
+                    '<td data-label="Status"><span class="status-badge ' + statusClass + '">' +
+                    '<span class="status-dot ' + statusValue + '"></span>' +
                     statusText + '</span></td>' +
                     '<td>' +
                     '<button class="action-btn" data-action="edit" data-id="' + t.id + '" title="Edit"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil" aria-hidden="true"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg></button>' +
@@ -505,33 +574,48 @@
         e.preventDefault();
         var name = addName.value.trim();
         var title = addTitle.value.trim();
-        var cohort = addCohort.value;
-        var status = addStatus ? addStatus.value : 'freelance';
+        var cohort = addCohort.value.trim();
+        var status = addStatus ? serializeStatusValues(addStatus.value) : '';
         var errors = false;
 
         if (!name) { addNameError.textContent = 'Name is required'; errors = true; } else { addNameError.textContent = ''; }
         if (!title) { addTitleError.textContent = 'Title is required'; errors = true; } else { addTitleError.textContent = ''; }
-        if (!cohort) { addCohortError.textContent = 'Cohort is required'; errors = true; } else { addCohortError.textContent = ''; }
+        if (!cohort) { addCohortError.textContent = 'Cohort is required'; errors = true; }
+        else if (!/^\d+$/.test(cohort)) { addCohortError.textContent = 'Please enter a valid cohort number (e.g. 17)'; errors = true; }
+        else { addCohortError.textContent = ''; }
+        if (!status) { addStatusError.textContent = 'Select at least one status'; errors = true; } else { addStatusError.textContent = ''; }
+        if (!addAvatarDataUrl || !addProfileImageDataUrl) { showToast('Upload both a grid illustration and a profile photo.', 'error'); errors = true; }
         if (errors) return;
 
-        var newTrainee = {
-            id: 'trainee-' + Date.now(),
-            name: name,
-            title: title,
-            subtitle: title,
-            cohort: parseInt(cohort, 10),
-            status: status,
-            avatar: addAvatarDataUrl || '',
-            cvLink: addCvLink.value.trim(),
-            portfolioLink: addPortfolioLink.value.trim(),
-            linkedIn: addLinkedIn.value.trim(),
-            github: addGithub.value.trim()
+        var newTrainee = new FormData();
+        newTrainee.append('name', name);
+        newTrainee.append('title', title);
+        newTrainee.append('cohort', parseInt(cohort, 10));
+        newTrainee.append('status', status);
+        var links = {
+            cvLink: normalizeLink(addCvLink.value),
+            portfolioLink: normalizeLink(addPortfolioLink.value),
+            linkedIn: normalizeLink(addLinkedIn.value),
+            github: normalizeLink(addGithub.value)
         };
-        api('trainee-create', 'POST', newTrainee).then(function () {
+        newTrainee.append('cvLink', links.cvLink);
+        newTrainee.append('portfolioLink', links.portfolioLink);
+        newTrainee.append('linkedIn', links.linkedIn);
+        newTrainee.append('github', links.github);
+        newTrainee.append('avatar', addAvatarDataUrl);
+        newTrainee.append('profileImage', addProfileImageDataUrl);
+        if (!linksAreValid(links)) { showToast('Links are not valid. Please check each URL.', 'error'); return; }
+        api('trainee-create', 'POST', newTrainee, 'Trainee could not be created.').then(function (result) {
+            return result;
+        }, function (error) { throw new Error(error.message || 'Trainee details could not be saved.'); }).then(function (result) {
+            var hasLinks = Object.keys(links).some(function (key) { return links[key] !== ''; });
+            return hasLinks ? api('trainee-update-links', 'POST', { id: result.id, cvLink: links.cvLink, portfolioLink: links.portfolioLink, linkedIn: links.linkedIn, github: links.github }, 'Links could not be saved. Please check that the links are valid.') : result;
+        }).then(function () {
             closeAddModal();
             showToast(name + ' has been added successfully.', 'success');
-            addForm.reset(); addAvatarDataUrl = '';
+            addForm.reset(); addAvatarDataUrl = ''; addProfileImageDataUrl = '';
             if (imagePreview) { imagePreview.style.display = 'none'; imagePreview.src = ''; }
+            if (profileImagePreview) { profileImagePreview.style.display = 'none'; profileImagePreview.src = ''; }
             return loadTrainees();
         }).catch(function (error) { showToast(error.message || 'Could not add trainee.', 'error'); });
     }
@@ -543,25 +627,35 @@
         editId.value = trainee.id;
         editName.value = trainee.name;
         editTitle.value = trainee.title;
-        buildCohortOptions(editCohort, trainee.cohort);
+        editCohort.value = trainee.cohort != null && trainee.cohort !== '' ? formatCohort(trainee.cohort) : '';
         editCvLink.value = trainee.cvLink || '';
         editPortfolioLink.value = trainee.portfolioLink || '';
         editLinkedIn.value = trainee.linkedIn || '';
         editGithub.value = trainee.github || '';
 
-        if (editStatus) editStatus.value = trainee.status || (trainee.employed ? 'employed' : 'freelance');
+        var currentStatuses = parseStatusValues(trainee.status || (trainee.employed ? 'employed' : 'freelance'));
+        document.querySelectorAll('.modal-status-option[data-group="edit"]').forEach(function (checkbox) {
+            checkbox.checked = currentStatuses.indexOf(checkbox.value) !== -1;
+        });
+        syncModalStatusSelection('edit');
 
         editAvatarDataUrl = trainee.avatar || '';
+        editProfileImageDataUrl = trainee.profileImage || trainee.avatar || '';
+        editAvatarChanged = false;
+        editProfileImageChanged = false;
         if (editImagePreview && editAvatarDataUrl) {
             editImagePreview.src = editAvatarDataUrl;
             editImagePreview.style.display = 'block';
+            editImageUploadArea.classList.add('is-previewing');
         } else if (editImagePreview) {
             editImagePreview.style.display = 'none';
+            editImageUploadArea.classList.remove('is-previewing');
         }
         var up = editImageUploadArea ? editImageUploadArea.querySelector('p') : null;
-        var ui = editImageUploadArea ? editImageUploadArea.querySelector('i') : null;
-        if (up) up.style.display = 'none';
-        if (ui) ui.style.display = 'none';
+        var ui = editImageUploadArea ? editImageUploadArea.querySelector('.upload-icon') : null;
+        if (up) up.style.display = editAvatarDataUrl ? 'none' : 'block';
+        if (ui) ui.style.display = editAvatarDataUrl ? 'none' : 'block';
+        setImagePreview(editProfileImagePreview, editProfileImageUploadArea, editProfileImageDataUrl);
 
         editNameError.textContent = '';
         editTitleError.textContent = '';
@@ -570,28 +664,73 @@
         if (editModal) editModal.classList.add('open');
     }
 
+    function setupStatusMultiSelect(groupName) {
+        var wrapper = document.querySelector('.status-multi-select[data-status-group="' + groupName + '"]');
+        if (!wrapper) return;
+
+        wrapper.querySelectorAll('.modal-status-option').forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                syncModalStatusSelection(groupName);
+            });
+        });
+    }
+
     function handleEditTrainee(e) {
         e.preventDefault();
         var id = editId.value;
         var name = editName.value.trim();
         var title = editTitle.value.trim();
-        var cohort = editCohort.value;
-        var status = editStatus ? editStatus.value : 'freelance';
+        var cohort = editCohort.value.trim();
+        var status = editStatus ? serializeStatusValues(editStatus.value) : '';
         var errors = false;
 
         if (!name) { editNameError.textContent = 'Name is required'; errors = true; } else { editNameError.textContent = ''; }
         if (!title) { editTitleError.textContent = 'Title is required'; errors = true; } else { editTitleError.textContent = ''; }
-        if (!cohort) { editCohortError.textContent = 'Cohort is required'; errors = true; } else { editCohortError.textContent = ''; }
+        if (!cohort) { editCohortError.textContent = 'Cohort is required'; errors = true; }
+        else if (!/^\d+$/.test(cohort)) { editCohortError.textContent = 'Please enter a valid cohort number (e.g. 17)'; errors = true; }
+        else { editCohortError.textContent = ''; }
+        if (!status) { editStatusError.textContent = 'Select at least one status'; errors = true; } else { editStatusError.textContent = ''; }
+        if (!editAvatarDataUrl || !editProfileImageDataUrl) { showToast('Both images are required.', 'error'); errors = true; }
         if (errors) return;
 
-        var updatedTrainee = { id: String(id), name: name, title: title, cohort: parseInt(cohort, 10), status: status,
-            avatar: editAvatarDataUrl || traineeAvatar(id), cvLink: editCvLink.value.trim(), portfolioLink: editPortfolioLink.value.trim(), linkedIn: editLinkedIn.value.trim(), github: editGithub.value.trim() };
-        api('trainee-update', 'POST', updatedTrainee).then(function () {
+        var updatedTrainee = { id: String(id), name: name, title: title, cohort: parseInt(cohort, 10), status: status };
+        var links = { cvLink: normalizeLink(editCvLink.value), portfolioLink: normalizeLink(editPortfolioLink.value), linkedIn: normalizeLink(editLinkedIn.value), github: normalizeLink(editGithub.value) };
+        if (!linksAreValid(links)) { showToast('Links are not valid. Please check each URL.', 'error'); return; }
+        api('trainee-update-details', 'POST', updatedTrainee, 'Profile details could not be saved.').then(function () {
+            var imageRequests = [];
+            if (editAvatarChanged) {
+                var avatarUpload = new FormData();
+                avatarUpload.append('id', id);
+                avatarUpload.append('avatar', editAvatarDataUrl);
+                imageRequests.push(api('trainee-update-images', 'POST', avatarUpload, 'Grid Illustration file too large.'));
+            }
+            if (editProfileImageChanged) {
+                var profileUpload = new FormData();
+                profileUpload.append('id', id);
+                profileUpload.append('profileImage', editProfileImageDataUrl);
+                imageRequests.push(api('trainee-update-images', 'POST', profileUpload, 'Profile Photo file too large.'));
+            }
+            return Promise.all(imageRequests);
+        }).then(function () {
+            return api('trainee-update-links', 'POST', { id: id, cvLink: links.cvLink, portfolioLink: links.portfolioLink, linkedIn: links.linkedIn, github: links.github }, 'Links could not be saved. Please check that the links are valid.');
+        }).then(function () {
             closeEditModal(); showToast(name + '\'s profile has been updated.', 'success'); return loadTrainees();
         }).catch(function (error) { showToast(error.message || 'Could not update trainee.', 'error'); });
     }
 
     function traineeAvatar(id) { var trainee = findTraineeById(id); return trainee ? trainee.avatar || '' : ''; }
+    function traineeProfileImage(id) { var trainee = findTraineeById(id); return trainee ? trainee.profileImage || trainee.avatar || '' : ''; }
+
+    function setImagePreview(previewEl, areaEl, dataUrl) {
+        if (!previewEl || !areaEl) return;
+        previewEl.src = dataUrl || '';
+        previewEl.style.display = dataUrl ? 'block' : 'none';
+        areaEl.classList.toggle('is-previewing', Boolean(dataUrl));
+        var label = areaEl.querySelector('p');
+        var icon = areaEl.querySelector('.upload-icon');
+        if (label) label.style.display = dataUrl ? 'none' : 'block';
+        if (icon) icon.style.display = dataUrl ? 'none' : 'block';
+    }
 
     // ============================================================
     // MODAL CONTROLS
@@ -600,12 +739,17 @@
         populateCohortSelects();
         addForm.reset();
         addAvatarDataUrl = '';
+        addProfileImageDataUrl = '';
         addNameError.textContent = '';
         addTitleError.textContent = '';
         addCohortError.textContent = '';
+        addStatusError.textContent = '';
+        resetModalStatusSelection('add');
         if (imagePreview) { imagePreview.style.display = 'none'; imagePreview.src = ''; }
+        setImagePreview(profileImagePreview, profileImageUploadArea, '');
+        if (imageUploadArea) imageUploadArea.classList.remove('is-previewing');
         var up = imageUploadArea ? imageUploadArea.querySelector('p') : null;
-        var ui = imageUploadArea ? imageUploadArea.querySelector('i') : null;
+        var ui = imageUploadArea ? imageUploadArea.querySelector('.upload-icon') : null;
         if (up) up.style.display = 'block';
         if (ui) ui.style.display = 'block';
         if (addModal) addModal.classList.add('open');
@@ -623,15 +767,28 @@
         inputEl.addEventListener('change', function (e) {
             var file = e.target.files[0];
             if (!file) return;
+            // Validate the file is an image and within a reasonable size
+            if (!/^image\/(jpeg|png|webp)$/i.test(file.type)) {
+                showToast('Please choose a JPG, PNG or WEBP image.', 'error');
+                inputEl.value = '';
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                showToast(inputEl === imageInput || inputEl === editImageInput ? 'Grid Illustration file too large. Maximum size is 5MB.' : 'Profile Photo file too large. Maximum size is 5MB.', 'error');
+                inputEl.value = '';
+                return;
+            }
+            // Store the original data URL so uploads keep their source quality and dimensions.
             var reader = new FileReader();
             reader.onload = function (ev) {
                 var dataUrl = ev.target.result;
                 if (previewEl) { previewEl.src = dataUrl; previewEl.style.display = 'block'; }
                 var p = areaEl.querySelector('p');
-                var i = areaEl.querySelector('i');
+                var i = areaEl.querySelector('.upload-icon');
                 if (p) p.style.display = 'none';
                 if (i) i.style.display = 'none';
-                if (callback) callback(dataUrl);
+                areaEl.classList.add('is-previewing');
+                if (callback) callback(file);
             };
             reader.readAsDataURL(file);
         });
@@ -641,11 +798,28 @@
     // FILTERS
     // ============================================================
     function applyFilters() { currentPage = 1; renderTable(); }
+    function updateStatusFilterLabel() {
+        if (!statusFilterLabel) return;
+        if (selectedStatuses.length === 0) {
+            statusFilterLabel.textContent = 'All Statuses';
+        } else if (selectedStatuses.length === 1) {
+            var labels = {
+                'freelance': 'Available to Freelance',
+                'opportunities': 'Open to Opportunities',
+                'employed': 'Currently Employed'
+            };
+            statusFilterLabel.textContent = labels[selectedStatuses[0]] || selectedStatuses[0];
+        } else {
+            statusFilterLabel.textContent = selectedStatuses.length + ' Statuses Selected';
+        }
+    }
+
     function resetFilters() {
         if (searchInput) searchInput.value = '';
         if (cohortFilterEl) cohortFilterEl.value = 'all';
-        if (statusFilterEl) statusFilterEl.value = 'all';
-        searchTerm = ''; cohortFilter = 'all'; statusFilter = 'all'; currentPage = 1;
+        statusCheckboxes.forEach(function (cb) { cb.checked = false; });
+        searchTerm = ''; cohortFilter = 'all'; selectedStatuses = []; currentPage = 1;
+        updateStatusFilterLabel();
         renderTable();
     }
 
@@ -663,7 +837,34 @@
         if (tbody) tbody.addEventListener('click', handleTableClick);
         if (searchInput) searchInput.addEventListener('input', function () { searchTerm = this.value; applyFilters(); });
         if (cohortFilterEl) cohortFilterEl.addEventListener('change', function () { cohortFilter = this.value; applyFilters(); });
-        if (statusFilterEl) statusFilterEl.addEventListener('change', function () { statusFilter = this.value; applyFilters(); });
+        if (statusFilterTrigger) {
+            statusFilterTrigger.addEventListener('click', function () {
+                var isOpen = statusFilterWrap.classList.toggle('is-open');
+                statusFilterTrigger.setAttribute('aria-expanded', String(isOpen));
+            });
+        }
+        if (statusFilterMenu) {
+            statusFilterMenu.addEventListener('change', function () {
+                selectedStatuses = [];
+                statusCheckboxes.forEach(function (cb) {
+                    if (cb.checked) selectedStatuses.push(cb.value);
+                });
+                updateStatusFilterLabel();
+                applyFilters();
+            });
+        }
+        document.addEventListener('click', function (e) {
+            if (statusFilterWrap && !statusFilterWrap.contains(e.target)) {
+                statusFilterWrap.classList.remove('is-open');
+                if (statusFilterTrigger) statusFilterTrigger.setAttribute('aria-expanded', 'false');
+            }
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && statusFilterWrap) {
+                statusFilterWrap.classList.remove('is-open');
+                if (statusFilterTrigger) statusFilterTrigger.setAttribute('aria-expanded', 'false');
+            }
+        });
         if (resetBtn) resetBtn.addEventListener('click', resetFilters);
         if (openModalBtn) openModalBtn.addEventListener('click', openAddModal);
         if (closeModalBtn) closeModalBtn.addEventListener('click', closeAddModal);
@@ -678,8 +879,12 @@
         if (deleteModal) deleteModal.addEventListener('click', function (e) { if (e.target === deleteModal) closeDeleteModal(); });
         if (addForm) addForm.addEventListener('submit', handleAddTrainee);
         if (editForm) editForm.addEventListener('submit', handleEditTrainee);
+        setupStatusMultiSelect('add');
+        setupStatusMultiSelect('edit');
         setupImageUpload(imageInput, imagePreview, imageUploadArea, function (dataUrl) { addAvatarDataUrl = dataUrl; });
-        setupImageUpload(editImageInput, editImagePreview, editImageUploadArea, function (dataUrl) { editAvatarDataUrl = dataUrl; });
+        setupImageUpload(profileImageInput, profileImagePreview, profileImageUploadArea, function (dataUrl) { addProfileImageDataUrl = dataUrl; });
+        setupImageUpload(editImageInput, editImagePreview, editImageUploadArea, function (dataUrl) { editAvatarDataUrl = dataUrl; editAvatarChanged = true; });
+        setupImageUpload(editProfileImageInput, editProfileImagePreview, editProfileImageUploadArea, function (dataUrl) { editProfileImageDataUrl = dataUrl; editProfileImageChanged = true; });
         console.log('TraineeHub Dashboard initialized.');
     }
 

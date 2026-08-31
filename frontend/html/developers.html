@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/images/LC%20Studio%20Logo.ico" type="image/x-icon">
+    <title>The Developers · LC Studio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css?v=11">
+</head>
+<body class="developers-page">
+    <div class="custom-cursor" aria-hidden="true"></div>
+    <div class="custom-cursor-ring" aria-hidden="true"></div>
+
+    <header class="site-header">
+        <a class="brand" href="/" aria-label="LC Studio Home">
+            <img src="../../images/LC-STUDIO-HI-RES-LOGO-2023-redgrey (1).png" alt="LC Studio Logo">
+        </a>
+        <nav class="site-nav" aria-label="Main navigation">
+            <a href="/" aria-label="LC Studio home"></a>
+            <a href="/profile-view" aria-label="Trainee profiles"></a>
+        </nav>
+        <button id="themeToggle" class="theme-toggle" type="button" aria-pressed="false">
+            <i class="fa-solid fa-sun" aria-hidden="true"></i>
+            <span>Light Mode</span>
+        </button>
+    </header>
+
+    <main id="home">
+        <section class="hero developer-hero">
+            <div class="hero-content">
+                <p class="eyebrow">THE PEOPLE WHO BUILT THIS</p>
+                <h1>MEET THE<br><span>DEVELOPERS.</span></h1>
+                <p class="intro">Five collaborators, one shared build. Explore the people and contributions behind this page.</p>
+            </div>
+        </section>
+
+        <section class="trainee-section developer-section" id="developers">
+            <header class="section-heading">
+                <div>
+                    <p class="eyebrow">THE TEAM BEHIND THE EXPERIENCE</p>
+                    <h2>MEET OUR <span>DEVELOPERS.</span></h2>
+                </div>
+                <p>Discover what each collaborator brought to the project.</p>
+            </header>
+            <div id="loading" class="loading">Loading developers...</div>
+            <section id="developerGrid" class="grid"></section>
+            <p id="emptyState" class="empty-state" hidden>No developers found.</p>
+        </section>
+    </main>
+
+    <div class="modal-overlay" id="profileModal" aria-hidden="true">
+        <article class="profile-modal" role="dialog" aria-modal="true" aria-labelledby="modalName" tabindex="-1">
+            <button id="modalClose" class="modal-close" aria-label="Close developer profile">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="modalVisual" class="modal-visual">
+                <img id="modalPortrait" class="modal-portrait" alt="">
+            </div>
+            <div class="modal-body">
+                <h2 id="modalName"></h2>
+                <p id="modalRole"></p>
+                <p id="modalCohort" class="developer-modal-description"></p>
+                <div class="modal-rule"></div>
+                <div class="social-links">
+                    <a id="linkedinLink" href="#" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a id="githubLink" href="#" target="_blank" rel="noopener" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+                    <a id="portfolioLink" href="#" target="_blank" rel="noopener" aria-label="Portfolio"><i class="fa-solid fa-globe"></i></a>
+                </div>
+                <button id="modalDownload" class="modal-download" type="button">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    View CV
+                </button>
+            </div>
+        </article>
+    </div>
+
+    <footer class="site-footer">
+        <img src="/images/LC-STUDIO-HI-RES-LOGO-2023-redgrey%20(1).png" alt="LC Studio Logo">
+        <span>LC Studio ©2024</span>
+        <span>NPO – 086-084</span>
+    </footer>
+
+    <script src="../js/developers.js?v=1"></script>
+</body>
+</html>
