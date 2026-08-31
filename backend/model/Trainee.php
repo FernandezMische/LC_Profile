@@ -52,6 +52,12 @@ class Trainee {
         }, $rows);
     }
 
+    public function getImageUrls($id) {
+        $stmt = $this->pdo->prepare('SELECT avatar_url AS avatar, profile_image_url AS profileImage FROM trainees WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetch() ?: ['avatar' => null, 'profileImage' => null];
+    }
+
     public function create($data) {
         $stmt = $this->pdo->prepare('INSERT INTO trainees
             (full_name, title, cohort, status, cv_link, portfolio_link, linkedin_link, github_link)

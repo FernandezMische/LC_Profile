@@ -697,20 +697,12 @@
         var links = { cvLink: normalizeLink(editCvLink.value), portfolioLink: normalizeLink(editPortfolioLink.value), linkedIn: normalizeLink(editLinkedIn.value), github: normalizeLink(editGithub.value) };
         if (!linksAreValid(links)) { showToast('Links are not valid. Please check each URL.', 'error'); return; }
         api('trainee-update-details', 'POST', updatedTrainee, 'Profile details could not be saved.').then(function () {
-            var imageRequests = [];
-            if (editAvatarChanged) {
-                var avatarUpload = new FormData();
-                avatarUpload.append('id', id);
-                avatarUpload.append('avatar', editAvatarDataUrl);
-                imageRequests.push(api('trainee-update-images', 'POST', avatarUpload, 'Grid Illustration file too large.'));
-            }
-            if (editProfileImageChanged) {
-                var profileUpload = new FormData();
-                profileUpload.append('id', id);
-                profileUpload.append('profileImage', editProfileImageDataUrl);
-                imageRequests.push(api('trainee-update-images', 'POST', profileUpload, 'Profile Photo file too large.'));
-            }
-            return Promise.all(imageRequests);
+            if (!editAvatarChanged && !editProfileImageChanged) return null;
+            var imageUpload = new FormData();
+            imageUpload.append('id', id);
+            if (editAvatarChanged) imageUpload.append('avatar', editAvatarDataUrl);
+            if (editProfileImageChanged) imageUpload.append('profileImage', editProfileImageDataUrl);
+            return api('trainee-update-images', 'POST', imageUpload, 'One of the image files is too large.');
         }).then(function () {
             return api('trainee-update-links', 'POST', { id: id, cvLink: links.cvLink, portfolioLink: links.portfolioLink, linkedIn: links.linkedIn, github: links.github }, 'Links could not be saved. Please check that the links are valid.');
         }).then(function () {

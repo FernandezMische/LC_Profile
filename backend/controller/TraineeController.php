@@ -48,12 +48,19 @@ class TraineeController {
         } catch (InvalidArgumentException $e) {
             $this->error($e->getMessage()); return;
         }
+        $existingImages = $this->model->getImageUrls($id);
         try {
             $this->model->updateImages($id, $images);
         } catch (Throwable $e) {
             throw $e;
         }
-        $this->removeStoredImages($id, array_values($images));
+        $keep = array_values($images);
+        foreach ($existingImages as $key => $url) {
+            if (!array_key_exists($key, $images) && $url) {
+                $keep[] = $url;
+            }
+        }
+        $this->removeStoredImages($id, $keep);
         echo json_encode(['success' => true, 'images' => $images]);
     }
 
