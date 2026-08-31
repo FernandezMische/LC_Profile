@@ -813,6 +813,18 @@ h3 {
 
 }
 
+/* The developers page contains exactly five cards, displayed in one row on
+   desktop while retaining the responsive trainee grid at smaller widths. */
+@media (min-width: 901px) {
+
+    #developerGrid {
+
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+
+    }
+
+}
+
 /* ==========================
    CARD
 ========================== */
@@ -1183,11 +1195,20 @@ h3 {
 }
 
 /* Trainee page credit */
+.trainees-page .site-footer {
+
+    flex-wrap: wrap;
+    justify-content: center;
+    column-gap: clamp(24px, 4vw, 56px);
+    row-gap: 22px;
+
+}
+
 .trainees-page .site-footer .trainee-credit {
 
     display: inline-block;
     width: fit-content;
-    margin: 0 auto;
+    margin: 0;
     position: relative;
     color: #fff;
     font-size: 13px;
@@ -1225,9 +1246,9 @@ h3 {
 
 }
 
-.trainees-page .trainee-credit strong {
+.trainees-page .trainee-credit .trainee-credit-team {
 
-    color: inherit;
+    color: #fff;
     font-weight: 300;
     transition: color .4s cubic-bezier(.25, .46, .45, .94);
 
@@ -1239,6 +1260,13 @@ h3 {
 
 }
 
+.trainees-page .site-footer .trainee-credit:hover,
+.trainees-page .site-footer .trainee-credit:focus-visible {
+
+    color: #fff;
+
+}
+
 .trainees-page .trainee-credit:hover::after,
 .trainees-page .trainee-credit:focus-visible::after {
 
@@ -1246,8 +1274,8 @@ h3 {
 
 }
 
-.trainees-page .trainee-credit:hover strong,
-.trainees-page .trainee-credit:focus-visible strong {
+.trainees-page .trainee-credit:hover .trainee-credit-team,
+.trainees-page .trainee-credit:focus-visible .trainee-credit-team {
 
     color: #f51c26;
 
