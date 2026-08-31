@@ -697,18 +697,16 @@
         var links = { cvLink: normalizeLink(editCvLink.value), portfolioLink: normalizeLink(editPortfolioLink.value), linkedIn: normalizeLink(editLinkedIn.value), github: normalizeLink(editGithub.value) };
         if (!linksAreValid(links)) { showToast('Links are not valid. Please check each URL.', 'error'); return; }
         api('trainee-update-details', 'POST', updatedTrainee, 'Profile details could not be saved.').then(function () {
+            var imageForm = new FormData();
+            imageForm.append('id', id);
+            if (editAvatarChanged) imageForm.append('avatar', editAvatarDataUrl);
+            if (editProfileImageChanged) imageForm.append('profileImage', editProfileImageDataUrl);
+            // Send both changed images in ONE request. Two parallel per-image
+            // requests previously raced: each request's cleanup deleted the
+            // other image's freshly saved file, leaving 404s for IDs 50-52.
             var imageRequests = [];
-            if (editAvatarChanged) {
-                var avatarUpload = new FormData();
-                avatarUpload.append('id', id);
-                avatarUpload.append('avatar', editAvatarDataUrl);
-                imageRequests.push(api('trainee-update-images', 'POST', avatarUpload, 'Grid Illustration file too large.'));
-            }
-            if (editProfileImageChanged) {
-                var profileUpload = new FormData();
-                profileUpload.append('id', id);
-                profileUpload.append('profileImage', editProfileImageDataUrl);
-                imageRequests.push(api('trainee-update-images', 'POST', profileUpload, 'Profile Photo file too large.'));
+            if (editAvatarChanged || editProfileImageChanged) {
+                imageRequests.push(api('trainee-update-images', 'POST', imageForm, 'Image file too large.'));
             }
             return Promise.all(imageRequests);
         }).then(function () {

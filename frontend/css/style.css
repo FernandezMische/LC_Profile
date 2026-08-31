@@ -143,16 +143,9 @@ h3 {
     padding: 18px clamp(14px, 4vw, 40px);
     gap: 34px;
 
-    background: linear-gradient(90deg,
-                rgba(0,0,0,0.92) 0%,
-                rgba(0,0,0,0.92) 38%,
-                rgba(0,0,0,0.6) 50%,
-                rgba(255,255,255,0.12) 68%,
-                rgba(255,255,255,0.06) 100%);
-    background-color: rgba(255,255,255,0.04);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    box-shadow: 0 6px 24px rgba(3,8,16,0.12);
+    /* Transparent so the hero image shows through exactly as-is – no scrim,
+       no blur, no shadow, no gradient – keeping navbar and hero as "one image". */
+    background: transparent;
     transition: background .35s ease, color .35s ease, transform .25s ease;
 }
 
@@ -1710,14 +1703,10 @@ h3 {
         padding: 0 16px;
         height: 60px;
         gap: 8px;
-        /* Render the same part of the banner as the hero, then blur it. */
-        background-image: linear-gradient(rgba(8, 9, 9, .16), rgba(8, 9, 9, .16)), url("../../images/1920x1080-LCS-BANNER.png");
-        background-size: auto 100vh;
-        background-position: center 30%;
-        background-repeat: no-repeat;
-        background-color: transparent;
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
+        /* No background of its own. The header stays transparent so the hero's
+           banner shows through behind it – one image, always aligned, at any
+           screen size (no second copy to resize or misalign). */
+        background: transparent;
     }
 
     .site-nav {
@@ -2380,7 +2369,13 @@ body[data-theme="light"] .modal-close {
 
 }
 
-body[data-theme="light"] .site-header,
+/* The navbar is fully transparent in both themes, so the hero image shows
+   through unaltered and reads as one continuous image. Only link/toggle
+   text colors are adjusted for readability. */
+body[data-theme="light"] .site-header {
+    color: #f7f7f7;
+}
+
 body[data-theme="light"] .site-nav,
 body[data-theme="light"] .site-nav a,
 body[data-theme="light"] .theme-toggle {

@@ -49,11 +49,24 @@ class TraineeController {
             $this->error($e->getMessage()); return;
         }
         try {
+            // Build the keep-list BEFORE writing: the new files being saved,
+            // plus any image the database still references that is NOT being
+            // replaced by this request. Otherwise a single-image update would
+            // delete the other image's file while its URL is still in MySQL
+            // (and two parallel per-image requests would delete each other's
+            // freshly saved files).
+            $current = $this->model->getImageUrls($id);
+            $keep = array_values($images);
+            foreach (['avatar' => 'avatar_url', 'profileImage' => 'profile_image_url'] as $column => $field) {
+                if (!isset($images[$column]) && !empty($current[$field])) {
+                    $keep[] = $current[$field];
+                }
+            }
             $this->model->updateImages($id, $images);
+            $this->removeStoredImages($id, $keep);
         } catch (Throwable $e) {
             throw $e;
         }
-        $this->removeStoredImages($id, array_values($images));
         echo json_encode(['success' => true, 'images' => $images]);
     }
 

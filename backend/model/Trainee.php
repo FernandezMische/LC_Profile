@@ -85,6 +85,13 @@ class Trainee {
         return $stmt->rowCount() > 0;
     }
 
+    public function getImageUrls($id) {
+        $stmt = $this->pdo->prepare('SELECT avatar_url, profile_image_url FROM trainees WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+        $row = $stmt->fetch();
+        return $row ?: ['avatar_url' => null, 'profile_image_url' => null];
+    }
+
     public function updateImages($id, $data) {
         $fields = [];
         $params = ['id' => $id];
