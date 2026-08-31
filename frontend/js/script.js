@@ -252,13 +252,17 @@
 
         if (!trainee) return;
 
+        // Save the position before fixing the body: fixing it resets window.scrollY
+        // in some browsers, which previously caused the close action to return to 0.
+        const scrollY = window.scrollY;
+        document.body.dataset.scrollY = String(scrollY);
+
         // Lock page scroll completely - set on both html and body for cross-browser support
         document.documentElement.style.overflow = "hidden";
         document.body.style.overflow = "hidden";
         document.body.style.position = "fixed";
         document.body.style.width = "100%";
-        document.body.style.top = `-${window.scrollY}px`;
-        document.body.dataset.scrollY = String(window.scrollY);
+        document.body.style.top = `-${scrollY}px`;
 
         const modalPortrait = document.getElementById("modalPortrait");
         modalPortrait.src = imagesFor(trainee).profile;
@@ -303,6 +307,8 @@
 
     function closeProfile() {
 
+        if (!modal.classList.contains("show")) return;
+
         modal.classList.remove("show");
         modal.setAttribute("aria-hidden", "true");
 
@@ -314,7 +320,14 @@
         document.body.style.top = "";
         const scrollY = parseInt(document.body.dataset.scrollY || "0", 10);
         delete document.body.dataset.scrollY;
-        window.scrollTo(0, scrollY);
+        // Wait until the body is back in normal document flow, then restore the
+        // original position without the page-level smooth-scroll animation.
+        requestAnimationFrame(() => {
+            const previousScrollBehavior = document.documentElement.style.scrollBehavior;
+            document.documentElement.style.scrollBehavior = "auto";
+            window.scrollTo(0, scrollY);
+            document.documentElement.style.scrollBehavior = previousScrollBehavior;
+        });
 
     }
 

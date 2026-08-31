@@ -1,76 +1,39 @@
 <?php
 
+require_once __DIR__ . '/../config/database.php';
+
 class DeveloperController {
+    /** Return the five collaborators represented by trainee records 1–5. */
     public function publicList() {
+        $pdo = getDBConnection();
+        $stmt = $pdo->query("SELECT id, full_name, title, cohort, avatar_url, profile_image_url,
+            cv_link, portfolio_link, linkedin_link, github_link
+            FROM trainees
+            WHERE id BETWEEN 1 AND 5
+            ORDER BY id ASC");
+
+        $developers = array_map(function ($row) {
+            $name = preg_split('/\s+/', trim($row['full_name']), 2);
+            $cohort = trim((string) $row['cohort']);
+
+            return [
+                'id' => (int) $row['id'],
+                'first' => $name[0] ?? '',
+                'last' => $name[1] ?? '',
+                'role' => $row['title'] ?: 'Developer',
+                'contribution' => $cohort !== '' ? "Cohort {$cohort}" : '',
+                'image' => $row['avatar_url'] ?: ($row['profile_image_url'] ?: ''),
+                'profileImage' => $row['profile_image_url'] ?: ($row['avatar_url'] ?: ''),
+                'cv' => $row['cv_link'] ?: '#',
+                'portfolio' => $row['portfolio_link'] ?: '#',
+                'linkedin' => $row['linkedin_link'] ?: '#',
+                'github' => $row['github_link'] ?: '#'
+            ];
+        }, $stmt->fetchAll());
+
         echo json_encode([
             'success' => true,
-            'developers' => [
-                [
-                    'id' => 'developer-1',
-                    'first' => 'Developer',
-                    'last' => 'One',
-                    'role' => 'Full-Stack Developer',
-                    'contribution' => 'Project architecture, backend integration and deployment.',
-                    'image' => '/images/001.png',
-                    'profileImage' => '/images/001.png',
-                    'cv' => '#',
-                    'portfolio' => '#',
-                    'linkedin' => '#',
-                    'github' => '#'
-                ],
-                [
-                    'id' => 'developer-2',
-                    'first' => 'Developer',
-                    'last' => 'Two',
-                    'role' => 'Frontend Developer',
-                    'contribution' => 'Interface development, responsive layouts and interaction design.',
-                    'image' => '/images/002.png',
-                    'profileImage' => '/images/002.png',
-                    'cv' => '#',
-                    'portfolio' => '#',
-                    'linkedin' => '#',
-                    'github' => '#'
-                ],
-                [
-                    'id' => 'developer-3',
-                    'first' => 'Developer',
-                    'last' => 'Three',
-                    'role' => 'UI/UX Developer',
-                    'contribution' => 'Visual direction, user experience and accessible page structure.',
-                    'image' => '/images/003.png',
-                    'profileImage' => '/images/003.png',
-                    'cv' => '#',
-                    'portfolio' => '#',
-                    'linkedin' => '#',
-                    'github' => '#'
-                ],
-                [
-                    'id' => 'developer-4',
-                    'first' => 'Developer',
-                    'last' => 'Four',
-                    'role' => 'Backend Developer',
-                    'contribution' => 'Database design, API endpoints and application security.',
-                    'image' => '/images/004.png',
-                    'profileImage' => '/images/004.png',
-                    'cv' => '#',
-                    'portfolio' => '#',
-                    'linkedin' => '#',
-                    'github' => '#'
-                ],
-                [
-                    'id' => 'developer-5',
-                    'first' => 'Developer',
-                    'last' => 'Five',
-                    'role' => 'Product Developer',
-                    'contribution' => 'Feature planning, testing and collaborative delivery.',
-                    'image' => '/images/005.png',
-                    'profileImage' => '/images/005.png',
-                    'cv' => '#',
-                    'portfolio' => '#',
-                    'linkedin' => '#',
-                    'github' => '#'
-                ]
-            ]
+            'developers' => $developers
         ]);
     }
 }

@@ -1182,6 +1182,77 @@ h3 {
 
 }
 
+/* Trainee page credit */
+.trainees-page .site-footer .trainee-credit {
+
+    display: inline-block;
+    width: fit-content;
+    margin: 0 auto;
+    position: relative;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.4;
+    text-align: center;
+    text-decoration: none;
+
+}
+
+.trainees-page .trainee-credit::before,
+.trainees-page .trainee-credit::after {
+
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    height: 2px;
+
+}
+
+.trainees-page .trainee-credit::before {
+
+    width: 100%;
+    background-color: #fff;
+
+}
+
+.trainees-page .trainee-credit::after {
+
+    width: 0;
+    z-index: 1;
+    background-color: #f51c26;
+    transition: width .4s cubic-bezier(.25, .46, .45, .94);
+
+}
+
+.trainees-page .trainee-credit strong {
+
+    color: inherit;
+    font-weight: 300;
+    transition: color .4s cubic-bezier(.25, .46, .45, .94);
+
+}
+
+.trainees-page .trainee-credit strong span {
+
+    color: #f51c26;
+
+}
+
+.trainees-page .trainee-credit:hover::after,
+.trainees-page .trainee-credit:focus-visible::after {
+
+    width: 100%;
+
+}
+
+.trainees-page .trainee-credit:hover strong,
+.trainees-page .trainee-credit:focus-visible strong {
+
+    color: #f51c26;
+
+}
+
 /* ==========================
    MODAL OVERLAY
 ========================== */
