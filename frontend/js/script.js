@@ -84,7 +84,7 @@
         return String(n).padStart(2, "0");
     };
 
-    // Helper function to generate status badges
+    // Helper function to generate MULTIPLE status badges
     function getStatusBadges(statusString) {
         const statusMap = {
             'freelance': { label: 'Available to Freelance', class: 'status-freelance' },
@@ -94,6 +94,7 @@
 
         let statuses = [];
         if (statusString) {
+            // Splits by comma OR pipe
             statuses = String(statusString)
                 .split(/[|,]/)
                 .map(s => s.trim().toLowerCase())
@@ -101,7 +102,12 @@
         }
 
         if (statuses.length === 0) {
-            statuses = ['freelance'];
+            badgesHtml = '<span class="status-badge status-not-employed">Unemployed</span>';
+        } else {
+            // This maps over ALL selected statuses and creates a badge for each
+            badgesHtml = statuses.map(s => 
+                `<span class="status-badge ${statusMap[s].class}">${statusMap[s].label}</span>`
+            ).join('');
         }
 
         const badgesHtml = statuses.map(s => 
@@ -185,7 +191,6 @@
 
         emptyState.hidden = true;
 
-        // UPDATED render function to include status badges
         grid.innerHTML = items.map((t) => {
             const images = imagesFor(t);
 

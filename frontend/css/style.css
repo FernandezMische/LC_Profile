@@ -143,8 +143,6 @@ h3 {
     padding: 18px clamp(14px, 4vw, 40px);
     gap: 34px;
 
-    /* Transparent so the hero image shows through exactly as-is – no scrim,
-       no blur, no shadow, no gradient – keeping navbar and hero as "one image". */
     background: transparent;
     transition: background .35s ease, color .35s ease, transform .25s ease;
 }
@@ -1074,6 +1072,40 @@ h3 {
 }
 
 /* ==========================
+   CARD STATUS BADGES (Colored Borders)
+========================== */
+.card-statuses {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.status-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 400; /* Reverted to normal weight */
+    line-height: 1.4;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid currentColor;
+    background: transparent;
+    color: #fff; /* Default for dark mode */
+}
+
+/* Default Dark Mode Colors (Text and Border change together) */
+.status-badge.status-freelance { color: #3b82f6; }
+.status-badge.status-opportunities { color: #a855f7; }
+.status-badge.status-employed { color: #22c55e; }
+.status-badge.status-not-employed { color: #f97316; }
+
+/* Light Mode Colors (Darker shades) */
+body[data-theme="light"] .status-badge.status-freelance { color: #2563eb; }
+body[data-theme="light"] .status-badge.status-opportunities { color: #7c3aed; }
+body[data-theme="light"] .status-badge.status-employed { color: #15803d; }
+body[data-theme="light"] .status-badge.status-not-employed { color: #c2410c; }
+
+/* ==========================
    BUTTON
 ========================== */
 
@@ -1642,6 +1674,7 @@ h3 {
     color: white;
 
 }
+
 /* ==========================
    LARGE TABLETS
 ========================== */
@@ -1728,9 +1761,6 @@ h3 {
 
 /* ==========================
    TABLET – DEVELOPER HERO CLEARANCE
-   Between 601px and 900px the site-nav wraps onto its own row, making the
-   header ~196px tall. The developer hero is short (no button), so without
-   extra clearance its heading would sit underneath that taller header.
 ========================== */
 
 @media (min-width: 601px) and (max-width: 900px) {
@@ -1863,9 +1893,6 @@ h3 {
         padding: 0 16px;
         height: 60px;
         gap: 8px;
-        /* No background of its own. The header stays transparent so the hero's
-           banner shows through behind it – one image, always aligned, at any
-           screen size (no second copy to resize or misalign). */
         background: transparent;
     }
 
@@ -2529,9 +2556,6 @@ body[data-theme="light"] .modal-close {
 
 }
 
-/* The navbar is fully transparent in both themes, so the hero image shows
-   through unaltered and reads as one continuous image. Only link/toggle
-   text colors are adjusted for readability. */
 body[data-theme="light"] .site-header {
     color: #f7f7f7;
 }
