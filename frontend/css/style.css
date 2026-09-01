@@ -143,8 +143,6 @@ h3 {
     padding: 18px clamp(14px, 4vw, 40px);
     gap: 34px;
 
-    /* Transparent so the hero image shows through exactly as-is – no scrim,
-       no blur, no shadow, no gradient – keeping navbar and hero as "one image". */
     background: transparent;
     transition: background .35s ease, color .35s ease, transform .25s ease;
 }
@@ -249,9 +247,13 @@ h3 {
 }
 
 .developer-hero {
-    min-height: 46vh;
+    min-height: 32vh;
     padding-top: 92px;
-    padding-bottom: 56px;
+    padding-bottom: 28px;
+}
+
+.developer-hero .hero-content {
+    margin-top: 18px;
 }
 
 .eyebrow {
@@ -393,10 +395,15 @@ h3 {
 
 .trainee-section {
 
-    padding: 95px clamp(24px, 7vw, 112px);
+    padding: 54px clamp(24px, 7vw, 112px) 42px;
 
     background: #0b0c0c;
 
+}
+
+.developer-section {
+    padding-top: 14px;
+    padding-bottom: 28px;
 }
 
 .section-heading {
@@ -409,7 +416,7 @@ h3 {
 
     gap: 50px;
 
-    margin-bottom: 40px;
+    margin-bottom: 18px;
 
 }
 
@@ -813,6 +820,10 @@ h3 {
 
 }
 
+#developerGrid {
+    margin-top: 8px;
+}
+
 /* The developers page contains exactly five cards, displayed in one row on
    desktop while retaining the responsive trainee grid at smaller widths. */
 @media (min-width: 901px) {
@@ -820,6 +831,7 @@ h3 {
     #developerGrid {
 
         grid-template-columns: repeat(5, minmax(0, 1fr));
+        align-items: start;
 
     }
 
@@ -839,7 +851,7 @@ h3 {
 
     min-height: 0;
 
-    padding: 10px;
+    padding: 8px;
 
     overflow: hidden;
 
@@ -949,18 +961,18 @@ h3 {
     z-index: 2;
 
     min-width: 0;
-    margin-top: 12px;
-    padding: 0 6px 6px;
+    margin-top: 10px;
+    padding: 0 4px 2px;
 
 }
 
 .card-name {
 
-    font-size: 22px;
+    font-size: clamp(18px, 1.5vw, 24px);
 
     font-weight: 800;
 
-    line-height: 1.1;
+    line-height: 1.08;
 
     text-transform: uppercase;
 
@@ -970,7 +982,7 @@ h3 {
 
     display: block;
 
-    margin-top: 10px;
+    margin-top: 8px;
 
     color: #d6d6d6;
 
@@ -988,12 +1000,59 @@ h3 {
     line-height: 1.4;
 }
 
+.developer-projects {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.developer-projects-label,
+.modal-projects-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #f51c26;
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 800;
+}
+
+.developer-project-list,
+.modal-projects-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+}
+
+.developer-project-list li,
+.modal-projects-list li {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 8px;
+    border: 1px solid rgba(245,28,38,.35);
+    border-radius: 999px;
+    background: rgba(245,28,38,.06);
+    color: #ebebeb;
+    font-size: 10px;
+    line-height: 1.3;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
 .developer-modal-description {
     color: #d8d8d8;
     font-size: 15px;
     line-height: 1.5;
     text-transform: none !important;
     letter-spacing: 0 !important;
+}
+
+.modal-projects-wrap {
+    margin-top: 18px;
+    margin-bottom: 8px;
 }
 
 .cohort {
@@ -1013,7 +1072,7 @@ h3 {
 }
 
 /* ==========================
-   CARD STATUS BADGES (Color Coded)
+   CARD STATUS BADGES (Colored Borders)
 ========================== */
 .card-statuses {
     display: flex;
@@ -1025,54 +1084,26 @@ h3 {
 .status-badge {
     display: inline-block;
     font-size: 11px;
-    font-weight: 700;
-    line-height: 1;
-    padding: 5px 8px;
-    border-radius: 9999px; /* Makes them pill shaped */
-    border: none;
+    font-weight: 400; /* Reverted to normal weight */
+    line-height: 1.4;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid currentColor;
+    background: transparent;
+    color: #fff; /* Default for dark mode */
 }
 
-/* Default Dark Mode Colors */
-.status-badge.status-freelance {
-    background-color: #2563eb;
-    color: #ffffff;
-}
+/* Default Dark Mode Colors (Text and Border change together) */
+.status-badge.status-freelance { color: #3b82f6; }
+.status-badge.status-opportunities { color: #a855f7; }
+.status-badge.status-employed { color: #22c55e; }
+.status-badge.status-not-employed { color: #f97316; }
 
-.status-badge.status-opportunities {
-    background-color: #7c3aed;
-    color: #ffffff;
-}
-
-.status-badge.status-employed {
-    background-color: #15803d;
-    color: #ffffff;
-}
-
-.status-badge.status-not-employed {
-    background-color: #c2410c;
-    color: #ffffff;
-}
-
-/* Light Mode Colors (Soft pastel backgrounds, dark text) */
-body[data-theme="light"] .status-badge.status-freelance {
-    background-color: #dbeafe;
-    color: #1d4ed8;
-}
-
-body[data-theme="light"] .status-badge.status-opportunities {
-    background-color: #ede9fe;
-    color: #6d28d9;
-}
-
-body[data-theme="light"] .status-badge.status-employed {
-    background-color: #dcfce7;
-    color: #15803d;
-}
-
-body[data-theme="light"] .status-badge.status-not-employed {
-    background-color: #ffedd5;
-    color: #c2410c;
-}
+/* Light Mode Colors (Darker shades) */
+body[data-theme="light"] .status-badge.status-freelance { color: #2563eb; }
+body[data-theme="light"] .status-badge.status-opportunities { color: #7c3aed; }
+body[data-theme="light"] .status-badge.status-employed { color: #15803d; }
+body[data-theme="light"] .status-badge.status-not-employed { color: #c2410c; }
 
 /* ==========================
    BUTTON
@@ -1643,6 +1674,7 @@ body[data-theme="light"] .status-badge.status-not-employed {
     color: white;
 
 }
+
 /* ==========================
    LARGE TABLETS
 ========================== */
@@ -1729,9 +1761,6 @@ body[data-theme="light"] .status-badge.status-not-employed {
 
 /* ==========================
    TABLET – DEVELOPER HERO CLEARANCE
-   Between 601px and 900px the site-nav wraps onto its own row, making the
-   header ~196px tall. The developer hero is short (no button), so without
-   extra clearance its heading would sit underneath that taller header.
 ========================== */
 
 @media (min-width: 601px) and (max-width: 900px) {
@@ -1864,9 +1893,6 @@ body[data-theme="light"] .status-badge.status-not-employed {
         padding: 0 16px;
         height: 60px;
         gap: 8px;
-        /* No background of its own. The header stays transparent so the hero's
-           banner shows through behind it – one image, always aligned, at any
-           screen size (no second copy to resize or misalign). */
         background: transparent;
     }
 
@@ -2469,27 +2495,6 @@ body[data-theme="light"] .cohort {
 
 }
 
-/* Light Mode Colors (Soft pastel backgrounds, dark text) */
-body[data-theme="light"] .status-badge.status-freelance {
-    background-color: #dbeafe;
-    color: #1d4ed8;
-}
-
-body[data-theme="light"] .status-badge.status-opportunities {
-    background-color: #ede9fe;
-    color: #6d28d9;
-}
-
-body[data-theme="light"] .status-badge.status-employed {
-    background-color: #dcfce7;
-    color: #15803d;
-}
-
-body[data-theme="light"] .status-badge.status-not-employed {
-    background-color: #ffedd5;
-    color: #c2410c;
-}
-
 body[data-theme="light"] .view-profile-btn:hover {
 
     color: #171717;
@@ -2551,9 +2556,6 @@ body[data-theme="light"] .modal-close {
 
 }
 
-/* The navbar is fully transparent in both themes, so the hero image shows
-   through unaltered and reads as one continuous image. Only link/toggle
-   text colors are adjusted for readability. */
 body[data-theme="light"] .site-header {
     color: #f7f7f7;
 }
