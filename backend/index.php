@@ -11,6 +11,7 @@ ini_set('max_input_time', '60');
 ini_set('memory_limit', '128M');
 
 header("Content-Type: application/json");
+header('Cache-Control: no-store, max-age=0');
 require_once __DIR__ . '/controller/AuthController.php';
 require_once __DIR__ . '/controller/TraineeController.php';
 require_once __DIR__ . '/controller/DeveloperController.php';

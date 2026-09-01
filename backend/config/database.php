@@ -105,6 +105,25 @@ function getDBConnection() {
     }
 }
 
+/**
+ * Add the file modification time to locally served image URLs. This also
+ * refreshes portraits that were uploaded before versioned filenames were used.
+ */
+function cacheBustedImageUrl($url) {
+    $url = (string) $url;
+    if ($url === '' || preg_match('#^https?://#i', $url)) {
+        return $url;
+    }
+
+    $path = parse_url($url, PHP_URL_PATH);
+    $filePath = __DIR__ . '/../../' . ltrim((string) $path, '/');
+    if (!is_file($filePath)) {
+        return $url;
+    }
+
+    return $url . (strpos($url, '?') === false ? '?' : '&') . 'v=' . filemtime($filePath);
+}
+
 function csrfToken() {
     secureSessionStart();
     if (empty($_SESSION['csrf_token'])) {

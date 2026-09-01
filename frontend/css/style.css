@@ -1198,7 +1198,7 @@ h3 {
 .trainees-page .site-footer {
 
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-between;
     column-gap: clamp(24px, 4vw, 56px);
     row-gap: 22px;
 

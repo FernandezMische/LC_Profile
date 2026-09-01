@@ -14,7 +14,11 @@ class Trainee {
             cv_link AS cvLink, portfolio_link AS portfolioLink, linkedin_link AS linkedIn, github_link AS github,
             (status = 'employed') AS employed
             FROM trainees ORDER BY created_at DESC, id DESC");
-        return $stmt->fetchAll();
+        return array_map(function ($row) {
+            $row['avatar'] = cacheBustedImageUrl($row['avatar'] ?? '');
+            $row['profileImage'] = cacheBustedImageUrl($row['profileImage'] ?? '');
+            return $row;
+        }, $stmt->fetchAll());
     }
 
     public function getCohorts() {
@@ -45,7 +49,7 @@ class Trainee {
                 'id' => (int) $row['id'],
                 'first' => $name[0] ?? '', 'last' => $name[1] ?? '',
                 'role' => $row['title'], 'cohort' => (int) $row['cohort'], 'status' => $row['status'],
-                'image' => $row['avatar_url'] ?: '', 'profileImage' => $row['profile_image_url'] ?: ($row['avatar_url'] ?: ''), 'cv' => $row['cv_link'] ?: '#',
+                'image' => cacheBustedImageUrl($row['avatar_url'] ?: ''), 'profileImage' => cacheBustedImageUrl($row['profile_image_url'] ?: ($row['avatar_url'] ?: '')), 'cv' => $row['cv_link'] ?: '#',
                 'portfolio' => $row['portfolio_link'] ?: '#', 'linkedin' => $row['linkedin_link'] ?: '#',
                 'github' => $row['github_link'] ?: '#', 'email' => '#'
             ];

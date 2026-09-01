@@ -89,7 +89,11 @@ class TraineeController {
             if (!$imageInfo || !isset($mimeTypes[$mime])) {
                 throw new InvalidArgumentException($key === 'avatar' ? 'Grid Illustration must be a JPG, PNG or WEBP image.' : 'Profile Photo must be a JPG, PNG or WEBP image.');
             }
-            $filename = (int) $id . '-' . $key . '.' . $mimeTypes[$mime];
+            // A new filename gives every uploaded image a new URL. Static images
+            // are intentionally cached by the server, so overwriting a fixed URL
+            // (for example, "1-avatar.jpg") would otherwise keep showing an old
+            // portrait until the browser cache expires.
+            $filename = (int) $id . '-' . $key . '-' . bin2hex(random_bytes(8)) . '.' . $mimeTypes[$mime];
             $path = $directory . '/' . $filename;
             if (!move_uploaded_file($file['tmp_name'], $path)) throw new RuntimeException('The image could not be saved.');
             $images[$column] = '/images/trainees/' . $filename;
