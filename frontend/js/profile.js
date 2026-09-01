@@ -304,6 +304,25 @@
         });
     }
 
+    function normalizeStatusSet(values) {
+        var allowed = ['freelance', 'opportunities', 'employed'];
+        var normalized = [];
+        var raw = Array.isArray(values) ? values : parseStatusValues(values);
+        raw.forEach(function (entry) {
+            var item = String(entry || '').trim().toLowerCase();
+            if (!item || allowed.indexOf(item) === -1) return;
+            if (normalized.indexOf(item) === -1) normalized.push(item);
+        });
+
+        var hasEmployed = normalized.indexOf('employed') !== -1;
+        var hasOpportunities = normalized.indexOf('opportunities') !== -1;
+        if (hasEmployed && hasOpportunities) {
+            normalized = normalized.filter(function (status) { return status !== 'opportunities'; });
+        }
+
+        return normalized;
+    }
+
     function parseStatusValues(value) {
         var allowed = ['freelance', 'opportunities', 'employed'];
         var values = [];
@@ -313,11 +332,11 @@
             if (!item || allowed.indexOf(item) === -1) return;
             if (values.indexOf(item) === -1) values.push(item);
         });
-        return values;
+        return normalizeStatusSet(values);
     }
 
     function serializeStatusValues(value) {
-        return parseStatusValues(value).join(',');
+        return normalizeStatusSet(value).join(',');
     }
 
     function getStatusLabels(values) {
@@ -339,8 +358,14 @@
         checkboxes.forEach(function (checkbox) {
             if (checkbox.checked) selected.push(checkbox.value);
         });
-        if (groupName === 'add' && addStatus) addStatus.value = serializeStatusValues(selected);
-        if (groupName === 'edit' && editStatus) editStatus.value = serializeStatusValues(selected);
+
+        var normalized = normalizeStatusSet(selected);
+        checkboxes.forEach(function (checkbox) {
+            checkbox.checked = normalized.indexOf(checkbox.value) !== -1;
+        });
+
+        if (groupName === 'add' && addStatus) addStatus.value = serializeStatusValues(normalized);
+        if (groupName === 'edit' && editStatus) editStatus.value = serializeStatusValues(normalized);
     }
 
     function resetModalStatusSelection(groupName) {
@@ -846,6 +871,10 @@
                 selectedStatuses = [];
                 statusCheckboxes.forEach(function (cb) {
                     if (cb.checked) selectedStatuses.push(cb.value);
+                });
+                selectedStatuses = normalizeStatusSet(selectedStatuses);
+                statusCheckboxes.forEach(function (cb) {
+                    cb.checked = selectedStatuses.indexOf(cb.value) !== -1;
                 });
                 updateStatusFilterLabel();
                 applyFilters();

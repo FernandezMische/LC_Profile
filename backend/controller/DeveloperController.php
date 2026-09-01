@@ -15,13 +15,25 @@ class DeveloperController {
         $developers = array_map(function ($row) {
             $name = preg_split('/\s+/', trim($row['full_name']), 2);
             $cohort = trim((string) $row['cohort']);
+            $role = $row['title'] ?: 'Developer';
+
+            $projectMap = [
+                'Frontend Developer' => ['LC Studio Rebuild', 'Portfolio Experience', 'Client-facing Interface'],
+                'Backend Developer' => ['Platform Architecture', 'API Delivery', 'Data Integration'],
+                'UI/UX Designer' => ['Brand Direction', 'Experience Design', 'Digital Prototypes'],
+                'Full-Stack Developer' => ['LC Studio Rebuild', 'System Build', 'Full Delivery Flow'],
+                'Project Lead' => ['Team Coordination', 'Delivery Planning', 'Launch Support'],
+            ];
+
+            $projects = $projectMap[$role] ?? ['LC Studio Rebuild', 'Project Delivery', 'Collaborative Build'];
 
             return [
                 'id' => (int) $row['id'],
                 'first' => $name[0] ?? '',
                 'last' => $name[1] ?? '',
-                'role' => $row['title'] ?: 'Developer',
+                'role' => $role,
                 'contribution' => $cohort !== '' ? "Cohort {$cohort}" : '',
+                'projects' => $projects,
                 'image' => cacheBustedImageUrl($row['avatar_url'] ?: ($row['profile_image_url'] ?: '')),
                 'profileImage' => cacheBustedImageUrl($row['profile_image_url'] ?: ($row['avatar_url'] ?: '')),
                 'cv' => $row['cv_link'] ?: '#',

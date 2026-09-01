@@ -205,6 +205,13 @@ class TraineeController {
             if ($item === '' || !in_array($item, $allowed, true)) continue;
             if (!in_array($item, $values, true)) $values[] = $item;
         }
+
+        $hasEmployed = in_array('employed', $values, true);
+        $hasOpportunities = in_array('opportunities', $values, true);
+        if ($hasEmployed && $hasOpportunities) {
+            $values = array_values(array_filter($values, fn($status) => $status !== 'opportunities'));
+        }
+
         return $values;
     }
     private function removeStoredImages($id, $keep = []) {

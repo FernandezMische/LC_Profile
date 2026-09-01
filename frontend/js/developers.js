@@ -37,28 +37,43 @@
         });
     }
 
+    function getProjectList(developer) {
+        if (Array.isArray(developer.projects) && developer.projects.length) return developer.projects;
+        return ["LC Studio Rebuild", "Project Delivery", "Collaborative Build"];
+    }
+
     function render(items) {
         loading.style.display = "none";
         emptyState.hidden = items.length !== 0;
-        grid.innerHTML = items.map((developer) => `
-            <article class="trainee-card" data-id="${developer.id}">
-                <div class="card-image">
-                    <img class="card-portrait card-portrait-grid" src="${developer.image}" alt="Illustrated portrait of ${developer.first} ${developer.last}">
-                    <img class="card-portrait card-portrait-hover" src="${developer.profileImage || developer.image}" alt="Photo of ${developer.first} ${developer.last}">
-                </div>
-                <div class="card-details">
-                    <h2 class="card-name">${developer.first}<br>${developer.last}</h2>
-                    <span class="trainee-role">${developer.role}</span>
-                    <span class="developer-card-description">${developer.contribution}</span>
-                    <button class="view-profile-btn" data-id="${developer.id}">View Profile <i class="fa-solid fa-arrow-right"></i></button>
-                </div>
-            </article>
-        `).join("");
+        grid.innerHTML = items.map((developer) => {
+            const projects = getProjectList(developer).slice(0, 3);
+            return `
+                <article class="trainee-card" data-id="${developer.id}">
+                    <div class="card-image">
+                        <img class="card-portrait card-portrait-grid" src="${developer.image}" alt="Illustrated portrait of ${developer.first} ${developer.last}">
+                        <img class="card-portrait card-portrait-hover" src="${developer.profileImage || developer.image}" alt="Photo of ${developer.first} ${developer.last}">
+                    </div>
+                    <div class="card-details">
+                        <h2 class="card-name">${developer.first}<br>${developer.last}</h2>
+                        <span class="trainee-role">${developer.role}</span>
+                        <span class="developer-card-description">${developer.contribution}</span>
+                        <div class="developer-projects" aria-label="Projects worked on by ${developer.first} ${developer.last}">
+                            <span class="developer-projects-label">Projects</span>
+                            <ul class="developer-project-list">
+                                ${projects.map((project) => `<li>${project}</li>`).join("")}
+                            </ul>
+                        </div>
+                        <button class="view-profile-btn" data-id="${developer.id}">View Profile <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                </article>
+            `;
+        }).join("");
     }
 
     function openProfile(id) {
         const developer = developers.find((item) => String(item.id) === String(id));
         if (!developer) return;
+        const projects = getProjectList(developer);
         document.documentElement.style.overflow = "hidden";
         document.body.style.overflow = "hidden";
         document.getElementById("modalPortrait").src = developer.profileImage || developer.image;
@@ -66,6 +81,7 @@
         document.getElementById("modalName").innerHTML = `${developer.first}<br><span>${developer.last}</span>`;
         document.getElementById("modalRole").textContent = developer.role;
         document.getElementById("modalCohort").textContent = developer.contribution;
+        document.getElementById("modalProjects").innerHTML = projects.map((project) => `<li>${project}</li>`).join("");
         document.getElementById("linkedinLink").href = developer.linkedin;
         document.getElementById("githubLink").href = developer.github;
         document.getElementById("portfolioLink").href = developer.portfolio;
