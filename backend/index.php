@@ -1,6 +1,7 @@
 <?php
 error_reporting(E_ALL);
-ini_set('display_errors', '0');
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
 
 // Allow image uploads without HTTP 413 errors.
 // .htaccess applies the same limits when Apache handles the request.
@@ -8,7 +9,7 @@ ini_set('post_max_size', '32M');
 ini_set('upload_max_filesize', '16M');
 ini_set('max_execution_time', '60');
 ini_set('max_input_time', '60');
-ini_set('memory_limit', '128M');
+ini_set('memory_limit', '256M');
 
 header("Content-Type: application/json");
 header('Cache-Control: no-store, max-age=0');
