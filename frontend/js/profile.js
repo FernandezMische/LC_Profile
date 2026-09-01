@@ -460,19 +460,24 @@
             var html = '';
             paginated.forEach(function (t) {
                 var statusValues = parseStatusValues(t.status || (t.employed ? 'employed' : 'freelance'));
-                var statusValue = statusValues[0] || 'freelance';
-                var statusClass = 'status-' + statusValue;
-                var statusText = getStatusLabels(statusValues).join(', ') || 'Available to Freelance';
+                var avatarUrl = t.avatar || t.image || '';
+                var profileImageUrl = t.profileImage || t.avatar || t.image || '';
                 var initials = getInitials(t.name);
                 var displayName = displayValue(t.name);
                 var displayTitle = displayValue(t.title);
+                var statusHtml = statusValues.length ? statusValues.map(function (status) {
+                    return '<span class="status-badge status-' + status + '">' +
+                        '<span class="status-dot ' + status + '"></span>' +
+                        (getStatusLabels([status])[0] || 'Available to Freelance') +
+                        '</span>';
+                }).join(' ') : '<span class="status-badge status-freelance"><span class="status-dot freelance"></span>Available to Freelance</span>';
 
                 // Generate avatar from initials (no external images)
                 var avatarHtml = '<span class="trainee-avatar-fallback" style="display:flex;">' + initials + '</span>';
 
                 // If avatar exists in data, use it, but fallback to initials
-                if (t.avatar) {
-                    avatarHtml = '<img src="' + t.avatar + '" alt="' + t.name + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'" />' +
+                if (avatarUrl) {
+                    avatarHtml = '<img src="' + avatarUrl + '" alt="' + t.name + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'" />' +
                                  '<span class="trainee-avatar-fallback" style="display:none;">' + initials + '</span>';
                 }
 
@@ -483,9 +488,7 @@
                     '</div></td>' +
                     '<td data-label="Title">' + displayTitle + '</td>' +
                     '<td data-label="Cohort">' + formatCohort(t.cohort) + '</td>' +
-                    '<td data-label="Status"><span class="status-badge ' + statusClass + '">' +
-                    '<span class="status-dot ' + statusValue + '"></span>' +
-                    statusText + '</span></td>' +
+                    '<td data-label="Status">' + statusHtml + '</td>' +
                     '<td>' +
                     '<button class="action-btn" data-action="edit" data-id="' + t.id + '" title="Edit"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil" aria-hidden="true"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg></button>' +
                     '<button class="action-btn danger" data-action="delete" data-id="' + t.id + '" title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2" aria-hidden="true"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>' +
@@ -639,8 +642,8 @@
         });
         syncModalStatusSelection('edit');
 
-        editAvatarDataUrl = trainee.avatar || '';
-        editProfileImageDataUrl = trainee.profileImage || trainee.avatar || '';
+        editAvatarDataUrl = trainee.avatar || trainee.image || '';
+        editProfileImageDataUrl = trainee.profileImage || trainee.avatar || trainee.image || '';
         editAvatarChanged = false;
         editProfileImageChanged = false;
         if (editImagePreview && editAvatarDataUrl) {
@@ -697,18 +700,12 @@
         var links = { cvLink: normalizeLink(editCvLink.value), portfolioLink: normalizeLink(editPortfolioLink.value), linkedIn: normalizeLink(editLinkedIn.value), github: normalizeLink(editGithub.value) };
         if (!linksAreValid(links)) { showToast('Links are not valid. Please check each URL.', 'error'); return; }
         api('trainee-update-details', 'POST', updatedTrainee, 'Profile details could not be saved.').then(function () {
-            var imageForm = new FormData();
-            imageForm.append('id', id);
-            if (editAvatarChanged) imageForm.append('avatar', editAvatarDataUrl);
-            if (editProfileImageChanged) imageForm.append('profileImage', editProfileImageDataUrl);
-            // Send both changed images in ONE request. Two parallel per-image
-            // requests previously raced: each request's cleanup deleted the
-            // other image's freshly saved file, leaving 404s for IDs 50-52.
-            var imageRequests = [];
-            if (editAvatarChanged || editProfileImageChanged) {
-                imageRequests.push(api('trainee-update-images', 'POST', imageForm, 'Image file too large.'));
-            }
-            return Promise.all(imageRequests);
+            if (!editAvatarChanged && !editProfileImageChanged) return null;
+            var imageUpload = new FormData();
+            imageUpload.append('id', id);
+            if (editAvatarChanged) imageUpload.append('avatar', editAvatarDataUrl);
+            if (editProfileImageChanged) imageUpload.append('profileImage', editProfileImageDataUrl);
+            return api('trainee-update-images', 'POST', imageUpload, 'One of the image files is too large.');
         }).then(function () {
             return api('trainee-update-links', 'POST', { id: id, cvLink: links.cvLink, portfolioLink: links.portfolioLink, linkedIn: links.linkedIn, github: links.github }, 'Links could not be saved. Please check that the links are valid.');
         }).then(function () {
@@ -716,8 +713,8 @@
         }).catch(function (error) { showToast(error.message || 'Could not update trainee.', 'error'); });
     }
 
-    function traineeAvatar(id) { var trainee = findTraineeById(id); return trainee ? trainee.avatar || '' : ''; }
-    function traineeProfileImage(id) { var trainee = findTraineeById(id); return trainee ? trainee.profileImage || trainee.avatar || '' : ''; }
+    function traineeAvatar(id) { var trainee = findTraineeById(id); return trainee ? (trainee.avatar || trainee.image || '') : ''; }
+    function traineeProfileImage(id) { var trainee = findTraineeById(id); return trainee ? (trainee.profileImage || trainee.avatar || trainee.image || '') : ''; }
 
     function setImagePreview(previewEl, areaEl, dataUrl) {
         if (!previewEl || !areaEl) return;

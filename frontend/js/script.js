@@ -84,6 +84,34 @@
         return String(n).padStart(2, "0");
     };
 
+    // Helper function to generate status badges
+    function getStatusBadges(statusString) {
+        const statusMap = {
+            'freelance': { label: 'Available to Freelance', class: 'status-freelance' },
+            'opportunities': { label: 'Open to Opportunities', class: 'status-opportunities' },
+            'employed': { label: 'Currently Employed', class: 'status-employed' }
+        };
+
+        let statuses = [];
+        if (statusString) {
+            statuses = String(statusString)
+                .split(/[|,]/)
+                .map(s => s.trim().toLowerCase())
+                .filter(s => statusMap[s]);
+        }
+
+        let badgesHtml = '';
+        if (statuses.length === 0) {
+            badgesHtml = '<span class="status-badge status-not-employed">Unemployed</span>';
+        } else {
+            badgesHtml = statuses.map(s => 
+                `<span class="status-badge ${statusMap[s].class}">${statusMap[s].label}</span>`
+            ).join('');
+        }
+
+        return `<div class="card-statuses">${badgesHtml}</div>`;
+    }
+
     const grid = document.getElementById("traineeGrid");
     const search = document.getElementById("searchInput");
     const sortSelect = document.getElementById("sortSelect");
@@ -158,6 +186,7 @@
 
         emptyState.hidden = true;
 
+        // UPDATED render function to include status badges
         grid.innerHTML = items.map((t) => {
             const images = imagesFor(t);
 
@@ -183,6 +212,8 @@
                 <span class="cohort">
                     COHORT ${formatCohort(t.cohort)}
                 </span>
+
+                ${getStatusBadges(t.status)}
 
                 <button
                     class="view-profile-btn"
