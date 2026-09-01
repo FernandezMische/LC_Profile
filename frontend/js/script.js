@@ -97,17 +97,16 @@
             statuses = String(statusString)
                 .split(/[|,]/)
                 .map(s => s.trim().toLowerCase())
-                .filter(s => statusMap[s]);
+                .filter(s => s && s !== 'unemployed' && statusMap[s]);
         }
 
-        let badgesHtml = '';
         if (statuses.length === 0) {
-            badgesHtml = '<span class="status-badge status-not-employed">Unemployed</span>';
-        } else {
-            badgesHtml = statuses.map(s => 
-                `<span class="status-badge ${statusMap[s].class}">${statusMap[s].label}</span>`
-            ).join('');
+            statuses = ['freelance'];
         }
+
+        const badgesHtml = statuses.map(s => 
+            `<span class="status-badge ${statusMap[s].class}">${statusMap[s].label}</span>`
+        ).join('');
 
         return `<div class="card-statuses">${badgesHtml}</div>`;
     }

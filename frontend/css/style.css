@@ -1073,30 +1073,6 @@ h3 {
 
 }
 
-/* NEW: Card Status Badges */
-.card-statuses {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 10px;
-}
-
-.status-badge {
-    display: inline-block;
-    font-size: 11px;
-    line-height: 1.4;
-    padding: 2px 6px;
-    border-radius: 4px;
-    border: 1px solid currentColor;
-    color: #fff; /* Default color for dark mode */
-}
-
-/* Light mode status colors */
-body[data-theme="light"] .status-badge.status-freelance { color: #2563eb; }
-body[data-theme="light"] .status-badge.status-opportunities { color: #7c3aed; }
-body[data-theme="light"] .status-badge.status-employed { color: #15803d; }
-body[data-theme="light"] .status-badge.status-not-employed { color: #c2410c; }
-
 /* ==========================
    BUTTON
 ========================== */
@@ -2490,20 +2466,6 @@ body[data-theme="light"] .cohort {
 
     color: #777;
 
-}
-
-/* NEW: Light mode status badge colors */
-body[data-theme="light"] .status-badge.status-freelance {
-    color: #2563eb;
-}
-body[data-theme="light"] .status-badge.status-opportunities {
-    color: #7c3aed;
-}
-body[data-theme="light"] .status-badge.status-employed {
-    color: #15803d;
-}
-body[data-theme="light"] .status-badge.status-not-employed {
-    color: #c2410c;
 }
 
 body[data-theme="light"] .view-profile-btn:hover {

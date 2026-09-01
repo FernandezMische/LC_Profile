@@ -310,7 +310,7 @@
         var raw = Array.isArray(values) ? values : parseStatusValues(values);
         raw.forEach(function (entry) {
             var item = String(entry || '').trim().toLowerCase();
-            if (!item || allowed.indexOf(item) === -1) return;
+            if (!item || item === 'unemployed' || allowed.indexOf(item) === -1) return;
             if (normalized.indexOf(item) === -1) normalized.push(item);
         });
 
@@ -329,7 +329,7 @@
         var raw = Array.isArray(value) ? value : String(value || '').split(/[|,]/);
         raw.forEach(function (entry) {
             var item = String(entry || '').trim().toLowerCase();
-            if (!item || allowed.indexOf(item) === -1) return;
+            if (!item || item === 'unemployed' || allowed.indexOf(item) === -1) return;
             if (values.indexOf(item) === -1) values.push(item);
         });
         return normalizeStatusSet(values);
@@ -458,12 +458,18 @@
 
     function updateStats() {
         var total = trainees.length;
-        var employed = trainees.filter(function (t) { return t.employed; }).length;
-        var notEmployed = total - employed;
+        var employed = trainees.filter(function (t) {
+            var statuses = parseStatusValues(t.status || (t.employed ? 'employed' : 'freelance'));
+            return statuses.indexOf('employed') !== -1;
+        }).length;
+        var openToWork = trainees.filter(function (t) {
+            var statuses = parseStatusValues(t.status || (t.employed ? 'employed' : 'freelance'));
+            return statuses.indexOf('freelance') !== -1 || statuses.indexOf('opportunities') !== -1;
+        }).length;
         var uniqueCohorts = getCohorts().length;
         if (statTotal) statTotal.textContent = total;
         if (statEmployed) statEmployed.textContent = employed;
-        if (statNotEmployed) statNotEmployed.textContent = notEmployed;
+        if (statNotEmployed) statNotEmployed.textContent = openToWork;
         if (statCohorts) statCohorts.textContent = uniqueCohorts;
     }
 
@@ -630,8 +636,8 @@
         newTrainee.append('portfolioLink', links.portfolioLink);
         newTrainee.append('linkedIn', links.linkedIn);
         newTrainee.append('github', links.github);
-        newTrainee.append('avatar', addAvatarDataUrl);
-        newTrainee.append('profileImage', addProfileImageDataUrl);
+        newTrainee.append('avatar', dataUrlToFile(addAvatarDataUrl, 'avatar.png'));
+        newTrainee.append('profileImage', dataUrlToFile(addProfileImageDataUrl, 'profileImage.png'));
         if (!linksAreValid(links)) { showToast('Links are not valid. Please check each URL.', 'error'); return; }
         api('trainee-create', 'POST', newTrainee, 'Trainee could not be created.').then(function (result) {
             return result;
@@ -728,8 +734,8 @@
             if (!editAvatarChanged && !editProfileImageChanged) return null;
             var imageUpload = new FormData();
             imageUpload.append('id', id);
-            if (editAvatarChanged) imageUpload.append('avatar', editAvatarDataUrl);
-            if (editProfileImageChanged) imageUpload.append('profileImage', editProfileImageDataUrl);
+            if (editAvatarChanged) imageUpload.append('avatar', dataUrlToFile(editAvatarDataUrl, 'avatar.png'));
+            if (editProfileImageChanged) imageUpload.append('profileImage', dataUrlToFile(editProfileImageDataUrl, 'profileImage.png'));
             return api('trainee-update-images', 'POST', imageUpload, 'One of the image files is too large.');
         }).then(function () {
             return api('trainee-update-links', 'POST', { id: id, cvLink: links.cvLink, portfolioLink: links.portfolioLink, linkedIn: links.linkedIn, github: links.github }, 'Links could not be saved. Please check that the links are valid.');
@@ -781,6 +787,20 @@
     // ============================================================
     // IMAGE UPLOAD
     // ============================================================
+    function dataUrlToFile(dataUrl, fileName) {
+        var matches = dataUrl.match(/^data:([^;]+);base64,(.*)$/);
+        if (!matches) {
+            return new File([dataUrl], fileName, { type: 'image/png' });
+        }
+        var mimeType = matches[1] || 'image/png';
+        var binary = atob(matches[2]);
+        var bytes = new Uint8Array(binary.length);
+        for (var i = 0; i < binary.length; i++) {
+            bytes[i] = binary.charCodeAt(i);
+        }
+        return new File([bytes], fileName, { type: mimeType });
+    }
+
     function setupImageUpload(inputEl, previewEl, areaEl, callback) {
         if (!inputEl || !areaEl) return;
         areaEl.addEventListener('click', function () { inputEl.click(); });
@@ -808,7 +828,7 @@
                 if (p) p.style.display = 'none';
                 if (i) i.style.display = 'none';
                 areaEl.classList.add('is-previewing');
-                if (callback) callback(file);
+                if (callback) callback(dataUrl);
             };
             reader.readAsDataURL(file);
         });

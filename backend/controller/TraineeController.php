@@ -78,25 +78,44 @@ class TraineeController {
             throw new RuntimeException('The image upload directory is not available.');
         }
         foreach ($uploads as $key => $column) {
-            if (!isset($files[$key])) continue;
-            $file = $files[$key];
-            if ($file['error'] !== UPLOAD_ERR_OK || $file['size'] > 5 * 1024 * 1024) {
-                throw new InvalidArgumentException($key === 'avatar' ? 'Grid Illustration file is too large or invalid.' : 'Profile Photo file is too large or invalid.');
+            $dataUrl = null;
+            if (!isset($files[$key]) && isset($_POST[$key]) && is_string($_POST[$key]) && strpos($_POST[$key], 'data:') === 0) {
+                $dataUrl = $_POST[$key];
             }
-            $imageInfo = @getimagesize($file['tmp_name']);
-            $mimeTypes = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
-            $mime = $imageInfo['mime'] ?? '';
-            if (!$imageInfo || !isset($mimeTypes[$mime])) {
-                throw new InvalidArgumentException($key === 'avatar' ? 'Grid Illustration must be a JPG, PNG or WEBP image.' : 'Profile Photo must be a JPG, PNG or WEBP image.');
+            if (isset($files[$key])) {
+                $file = $files[$key];
+                if ($file['error'] !== UPLOAD_ERR_OK || $file['size'] > 5 * 1024 * 1024) {
+                    throw new InvalidArgumentException($key === 'avatar' ? 'Grid Illustration file is too large or invalid.' : 'Profile Photo file is too large or invalid.');
+                }
+                $imageInfo = @getimagesize($file['tmp_name']);
+                $mimeTypes = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+                $mime = $imageInfo['mime'] ?? '';
+                if (!$imageInfo || !isset($mimeTypes[$mime])) {
+                    throw new InvalidArgumentException($key === 'avatar' ? 'Grid Illustration must be a JPG, PNG or WEBP image.' : 'Profile Photo must be a JPG, PNG or WEBP image.');
+                }
+                $filename = (int) $id . '-' . $key . '-' . bin2hex(random_bytes(8)) . '.' . $mimeTypes[$mime];
+                $path = $directory . '/' . $filename;
+                if (!move_uploaded_file($file['tmp_name'], $path)) throw new RuntimeException('The image could not be saved.');
+                $images[$column] = '/images/trainees/' . $filename;
+                continue;
             }
-            // A new filename gives every uploaded image a new URL. Static images
-            // are intentionally cached by the server, so overwriting a fixed URL
-            // (for example, "1-avatar.jpg") would otherwise keep showing an old
-            // portrait until the browser cache expires.
-            $filename = (int) $id . '-' . $key . '-' . bin2hex(random_bytes(8)) . '.' . $mimeTypes[$mime];
-            $path = $directory . '/' . $filename;
-            if (!move_uploaded_file($file['tmp_name'], $path)) throw new RuntimeException('The image could not be saved.');
-            $images[$column] = '/images/trainees/' . $filename;
+            if ($dataUrl !== null) {
+                if (!preg_match('/^data:(image\/(jpeg|png|webp));base64,/', $dataUrl, $matches)) {
+                    throw new InvalidArgumentException($key === 'avatar' ? 'Grid Illustration must be a JPG, PNG or WEBP image.' : 'Profile Photo must be a JPG, PNG or WEBP image.');
+                }
+                $mime = $matches[1];
+                $encoded = preg_replace('/^data:.*;base64,/', '', $dataUrl);
+                $binary = base64_decode($encoded, true);
+                if ($binary === false || strlen($binary) > 5 * 1024 * 1024) {
+                    throw new InvalidArgumentException($key === 'avatar' ? 'Grid Illustration file is too large or invalid.' : 'Profile Photo file is too large or invalid.');
+                }
+                $mimeTypes = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+                $ext = $mimeTypes[$mime] ?? 'png';
+                $filename = (int) $id . '-' . $key . '-' . bin2hex(random_bytes(8)) . '.' . $ext;
+                $path = $directory . '/' . $filename;
+                if (file_put_contents($path, $binary) === false) throw new RuntimeException('The image could not be saved.');
+                $images[$column] = '/images/trainees/' . $filename;
+            }
         }
         if (count($images) === 0) throw new InvalidArgumentException('At least one image is required');
         return $images;
@@ -202,7 +221,7 @@ class TraineeController {
         $values = [];
         foreach ((array) $items as $value) {
             $item = strtolower(trim((string) $value));
-            if ($item === '' || !in_array($item, $allowed, true)) continue;
+            if ($item === '' || $item === 'unemployed' || !in_array($item, $allowed, true)) continue;
             if (!in_array($item, $values, true)) $values[] = $item;
         }
 
