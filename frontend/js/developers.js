@@ -19,6 +19,10 @@
     const emptyState = document.getElementById("emptyState");
     const modal = document.getElementById("profileModal");
     let developers = [];
+    const developerAvatars = window.developerAvatars || {};
+
+    const avatarFor = (developer) => developerAvatars[String(developer.id)] || "";
+    const profileFor = (developer) => developer.profileImage || avatarFor(developer);
 
     function setupCursor() {
         const cursor = document.querySelector(".custom-cursor");
@@ -43,8 +47,8 @@
         grid.innerHTML = items.map((developer) => `
             <article class="trainee-card" data-id="${developer.id}">
                 <div class="card-image">
-                    <img class="card-portrait card-portrait-grid" src="${developer.image}" alt="Illustrated portrait of ${developer.first} ${developer.last}">
-                    <img class="card-portrait card-portrait-hover" src="${developer.profileImage || developer.image}" alt="Photo of ${developer.first} ${developer.last}">
+                    <img class="card-portrait card-portrait-grid" src="${avatarFor(developer)}" alt="Illustrated portrait of ${developer.first} ${developer.last}">
+                    <img class="card-portrait card-portrait-hover" src="${profileFor(developer)}" alt="Photo of ${developer.first} ${developer.last}">
                 </div>
                 <div class="card-details">
                     <h2 class="card-name">${developer.first}<br>${developer.last}</h2>
@@ -61,7 +65,7 @@
         if (!developer) return;
         document.documentElement.style.overflow = "hidden";
         document.body.style.overflow = "hidden";
-        document.getElementById("modalPortrait").src = developer.profileImage || developer.image;
+        document.getElementById("modalPortrait").src = profileFor(developer);
         document.getElementById("modalPortrait").alt = `${developer.first} ${developer.last}`;
         document.getElementById("modalName").innerHTML = `${developer.first}<br><span>${developer.last}</span>`;
         document.getElementById("modalRole").textContent = developer.role;

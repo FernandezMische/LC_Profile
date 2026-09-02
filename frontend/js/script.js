@@ -287,7 +287,7 @@
         }
     }
 
-    // Wait for DOM to be fully loaded before running
+    // Wait for DOM to be fully loaded before running, AVOIDINNG NULL RESULTS
     function init() {
         loadTrainees();
     }
