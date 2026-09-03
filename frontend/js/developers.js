@@ -19,6 +19,10 @@
     const emptyState = document.getElementById("emptyState");
     const modal = document.getElementById("profileModal");
     let developers = [];
+    const developerAvatars = window.developerAvatars || {};
+
+    const avatarFor = (developer) => developerAvatars[String(developer.id)] || "";
+    const profileFor = (developer) => developer.profileImage || avatarFor(developer);
 
     function setupCursor() {
         const cursor = document.querySelector(".custom-cursor");
@@ -76,7 +80,7 @@
         const projects = getProjectList(developer);
         document.documentElement.style.overflow = "hidden";
         document.body.style.overflow = "hidden";
-        document.getElementById("modalPortrait").src = developer.profileImage || developer.image;
+        document.getElementById("modalPortrait").src = profileFor(developer);
         document.getElementById("modalPortrait").alt = `${developer.first} ${developer.last}`;
         document.getElementById("modalName").innerHTML = `${developer.first}<br><span>${developer.last}</span>`;
         document.getElementById("modalRole").textContent = developer.role;
