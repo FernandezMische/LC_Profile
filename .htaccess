@@ -1,0 +1,36 @@
+Options -Indexes
+DirectoryIndex index.php
+
+# Allow full-quality avatar uploads (base64 JSON payloads) without HTTP 413 errors.
+LimitRequestBody 33554432
+<IfModule mod_php.c>
+    php_value post_max_size 32M
+    php_value upload_max_filesize 16M
+    php_value max_execution_time 60
+    php_value max_input_time 60
+    php_value memory_limit 128M
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Do not allow the protected source files to bypass the PHP login guard.
+    RewriteRule ^frontend/html/profile\.html$ /profiles [R=302,L]
+    RewriteRule ^frontend/html/admin-management\.html$ /admin-management [R=302,L]
+
+    # Keep the public CSS and JavaScript URLs used by the clean page routes.
+    RewriteRule ^css/(.*)$ frontend/css/$1 [L]
+    RewriteRule ^js/(.*)$ frontend/js/$1 [L]
+
+    # Serve real files and folders normally (including /backend/ API requests).
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # All clean page URLs are handled by the PHP router below.
+    RewriteRule ^ index.php [L,QSA]
+</IfModule>
+
+<FilesMatch "^(?:\.env|\.gitignore)$">
+    Require all denied
+</FilesMatch>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/images/LC%20Studio%20Logo.ico" type="image/x-icon">
+    <title>Trainee Library · LC Studio</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="../css/style.css?v=999999">
+</head>
+<body class="trainees-page">
+
+    <div class="custom-cursor" aria-hidden="true"></div>
+    <div class="custom-cursor-ring" aria-hidden="true"></div>
+
+    <header class="site-header">
+        <a class="brand" href="https://lcstudiorebuild.lcstudio.co.za/home/" aria-label="LC Studio Home">
+            <img src="../../images/LC-STUDIO-HI-RES-LOGO-2023-redgrey (1).png" alt="LC Studio Logo">
+        </a>
+
+        <nav class="site-nav" aria-label="Main navigation">
+            <a href="#services" aria-label="Services"></a>
+            <a href="#profiles" aria-label="Profiles"></a>
+            <a href="#clients" aria-label="Clients"></a>
+            <a href="#partners" aria-label="Partners"></a>
+            <a href="#contact" aria-label="Contact"></a>
+        </nav>
+
+        <button id="themeToggle" class="theme-toggle" type="button" aria-pressed="false">
+            <i class="fa-solid fa-sun" aria-hidden="true"></i>
+            <span>Light Mode</span>
+        </button>
+    </header>
+
+    <main id="home">
+
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <p class="eyebrow">
+                    OUR TRAINEES
+                </p>
+
+                <h1>
+                    THE NEXT GENERATION OF
+                    <br>
+                    <span>CREATIVE</span>
+                    BUILDERS.
+                </h1>
+
+                <p class="intro">
+                    We're building more than projects. We're building people.
+                    Meet the talented interns solving real problems, growing
+                    their skills and shaping the future with us.
+                </p>
+
+                <a href="#trainees" class="hero-button">
+                    Meet our trainees
+                    <i class="fa-solid fa-arrow-down"></i>
+                </a>
+
+            </div>
+
+        </section>
+
+        <section class="trainee-section" id="trainees">
+
+            <header class="section-heading">
+
+                <div>
+
+                    <p class="eyebrow">
+                        THE PEOPLE BEHIND THE WORK
+                    </p>
+
+                    <h2>
+                        MEET OUR
+                        <span>TRAINEES.</span>
+                    </h2>
+
+                </div>
+
+                <p>
+                    Explore the talented people building their careers at LC
+                    Studio.
+                </p>
+
+            </header>
+
+            <div class="filter-row">
+
+                <label class="search-box">
+
+                    <input
+                        id="searchInput"
+                        type="search"
+                        placeholder="Search trainee..."
+                    >
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                </label>
+
+                <div class="filter-select">
+
+                    <select id="sortSelect" class="native-select" tabindex="-1" aria-hidden="true">
+                        <option value="recent">Recently Added</option>
+                        <option value="name">Name (A-Z)</option>
+                        <option value="cohort">Cohort</option>
+                    </select>
+
+                    <button class="filter-select-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+                        <span>Recently Added</span>
+                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+
+                    <div class="filter-select-menu" role="listbox" aria-label="Sort trainees">
+                        <button type="button" role="option" aria-selected="true" data-value="recent">Recently Added</button>
+                        <button type="button" role="option" data-value="name">Name (A-Z)</button>
+                        <button type="button" role="option" data-value="cohort">Cohort</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="loading" class="loading">
+                Loading trainees...
+            </div>
+
+            <section
+                id="traineeGrid"
+                class="grid">
+            </section>
+
+            <p
+                id="emptyState"
+                class="empty-state"
+                hidden>
+
+                No trainees found.
+
+            </p>
+
+        </section>
+
+    </main>
+
+    <div
+        class="modal-overlay"
+        id="profileModal"
+        aria-hidden="true">
+
+        <article
+            class="profile-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modalName"
+            tabindex="-1">
+
+            <button
+                id="modalClose"
+                class="modal-close"
+                aria-label="Close profile">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+            <div id="modalVisual" class="modal-visual">
+                <img id="modalPortrait" class="modal-portrait" alt="">
+            </div>
+
+            <div class="modal-body">
+
+                <h2 id="modalName"></h2>
+
+                <p id="modalRole"></p>
+
+                <p id="modalCohort"></p>
+
+                <div class="modal-rule"></div>
+
+                <div class="social-links">
+
+                    <a
+                        id="linkedinLink"
+                        href="#"
+                        target="_blank"
+                        aria-label="LinkedIn">
+
+                        <i class="fa-brands fa-linkedin-in"></i>
+
+                    </a>
+
+                    <a
+                        id="githubLink"
+                        href="#"
+                        target="_blank"
+                        aria-label="GitHub">
+
+                        <i class="fa-brands fa-github"></i>
+
+                    </a>
+
+                    <a
+                        id="portfolioLink"
+                        href="#"
+                        target="_blank"
+                        aria-label="Portfolio">
+
+                        <i class="fa-solid fa-globe"></i>
+
+                    </a>
+
+                </div>
+
+                <button
+                    id="modalDownload"
+                    class="modal-download">
+
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+                    View CV
+
+                </button>
+
+            </div>
+
+        </article>
+
+    </div>
+
+    <footer class="site-footer">
+
+        <img
+            src="/images/LC-STUDIO-HI-RES-LOGO-2023-redgrey%20(1).png"
+            alt="LC Studio Logo">
+
+        <span>
+            LC Studio ©2026
+        </span>
+
+        <span>
+            Official Programme of Life Choices NPO – 086-084
+        </span>
+
+        <a class="trainee-credit" href="/developers">
+            Craftfully Designed &amp; Developed By <strong class="trainee-credit-team"><span>LC</span> Studio Interns</strong>
+        </a>
+
+    </footer>
+
+    <script src="../js/script.js?v=999999"></script>
+
+</body>
+</html>

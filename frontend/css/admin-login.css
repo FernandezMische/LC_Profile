@@ -1,0 +1,423 @@
+/* ============================================================
+   BRANDON GROTESQUE FONTS
+   ============================================================ */
+@font-face {
+    font-family: 'Brandon Grotesque';
+    src: url('/fonts/brandon-grotesque-light-58a8a4b38001d.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Brandon Grotesque';
+    src: url('/fonts/brandon-grotesque-regular-italic-58a8a456c4724.otf') format('opentype');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Brandon Grotesque';
+    src: url('/fonts/brandon-grotesque-medium-italic-58a8a3c40866a.otf') format('opentype');
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Brandon Grotesque';
+    src: url('/fonts/brandon-grotesque-bold-italic-58a8a48221563.otf') format('opentype');
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Brandon Grotesque';
+    src: url('/fonts/brandon-grotesque-black-58a8a3e824392.otf') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ============================================================
+   THEME VARIABLES
+   ============================================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-page: #f0f2f5;
+    --bg-card: rgba(255, 255, 255, 0.92);
+    --text-primary: #1a1a2e;
+    --text-secondary: #4a4a6a;
+    --text-muted: #7a7a9a;
+    --input-bg: #ffffff;
+    --input-border: #d0d5dd;
+    --input-focus: #c70621;
+    --toggle-bg: #e2e8f0;
+    --link-color: #c70621;
+    --link-hover: #a0051a;
+    --overlay-color: rgba(0, 0, 0, 0.35);
+    --red: #c70621;
+    --blue: #1e525f;
+    --border-color: #d0d5dd;
+    --shadow-color: rgba(0, 0, 0, 0.10);
+}
+
+[data-theme="dark"] {
+    --bg-page: #0f1117;
+    --bg-card: rgba(22, 26, 35, 0.94);
+    --text-primary: #edf2f7;
+    --text-secondary: #b0b8c8;
+    --text-muted: #7a84a0;
+    --input-bg: #1e2430;
+    --input-border: #3a4050;
+    --toggle-bg: #2d3340;
+    --link-color: #e84a5f;
+    --link-hover: #ff6b7a;
+    --overlay-color: rgba(0, 0, 0, 0.55);
+    --border-color: #2d3340;
+    --shadow-color: rgba(0, 0, 0, 0.50);
+}
+
+html,
+body {
+    height: 100%;
+    font-family: 'Brandon Grotesque', 'Segoe UI', system-ui, sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    transition: background-color 0.35s ease, color 0.30s ease;
+}
+
+/* ============================================================
+   BACKGROUND WRAPPER – blurred
+   ============================================================ */
+.login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    background-image: url('../../images/foreshore-grey.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(8px);
+    -webkit-filter: blur(8px);
+    transform: scale(1.05);
+    z-index: 0;
+}
+
+.login-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--overlay-color);
+    z-index: 1;
+}
+
+/* ============================================================
+   LOGIN CARD – COMPACT, NO TOP LINE
+   ============================================================ */
+.login-card {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 820px;
+    background: var(--bg-card);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 20px 60px var(--shadow-color);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: background 0.35s ease, box-shadow 0.35s ease;
+}
+
+/* NO TOP LINE – removed */
+
+.card-split {
+    display: flex;
+    min-height: 340px;
+}
+
+/* ============================================================
+   LEFT PANEL – RICH, SATURATED OVERLAY
+   ============================================================ */
+.card-art {
+    width: 44%;
+    background-image: url('../../images/foreshore-grey.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.card-art::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    mix-blend-mode: multiply;
+    z-index: 1;
+}
+
+.card-art::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #c70621 0%, #1e525f 100%);
+    mix-blend-mode: overlay;
+    opacity: 1;
+    z-index: 2;
+}
+
+/* ============================================================
+   RIGHT PANEL – COMPACT
+   ============================================================ */
+.card-form {
+    width: 56%;
+    padding: 1.5rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+}
+
+/* ============================================================
+   THEME TOGGLE
+   ============================================================ */
+.theme-toggle {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 5;
+}
+
+.toggle-track {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--toggle-bg);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.30s ease, transform 0.20s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    color: var(--text-primary);
+    font-size: 0.8rem;
+}
+
+.toggle-track:hover {
+    transform: scale(1.05);
+}
+
+/* ============================================================
+   HEADER – COMPACT
+   ============================================================ */
+.brand-header {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.brand-header .lc-studio {
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    color: var(--text-primary);
+    line-height: 1.1;
+    transition: color 0.30s ease;
+}
+
+.brand-header .tagline {
+    font-size: 0.65rem;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+    margin-top: -0.1rem;
+    margin-bottom: 0.1rem;
+    transition: color 0.30s ease;
+}
+
+.brand-header .admin-sub {
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    transition: color 0.30s ease;
+}
+
+.brand-header .sub-heading {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+    transition: color 0.30s ease;
+}
+
+.brand-header .main-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: 0.1rem;
+    transition: color 0.30s ease;
+}
+
+.brand-header .description {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-top: 0.1rem;
+    line-height: 1.4;
+    transition: color 0.30s ease;
+}
+
+/* ============================================================
+   FORM ELEMENTS – COMPACT
+   ============================================================ */
+.form-input {
+    background-color: var(--input-bg) !important;
+    border-color: var(--input-border) !important;
+    color: var(--text-primary) !important;
+    transition: background 0.30s ease, border-color 0.30s ease, color 0.30s ease;
+    font-size: 0.8rem !important;
+    padding-top: 0.4rem !important;
+    padding-bottom: 0.4rem !important;
+}
+.form-input:focus {
+    border-color: var(--input-focus) !important;
+    ring-color: var(--input-focus) !important;
+}
+.form-input::placeholder {
+    color: var(--text-muted) !important;
+    opacity: 0.7;
+}
+
+.login-error {
+    color: #f51c26;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    min-height: 18px;
+    text-align: center;
+}
+
+/* ===== RED BUTTON ===== */
+.btn-primary {
+    background-color: #c70621 !important;
+    color: #ffffff !important;
+    border: 2px solid #c70621 !important;
+    transition: all 0.25s ease !important;
+    font-size: 0.85rem !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+}
+
+.btn-primary:hover {
+    background-color: #ffffff !important;
+    color: #c70621 !important;
+    border-color: #c70621 !important;
+    transform: scale(1.01);
+    box-shadow: 0 4px 20px rgba(199, 6, 33, 0.25);
+}
+
+/* ============================================================
+   OTHER UTILITY STYLES
+   ============================================================ */
+.link-accent {
+    color: var(--link-color) !important;
+    transition: color 0.25s ease;
+}
+.link-accent:hover {
+    color: var(--link-hover) !important;
+}
+
+.card-text-primary {
+    color: var(--text-primary) !important;
+}
+.card-text-secondary {
+    color: var(--text-secondary) !important;
+}
+.card-text-muted {
+    color: var(--text-muted) !important;
+}
+
+.custom-checkbox:checked {
+    background-color: var(--red) !important;
+    border-color: var(--red) !important;
+}
+.custom-checkbox:focus {
+    ring-color: var(--red) !important;
+}
+
+.divider {
+    border-color: var(--border-color) !important;
+}
+
+/* ============================================================
+   MOBILE RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+    .card-split {
+        flex-direction: column;
+        min-height: auto;
+    }
+    .card-art {
+        width: 100%;
+        min-height: 140px;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .card-form {
+        width: 100%;
+        padding: 1.25rem;
+    }
+    .brand-header .lc-studio {
+        font-size: 1.4rem;
+    }
+    .brand-header .main-title {
+        font-size: 1.2rem;
+    }
+    .brand-header .description {
+        font-size: 0.65rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-card {
+        border-radius: 1rem;
+    }
+    .card-form {
+        padding: 1rem;
+    }
+    .brand-header .lc-studio {
+        font-size: 1.2rem;
+    }
+    .brand-header .main-title {
+        font-size: 1rem;
+    }
+    .brand-header .description {
+        font-size: 0.6rem;
+    }
+    .theme-toggle {
+        top: 0.4rem;
+        right: 0.4rem;
+    }
+    .toggle-track {
+        width: 24px;
+        height: 24px;
+        font-size: 0.65rem;
+    }
+}
