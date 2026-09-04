@@ -6,7 +6,7 @@
     <link rel="icon" href="/images/LC%20Studio%20Logo.ico" type="image/x-icon">
     <title>The Developers · LC Studio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="../css/style.css?v=12">
+    <link rel="stylesheet" href="../css/style.css?v=14">
 </head>
 <body class="developers-page">
     <div class="custom-cursor" aria-hidden="true"></div>
@@ -55,25 +55,45 @@
             </button>
             <div id="modalVisual" class="modal-visual">
                 <img id="modalPortrait" class="modal-portrait" alt="">
+                <p class="modal-image-note">The people<br>behind the work.</p>
             </div>
             <div class="modal-body">
-                <h2 id="modalName"></h2>
-                <p id="modalRole"></p>
-                <p id="modalCohort" class="developer-modal-description"></p>
-                <div class="modal-projects-wrap">
-                    <p class="modal-projects-label">Projects worked on</p>
-                    <ul id="modalProjects" class="modal-projects-list"></ul>
+                <div class="modal-identity">
+                    <h2 id="modalName"></h2>
+                    <p id="modalRole"></p>
+                    <p id="modalCohort" class="developer-modal-description"></p>
+                    <div class="social-links">
+                        <a id="linkedinLink" href="#" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a id="githubLink" href="#" target="_blank" rel="noopener" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+                        <a id="portfolioLink" href="#" target="_blank" rel="noopener" aria-label="Portfolio"><i class="fa-solid fa-globe"></i></a>
+                    </div>
+                    <button id="modalDownload" class="modal-download" type="button">
+                        <i class="fa-regular fa-file-lines"></i>
+                        View CV
+                    </button>
                 </div>
-                <div class="modal-rule"></div>
-                <div class="social-links">
-                    <a id="linkedinLink" href="#" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
-                    <a id="githubLink" href="#" target="_blank" rel="noopener" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
-                    <a id="portfolioLink" href="#" target="_blank" rel="noopener" aria-label="Portfolio"><i class="fa-solid fa-globe"></i></a>
+                <div class="modal-content">
+                    <nav class="modal-tabs" aria-label="Developer profile sections">
+                        <span class="is-active">About</span>
+                        <span>Projects</span>
+                        <span>Experience</span>
+                    </nav>
+                    <section class="modal-about">
+                        <p class="modal-kicker">About me</p>
+                        <p id="modalAbout"></p>
+                    </section>
+                    <section class="modal-projects-wrap">
+                        <div class="modal-section-heading">
+                            <p class="modal-kicker">Featured projects</p>
+                            <span>Selected work <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                        <ul id="modalProjects" class="modal-projects-list"></ul>
+                    </section>
+                    <section class="modal-skills-wrap">
+                        <p class="modal-kicker">Focus areas</p>
+                        <div id="modalSkills" class="modal-skills"></div>
+                    </section>
                 </div>
-                <button id="modalDownload" class="modal-download" type="button">
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                    View CV
-                </button>
             </div>
         </article>
     </div>
@@ -93,6 +113,6 @@
             zahraa: "/images/zahraa_animation_blue.jpg"
         };
     </script>
-    <script src="../js/developers.js?v=3"></script>
+    <script src="../js/developers.js?v=5"></script>
 </body>
 </html>

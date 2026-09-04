@@ -49,6 +49,20 @@
         return ["LC Studio Rebuild", "Project Delivery", "Collaborative Build"];
     }
 
+    function profileSummary(developer) {
+        const name = `${developer.first} ${developer.last}`.trim();
+        return `${name} is a ${developer.role || "developer"} contributing to the LC Studio Rebuild. Their work combines thoughtful collaboration, practical problem-solving, and a focus on creating clear, people-centred digital experiences.`;
+    }
+
+    function focusAreas(developer) {
+        const role = String(developer.role || "").toLowerCase();
+        if (role.includes("ui") || role.includes("design")) return ["UI/UX design", "Prototyping", "Design systems"];
+        if (role.includes("backend")) return ["APIs", "Data systems", "Architecture"];
+        if (role.includes("project")) return ["Team delivery", "Planning", "Collaboration"];
+        if (role.includes("front")) return ["Interfaces", "JavaScript", "Responsive UI"];
+        return ["Full-stack build", "Problem solving", "Collaboration"];
+    }
+
     function render(items) {
         loading.style.display = "none";
         emptyState.hidden = items.length !== 0;
@@ -85,12 +99,21 @@
         const projects = getProjectList(developer);
         document.documentElement.style.overflow = "hidden";
         document.body.style.overflow = "hidden";
-        document.getElementById("modalPortrait").src = profileFor(developer);
-        document.getElementById("modalPortrait").alt = `${developer.first} ${developer.last}`;
+        const modalPortrait = document.getElementById("modalPortrait");
+        modalPortrait.onerror = () => {
+            // Uploaded photos may be absent locally; retain a complete card by
+            // falling back to the developer's supplied illustration.
+            modalPortrait.onerror = null;
+            modalPortrait.src = avatarFor(developer);
+        };
+        modalPortrait.src = profileFor(developer);
+        modalPortrait.alt = `${developer.first} ${developer.last}`;
         document.getElementById("modalName").innerHTML = `${developer.first}<br><span>${developer.last}</span>`;
         document.getElementById("modalRole").textContent = developer.role;
         document.getElementById("modalCohort").textContent = developer.contribution;
-        document.getElementById("modalProjects").innerHTML = projects.map((project) => `<li>${project}</li>`).join("");
+        document.getElementById("modalAbout").textContent = profileSummary(developer);
+        document.getElementById("modalProjects").innerHTML = projects.map((project, index) => `<li><span class="project-number">0${index + 1}</span><span>${project}</span><i class="fa-solid fa-arrow-up-right-from-square"></i></li>`).join("");
+        document.getElementById("modalSkills").innerHTML = focusAreas(developer).map((skill) => `<span>${skill}</span>`).join("");
         document.getElementById("linkedinLink").href = developer.linkedin;
         document.getElementById("githubLink").href = developer.github;
         document.getElementById("portfolioLink").href = developer.portfolio;
