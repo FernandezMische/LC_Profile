@@ -21,8 +21,11 @@
     let developers = [];
     const developerAvatars = window.developerAvatars || {};
 
-    const avatarFor = (developer) => developerAvatars[String(developer.id)] || "";
-    const profileFor = (developer) => developer.profileImage || avatarFor(developer);
+    const avatarFor = (developer) => {
+        const firstName = String(developer.first || "").trim().toLowerCase();
+        return developerAvatars[firstName] || "";
+    };
+    const profileFor = (developer) => developer.profileImage || developer.image || avatarFor(developer);
 
     function setupCursor() {
         const cursor = document.querySelector(".custom-cursor");
@@ -51,11 +54,13 @@
         emptyState.hidden = items.length !== 0;
         grid.innerHTML = items.map((developer) => {
             const projects = getProjectList(developer).slice(0, 3);
+            const blueImage = avatarFor(developer);
+            const profileImage = profileFor(developer);
             return `
                 <article class="trainee-card" data-id="${developer.id}">
                     <div class="card-image">
-                        <img class="card-portrait card-portrait-grid" src="${developer.image}" alt="Illustrated portrait of ${developer.first} ${developer.last}">
-                        <img class="card-portrait card-portrait-hover" src="${developer.profileImage || developer.image}" alt="Photo of ${developer.first} ${developer.last}">
+                        <img class="card-portrait card-portrait-grid" src="${blueImage}" alt="Illustrated portrait of ${developer.first} ${developer.last}">
+                        <img class="card-portrait card-portrait-hover" src="${profileImage}" alt="Photo of ${developer.first} ${developer.last}">
                     </div>
                     <div class="card-details">
                         <h2 class="card-name">${developer.first}<br>${developer.last}</h2>

@@ -79,14 +79,6 @@
                 .filter(s => s && s !== 'unemployed' && statusMap[s]);
         }
 
-        if (statuses.length === 0) {
-            badgesHtml = '<span class="status-badge status-not-employed">Unemployed</span>';
-        } else {
-            badgesHtml = statuses.map(s => 
-                `<span class="status-badge ${statusMap[s].class}">${statusMap[s].label}</span>`
-            ).join('');
-        }
-
         const badgesHtml = statuses.map(s => 
             `<span class="status-badge ${statusMap[s].class}">${statusMap[s].label}</span>`
         ).join('');

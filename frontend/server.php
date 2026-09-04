@@ -60,10 +60,12 @@ if ($uri === '/info.php') {
 //    Map clean URLs to the actual HTML files in frontend/html/
 // ──────────────────────────────────────────────────────────────
 $htmlPages = [
-    '/'                  => '/frontend/html/profile-view.html',
-    '/index.html'        => '/frontend/html/profile-view.html',
-    '/profile-view.html' => '/frontend/html/profile-view.html',
-    '/profile-view'      => '/frontend/html/profile-view.html',
+    '/'                  => '/frontend/html/trainees.html',
+    '/index.html'        => '/frontend/html/trainees.html',
+    '/profile-view.html' => '/frontend/html/trainees.html',
+    '/profile-view'      => '/frontend/html/trainees.html',
+    '/trainees.html'     => '/frontend/html/trainees.html',
+    '/trainees'          => '/frontend/html/trainees.html',
     '/developers.html'   => '/frontend/html/developers.html',
     '/developers'        => '/frontend/html/developers.html',
     '/profile.html'      => '/frontend/html/profile.html',

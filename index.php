@@ -24,7 +24,7 @@ if (in_array($uri, $protectedPages, true) || in_array($uri, $loginPages, true)) 
 }
 
 $htmlPages = [
-    '/' => '/frontend/html/profile-view.html',
+    '/' => '/frontend/html/trainees.html',
     '/profile.html' => '/frontend/html/profile.html',
     '/profiles' => '/frontend/html/profile.html',
     '/admin-login.html' => '/frontend/html/admin-login.html',
@@ -32,12 +32,14 @@ $htmlPages = [
     '/admin-management.html' => '/frontend/html/admin-management.html',
     '/admin-management' => '/frontend/html/admin-management.html',
     // Public profile view. This is intentionally outside the admin guard.
-    '/profile-view.html' => '/frontend/html/profile-view.html',
-    '/profile-view' => '/frontend/html/profile-view.html',
+    '/profile-view.html' => '/frontend/html/trainees.html',
+    '/profile-view' => '/frontend/html/trainees.html',
+    '/trainees.html' => '/frontend/html/trainees.html',
+    '/trainees' => '/frontend/html/trainees.html',
     '/developers.html' => '/frontend/html/developers.html',
     '/developers' => '/frontend/html/developers.html',
-    '/home' => '/frontend/html/profile-view.html',
-    '/home.html' => '/frontend/html/profile-view.html',
+    '/home' => '/frontend/html/trainees.html',
+    '/home.html' => '/frontend/html/trainees.html',
 ];
 
 if (isset($htmlPages[$uri])) {
