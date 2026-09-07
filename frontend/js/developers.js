@@ -18,6 +18,10 @@
     const loading = document.getElementById("loading");
     const emptyState = document.getElementById("emptyState");
     const modal = document.getElementById("profileModal");
+    const selectedWorkButton = document.getElementById("selectedWorkButton");
+    const projectsDrawer = document.getElementById("projectsDrawer");
+    const projectsDrawerClose = document.getElementById("projectsDrawerClose");
+    const projectsDrawerList = document.getElementById("projectsDrawerList");
     let developers = [];
     const developerAvatars = window.developerAvatars || {};
 
@@ -113,6 +117,7 @@
         document.getElementById("modalCohort").textContent = developer.contribution;
         document.getElementById("modalAbout").textContent = profileSummary(developer);
         document.getElementById("modalProjects").innerHTML = projects.map((project, index) => `<li><span class="project-number">0${index + 1}</span><span>${project}</span><i class="fa-solid fa-arrow-up-right-from-square"></i></li>`).join("");
+        projectsDrawerList.innerHTML = projects.map((project, index) => `<li><span class="project-number">0${index + 1}</span><span>${project}</span></li>`).join("");
         document.getElementById("modalSkills").innerHTML = focusAreas(developer).map((skill) => `<span>${skill}</span>`).join("");
         document.getElementById("linkedinLink").href = developer.linkedin;
         document.getElementById("githubLink").href = developer.github;
@@ -123,13 +128,25 @@
         };
         modal.classList.add("show");
         modal.setAttribute("aria-hidden", "false");
+        closeProjectsDrawer();
     }
 
     function closeProfile() {
+        closeProjectsDrawer();
         modal.classList.remove("show");
         modal.setAttribute("aria-hidden", "true");
         document.documentElement.style.overflow = "";
         document.body.style.overflow = "";
+    }
+
+    function openProjectsDrawer() {
+        projectsDrawer.setAttribute("aria-hidden", "false");
+        selectedWorkButton.setAttribute("aria-expanded", "true");
+    }
+
+    function closeProjectsDrawer() {
+        projectsDrawer.setAttribute("aria-hidden", "true");
+        selectedWorkButton.setAttribute("aria-expanded", "false");
     }
 
     grid.addEventListener("click", (event) => {
@@ -137,8 +154,14 @@
         if (button) openProfile(button.dataset.id);
     });
     document.getElementById("modalClose").addEventListener("click", closeProfile);
+    selectedWorkButton.addEventListener("click", openProjectsDrawer);
+    projectsDrawerClose.addEventListener("click", closeProjectsDrawer);
     modal.addEventListener("click", (event) => { if (event.target === modal) closeProfile(); });
-    document.addEventListener("keydown", (event) => { if (event.key === "Escape") closeProfile(); });
+    document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (projectsDrawer.getAttribute("aria-hidden") === "false") closeProjectsDrawer();
+        else closeProfile();
+    });
 
     async function loadDevelopers() {
         try {

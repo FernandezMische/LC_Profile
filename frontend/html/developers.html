@@ -36,12 +36,6 @@
         </section>
 
         <section class="trainee-section developer-section" id="developers">
-            <header class="section-heading">
-                <div>
-                    <p class="eyebrow">THE TEAM BEHIND THE EXPERIENCE</p>
-                </div>
-                <p>Discover what each collaborator brought to the project.</p>
-            </header>
             <div id="loading" class="loading">Loading developers...</div>
             <section id="developerGrid" class="grid"></section>
             <p id="emptyState" class="empty-state" hidden>No developers found.</p>
@@ -49,15 +43,15 @@
     </main>
 
     <div class="modal-overlay" id="profileModal" aria-hidden="true">
-        <article class="profile-modal" role="dialog" aria-modal="true" aria-labelledby="modalName" tabindex="-1">
-            <button id="modalClose" class="modal-close" aria-label="Close developer profile">
+        <div class="developer-modal-shell">
+            <button id="modalClose" class="modal-close" aria-label="Close developer profile" type="button">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-            <div id="modalVisual" class="modal-visual">
+            <article class="profile-modal" role="dialog" aria-modal="true" aria-labelledby="modalName" tabindex="-1">
+                <div id="modalVisual" class="modal-visual">
                 <img id="modalPortrait" class="modal-portrait" alt="">
-                <p class="modal-image-note">The people<br>behind the work.</p>
-            </div>
-            <div class="modal-body">
+                </div>
+                <div class="modal-body">
                 <div class="modal-identity">
                     <h2 id="modalName"></h2>
                     <p id="modalRole"></p>
@@ -73,11 +67,6 @@
                     </button>
                 </div>
                 <div class="modal-content">
-                    <nav class="modal-tabs" aria-label="Developer profile sections">
-                        <span class="is-active">About</span>
-                        <span>Projects</span>
-                        <span>Experience</span>
-                    </nav>
                     <section class="modal-about">
                         <p class="modal-kicker">About me</p>
                         <p id="modalAbout"></p>
@@ -85,7 +74,9 @@
                     <section class="modal-projects-wrap">
                         <div class="modal-section-heading">
                             <p class="modal-kicker">Featured projects</p>
-                            <span>Selected work <i class="fa-solid fa-arrow-right"></i></span>
+                            <button id="selectedWorkButton" class="selected-work-button" type="button" aria-expanded="false" aria-controls="projectsDrawer">
+                                Selected work <i class="fa-solid fa-arrow-right"></i>
+                            </button>
                         </div>
                         <ul id="modalProjects" class="modal-projects-list"></ul>
                     </section>
@@ -94,8 +85,17 @@
                         <div id="modalSkills" class="modal-skills"></div>
                     </section>
                 </div>
-            </div>
-        </article>
+                </div>
+            </article>
+            <aside id="projectsDrawer" class="projects-drawer" aria-hidden="true" aria-labelledby="projectsDrawerTitle">
+                <button id="projectsDrawerClose" class="projects-drawer-close" type="button" aria-label="Close selected work">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <p class="modal-kicker">Selected work</p>
+                <h2 id="projectsDrawerTitle">Projects worked on</h2>
+                <ul id="projectsDrawerList" class="modal-projects-list"></ul>
+            </aside>
+        </div>
     </div>
 
     <footer class="site-footer">
