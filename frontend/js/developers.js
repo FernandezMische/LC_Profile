@@ -49,8 +49,29 @@
     }
 
     function getProjectList(developer) {
-        if (Array.isArray(developer.projects) && developer.projects.length) return developer.projects;
-        return ["LC Studio Rebuild", "Project Delivery", "Collaborative Build"];
+        const projects = Array.isArray(developer.projects) && developer.projects.length
+            ? [...developer.projects]
+            : ["LC Studio Rebuild", "Project Delivery", "Collaborative Build"];
+        const firstName = String(developer.first || "").trim().toLowerCase();
+        if ((firstName === "nina" || firstName === "phoenix") && !projects.includes("LIFE CHOICES CHRONICLE BLOG")) {
+            projects.push("LIFE CHOICES CHRONICLE BLOG");
+        }
+        return projects;
+    }
+
+    function projectUrl(developer, project) {
+        const firstName = String(developer.first || "").trim().toLowerCase();
+        if ((firstName === "nina" || firstName === "phoenix") && project === "LIFE CHOICES CHRONICLE BLOG") {
+            return "https://chronicle.lifechoices.co.za";
+        }
+        return "";
+    }
+
+    function projectContent(developer, project) {
+        const url = projectUrl(developer, project);
+        return url
+            ? `<a href="${url}" target="_blank" rel="noopener">${project}</a>`
+            : project;
     }
 
     function profileSummary(developer) {
@@ -71,7 +92,7 @@
         loading.style.display = "none";
         emptyState.hidden = items.length !== 0;
         grid.innerHTML = items.map((developer) => {
-            const projects = getProjectList(developer).slice(0, 3);
+            const projects = getProjectList(developer);
             const blueImage = avatarFor(developer);
             const profileImage = profileFor(developer);
             return `
@@ -87,7 +108,7 @@
                         <div class="developer-projects" aria-label="Projects worked on by ${developer.first} ${developer.last}">
                             <span class="developer-projects-label">Projects</span>
                             <ul class="developer-project-list">
-                                ${projects.map((project) => `<li>${project}</li>`).join("")}
+                                ${projects.map((project) => `<li>${projectContent(developer, project)}</li>`).join("")}
                             </ul>
                         </div>
                         <button class="view-profile-btn" data-id="${developer.id}">View Profile <i class="fa-solid fa-arrow-right"></i></button>
@@ -116,7 +137,7 @@
         document.getElementById("modalRole").textContent = developer.role;
         document.getElementById("modalCohort").textContent = developer.contribution;
         document.getElementById("modalAbout").textContent = profileSummary(developer);
-        document.getElementById("modalProjects").innerHTML = projects.map((project, index) => `<li><span class="project-number">0${index + 1}</span><span>${project}</span><i class="fa-solid fa-arrow-up-right-from-square"></i></li>`).join("");
+        document.getElementById("modalProjects").innerHTML = projects.map((project, index) => `<li><span class="project-number">0${index + 1}</span><span>${projectContent(developer, project)}</span><i class="fa-solid fa-arrow-up-right-from-square"></i></li>`).join("");
         projectsDrawerList.innerHTML = projects.map((project, index) => `<li><span class="project-number">0${index + 1}</span><span>${project}</span></li>`).join("");
         document.getElementById("modalSkills").innerHTML = focusAreas(developer).map((skill) => `<span>${skill}</span>`).join("");
         document.getElementById("linkedinLink").href = developer.linkedin;
