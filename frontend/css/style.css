@@ -157,10 +157,10 @@ h3 {
 }
 
 .trainee-home-label {
-    color: #f51c26;
+    color: white;
     font-family: "Brandon", Arial, sans-serif;
-    font-size: 14px;
-    font-weight: 800;
+    font-size: 12px;
+    font-weight: 300;
     letter-spacing: .04em;
     line-height: 1;
     white-space: nowrap;
@@ -333,7 +333,7 @@ h3 {
     font-size: 16px;
     font-weight: 800;
 
-    letter-spacing: .10em;
+    letter-spacing: .04em;
 
     text-transform: uppercase;
 
@@ -905,6 +905,28 @@ h3 {
 
 }
 
+@media (min-width: 601px) {
+    .developers-page #developerGrid {
+        align-items: stretch;
+    }
+
+    .developers-page .trainee-card {
+        height: 100%;
+    }
+
+    .developers-page .card-details {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .developers-page .view-profile-btn {
+        margin-top: auto;
+        padding-top: 24px;
+        align-self: flex-start;
+    }
+}
+
 /* ==========================
    CARD
 ========================== */
@@ -1124,6 +1146,13 @@ h3 {
     text-decoration: underline;
 }
 
+body[data-theme="light"].developers-page .developer-card-description,
+body[data-theme="light"].developers-page .developer-project-list li,
+body[data-theme="light"].developers-page .developer-project-list a,
+body[data-theme="light"].developers-page .trainee-role {
+    color: #222;
+}
+
 .developer-modal-description {
     color: #d8d8d8;
     font-size: 15px;
@@ -1193,7 +1222,7 @@ body[data-theme="light"] .status-badge.status-not-employed { color: #c2410c; }
 
 .view-profile-btn {
 
-    margin-top: 18px;
+    margin-top: 24px;
 
     padding: 0;
 
@@ -2018,6 +2047,23 @@ body[data-theme="light"] .status-badge.status-not-employed { color: #c2410c; }
         padding: 12px;
     }
 
+    .developers-page .trainee-card {
+        height: auto;
+    }
+
+    .developers-page .card-image {
+        aspect-ratio: 1 / 1;
+        min-height: 0;
+    }
+
+    .developers-page .card-details {
+        flex: none;
+    }
+
+    .developers-page .view-profile-btn {
+        margin-top: 20px;
+    }
+
     .card-name {
         font-size: 20px;
     }
@@ -2738,8 +2784,8 @@ body[data-theme="light"] ::-webkit-scrollbar-track {
     display: flex;
     align-items: stretch;
     justify-content: center;
-    width: min(1120px, calc(100vw - 40px));
-    max-height: min(860px, calc(100vh - 40px));
+    width: min(900px, calc(100vw - 40px));
+    max-height: min(690px, calc(100vh - 40px));
     --drawer-width: min(340px, 32vw);
     transition: transform .35s cubic-bezier(.22,.61,.36,1);
 }
@@ -2748,12 +2794,12 @@ body[data-theme="light"] ::-webkit-scrollbar-track {
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: minmax(310px, .78fr) minmax(500px, 1.22fr);
+    grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
     width: 100%;
-    max-height: min(860px, calc(100vh - 40px));
+    max-height: min(690px, calc(100vh - 40px));
     border-radius: 22px;
     background: #0d0e0e;
-    box-shadow: 0 32px 100px rgba(0, 0, 0, .72);
+    box-shadow: none;
     place-self: center;
     margin: auto;
 }
@@ -2802,7 +2848,7 @@ body[data-theme="light"] ::-webkit-scrollbar-track {
 
 .modal-identity {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     grid-column: 1;
     grid-row: 1;
     display: flex;
@@ -2835,8 +2881,9 @@ body[data-theme="light"] ::-webkit-scrollbar-track {
 .modal-content {
     grid-column: 2;
     grid-row: 1;
+    min-width: 0;
     overflow-y: auto;
-    padding: 34px 78px 34px 32px;
+    padding: 30px 34px 30px 28px;
     border-left: 1px solid rgba(255,255,255,.1);
 }
 
@@ -2893,16 +2940,37 @@ body[data-theme="light"] ::-webkit-scrollbar-track {
 
 .developers-page .modal-projects-list { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
 .developers-page .modal-projects-list li {
-    display: grid;
-    grid-template-columns: 30px 1fr auto;
-    align-items: center;
-    gap: 10px;
+    display: block;
     padding: 13px 15px;
     border: 1px solid rgba(255,255,255,.14);
     border-radius: 8px;
     color: #eee;
     font-size: 14px;
+    min-width: 0;
 }
+.modal-project-trigger {
+    display: grid;
+    grid-template-columns: 30px 1fr auto;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+.developers-page .modal-projects-list .modal-project-trigger {
+    grid-template-columns: 30px minmax(0, 1fr) auto;
+}
+.modal-project-trigger > span:nth-child(2) { min-width: 0; }
+.modal-project-trigger > span:nth-child(2) { overflow-wrap: anywhere; }
+.modal-project-trigger > span:nth-child(2) a { pointer-events: none; }
+.modal-project-trigger i { color: #aaa; font-size: 12px; }
+.modal-project-trigger:hover,
+.modal-project-trigger:focus-visible { color: #f51c26; }
 .project-number { color: #f51c26; font-size: 11px; font-weight: 700; }
 .developers-page .modal-projects-list i { color: #aaa; font-size: 12px; }
 .modal-skills-wrap { border-bottom: 0; }
@@ -2919,9 +2987,10 @@ body[data-theme="light"] ::-webkit-scrollbar-track {
     position: absolute;
     z-index: 0;
     top: 0;
-    left: 100%;
+    left: calc(100% - 1px);
     width: var(--drawer-width);
     height: 100%;
+    max-height: 100%;
     box-sizing: border-box;
     padding: 34px 28px;
     overflow: visible;
@@ -2929,27 +2998,86 @@ body[data-theme="light"] ::-webkit-scrollbar-track {
     border-left: 0;
     border-radius: 0 22px 22px 0;
     background: #111313;
-    box-shadow: 0 24px 70px rgba(0,0,0,.55);
+    box-shadow: none;
     transform: translateX(-100%);
     transition: transform .35s cubic-bezier(.22,.61,.36,1), visibility .35s;
+}
+.projects-drawer-list {
+    display: grid;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: calc(100% - 92px);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.project-accordion-item {
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.project-accordion-trigger {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 13px;
+    border: 0;
+    background: transparent;
+    color: #eee;
+    font: inherit;
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+}
+.project-accordion-trigger > span:nth-child(2) { min-width: 0; overflow-wrap: anywhere; }
+.project-accordion-trigger:hover,
+.project-accordion-trigger:focus-visible { color: #f51c26; }
+.project-accordion-trigger[aria-expanded="true"] i { transform: rotate(180deg); }
+.project-accordion-trigger i { color: #aaa; transition: transform .2s ease; }
+.project-accordion-panel {
+    position: relative;
+    padding: 0 13px 14px 49px;
+    color: #d6d6d6;
+    font-size: 13px;
+    line-height: 1.45;
+}
+.project-accordion-panel p { margin: 0; }
+.project-focus { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 9px; }
+.project-focus span {
+    padding: 4px 7px;
+    border: 1px solid rgba(245,28,38,.4);
+    border-radius: 999px;
+    color: #f51c26;
+    font-size: 10px;
+    line-height: 1;
+}
+.project-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #f51c26;
+    font-size: 12px;
 }
 .projects-drawer::before {
     content: "";
     position: absolute;
-    z-index: -1;
+    z-index: 0;
     top: 0;
     bottom: 0;
-    left: -24px;
-    width: 24px;
+    left: -25px;
+    width: 26px;
     pointer-events: none;
     background: #111313;
-    border-top: 1px solid rgba(255,255,255,.14);
-    border-bottom: 1px solid rgba(255,255,255,.14);
+}
+.projects-drawer > * {
+    position: relative;
+    z-index: 1;
 }
 .developers-page .modal-body,
-.developers-page .modal-visual,
-.developers-page .modal-content,
-.developers-page .modal-identity { position: relative; z-index: 1; }
+.developers-page .modal-content { position: relative; z-index: 1; }
+.developers-page .modal-visual { position: relative; z-index: 1; }
 .developers-page .modal-close {
     position: absolute;
     z-index: 3;
@@ -2969,9 +3097,13 @@ body[data-theme="light"] ::-webkit-scrollbar-track {
     pointer-events: none;
 }
 .projects-drawer[aria-hidden="false"] {
+    z-index: 2;
     transform: translateX(0);
     visibility: visible;
     pointer-events: auto;
+}
+.projects-drawer[aria-hidden="false"]::before {
+    z-index: 1;
 }
 .developer-modal-shell:has(.projects-drawer[aria-hidden="false"]) {
     transform: translateX(calc(var(--drawer-width) / -2));
@@ -2988,6 +3120,50 @@ body[data-theme="light"] ::-webkit-scrollbar-track {
     background: transparent;
     color: #fff;
     cursor: pointer;
+}
+
+body[data-theme="light"].developers-page .profile-modal,
+body[data-theme="light"].developers-page .projects-drawer {
+    background: #fff;
+    color: #161616;
+}
+
+body[data-theme="light"].developers-page .modal-identity {
+    background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,.08) 25%, rgba(255,255,255,.96) 52%);
+}
+
+body[data-theme="light"].developers-page .modal-body h2,
+body[data-theme="light"].developers-page .modal-projects-list li,
+body[data-theme="light"].developers-page .project-accordion-trigger,
+body[data-theme="light"].developers-page .projects-drawer h2 {
+    color: #161616;
+}
+
+body[data-theme="light"].developers-page .modal-about p:last-child,
+body[data-theme="light"].developers-page .project-accordion-panel {
+    color: #333;
+}
+
+body[data-theme="light"].developers-page #modalRole,
+body[data-theme="light"].developers-page #modalCohort,
+body[data-theme="light"].developers-page .modal-skills span,
+body[data-theme="light"].developers-page .modal-projects-list i,
+body[data-theme="light"].developers-page .project-accordion-trigger i {
+    color: #333;
+}
+
+body[data-theme="light"].developers-page .selected-work-button:hover {
+    color: #161616;
+}
+
+body[data-theme="light"].developers-page .modal-content,
+body[data-theme="light"].developers-page .project-accordion-item {
+    border-color: #d8d8d8;
+}
+
+body[data-theme="light"].developers-page .projects-drawer::before {
+    background: #fff;
+    border-color: #d8d8d8;
 }
 
 @media (max-width: 780px) {

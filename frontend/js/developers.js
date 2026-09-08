@@ -49,11 +49,9 @@
     }
 
     function getProjectList(developer) {
-        const projects = Array.isArray(developer.projects) && developer.projects.length
-            ? [...developer.projects]
-            : ["LC Studio Rebuild", "Project Delivery", "Collaborative Build"];
         const firstName = String(developer.first || "").trim().toLowerCase();
-        if ((firstName === "nina" || firstName === "phoenix") && !projects.includes("LIFE CHOICES CHRONICLE BLOG")) {
+        const projects = ["LC STUDIO REBUILD"];
+        if (firstName === "nina" || firstName === "phoenix") {
             projects.push("LIFE CHOICES CHRONICLE BLOG");
         }
         return projects;
@@ -61,17 +59,95 @@
 
     function projectUrl(developer, project) {
         const firstName = String(developer.first || "").trim().toLowerCase();
+        if (project === "LC STUDIO REBUILD") return "https://lcstudiorebuild.lcstudio.co.za";
         if ((firstName === "nina" || firstName === "phoenix") && project === "LIFE CHOICES CHRONICLE BLOG") {
             return "https://chronicle.lifechoices.co.za";
         }
         return "";
     }
 
+    function projectDetails(developer, project) {
+        const firstName = String(developer.first || "").trim().toLowerCase();
+        const details = {
+            mische: {
+                "LC STUDIO REBUILD": {
+                    description: "Mische helped shape the structure and visual rhythm of the trainee profile experience, turning the shared idea into a clear working interface.",
+                    focus: ["Interface structure", "Visual direction", "Team delivery"]
+                }
+            },
+            nina: {
+                "LC STUDIO REBUILD": {
+                    description: "Nina contributed to the profile experience with a focus on making the content feel approachable, organised, and useful to the people visiting it.",
+                    focus: ["Content flow", "User experience", "Collaboration"]
+                },
+                "LIFE CHOICES CHRONICLE BLOG": {
+                    description: "Nina helped develop the Chronicle experience as a place for Life Choices stories, ideas, and community work to be shared online.",
+                    focus: ["Editorial design", "Content systems", "Digital storytelling"]
+                }
+            },
+            phoenix: {
+                "LC STUDIO REBUILD": {
+                    description: "Phoenix contributed to the technical build of the profile experience, helping connect the interface, data, and responsive behaviour into one working site.",
+                    focus: ["Web development", "Responsive UI", "Team delivery"]
+                },
+                "LIFE CHOICES CHRONICLE BLOG": {
+                    description: "Phoenix helped build the Chronicle experience as a practical publishing space for Life Choices stories and community voices.",
+                    focus: ["Frontend development", "Content systems", "Digital storytelling"]
+                }
+            },
+            tylor: {
+                "LC STUDIO REBUILD": {
+                    description: "Tylor contributed to the shared LC Studio build, helping turn the team’s work and capabilities into a polished profile experience.",
+                    focus: ["Frontend development", "Interaction design", "Team delivery"]
+                }
+            },
+            zahraa: {
+                "LC STUDIO REBUILD": {
+                    description: "Zahraa helped refine the LC Studio profile experience so the team’s work could be presented clearly across different screens and contexts.",
+                    focus: ["Visual design", "Responsive UI", "Collaboration"]
+                }
+            }
+        };
+        const fallback = {
+            description: "A project contributed to by the LC Studio team through research, design, development, and delivery.",
+            focus: ["Collaboration", "Problem solving", "Delivery"]
+        };
+        return {
+            name: project,
+            url: projectUrl(developer, project),
+            ...(details[firstName]?.[project] || fallback)
+        };
+    }
+
     function projectContent(developer, project) {
-        const url = projectUrl(developer, project);
-        return url
-            ? `<a href="${url}" target="_blank" rel="noopener">${project}</a>`
-            : project;
+        const details = projectDetails(developer, project);
+        return details.url
+            ? `<a href="${details.url}" target="_blank" rel="noopener">${details.name}</a>`
+            : details.name;
+    }
+
+    function projectLink(details) {
+        return details.url
+            ? `<a class="project-link" href="${details.url}" target="_blank" rel="noopener" aria-label="Open ${details.name}"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>`
+            : "";
+    }
+
+    function projectAccordion(developer, project, index) {
+        const details = projectDetails(developer, project);
+        return `
+            <li class="project-accordion-item">
+                <button class="project-accordion-trigger" type="button" aria-expanded="${index === 0}" aria-controls="project-panel-${index}">
+                    <span class="project-number">0${index + 1}</span>
+                    <span>${details.name}</span>
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                </button>
+                <div class="project-accordion-panel" id="project-panel-${index}" ${index === 0 ? "" : "hidden"}>
+                    <div class="project-focus">${details.focus.map((focus) => `<span>${focus}</span>`).join("")}</div>
+                    <p>${details.description}</p>
+                    ${projectLink(details)}
+                </div>
+            </li>
+        `;
     }
 
     function profileSummary(developer) {
@@ -92,7 +168,7 @@
         loading.style.display = "none";
         emptyState.hidden = items.length !== 0;
         grid.innerHTML = items.map((developer) => {
-            const projects = getProjectList(developer);
+            const projects = getProjectList(developer).slice(0, 3);
             const blueImage = avatarFor(developer);
             const profileImage = profileFor(developer);
             return `
@@ -137,8 +213,8 @@
         document.getElementById("modalRole").textContent = developer.role;
         document.getElementById("modalCohort").textContent = developer.contribution;
         document.getElementById("modalAbout").textContent = profileSummary(developer);
-        document.getElementById("modalProjects").innerHTML = projects.map((project, index) => `<li><span class="project-number">0${index + 1}</span><span>${projectContent(developer, project)}</span><i class="fa-solid fa-arrow-up-right-from-square"></i></li>`).join("");
-        projectsDrawerList.innerHTML = projects.map((project, index) => `<li><span class="project-number">0${index + 1}</span><span>${project}</span></li>`).join("");
+        document.getElementById("modalProjects").innerHTML = projects.slice(0, 3).map((project, index) => `<li><button class="modal-project-trigger" type="button" data-project-index="${index}"><span class="project-number">0${index + 1}</span><span>${projectContent(developer, project)}</span><i class="fa-solid fa-arrow-right"></i></button></li>`).join("");
+        projectsDrawerList.innerHTML = projects.map((project, index) => projectAccordion(developer, project, index)).join("");
         document.getElementById("modalSkills").innerHTML = focusAreas(developer).map((skill) => `<span>${skill}</span>`).join("");
         document.getElementById("linkedinLink").href = developer.linkedin;
         document.getElementById("githubLink").href = developer.github;
@@ -160,9 +236,20 @@
         document.body.style.overflow = "";
     }
 
-    function openProjectsDrawer() {
+    function openProjectsDrawer(projectIndex = null) {
         projectsDrawer.setAttribute("aria-hidden", "false");
         selectedWorkButton.setAttribute("aria-expanded", "true");
+        if (projectIndex !== null) {
+            const trigger = projectsDrawerList.querySelectorAll(".project-accordion-trigger")[projectIndex];
+            if (trigger) toggleProject(trigger, true);
+        }
+    }
+
+    function toggleProject(trigger, forceOpen = null) {
+        const panel = document.getElementById(trigger.getAttribute("aria-controls"));
+        const shouldOpen = forceOpen === null ? trigger.getAttribute("aria-expanded") !== "true" : forceOpen;
+        trigger.setAttribute("aria-expanded", String(shouldOpen));
+        panel.hidden = !shouldOpen;
     }
 
     function closeProjectsDrawer() {
@@ -172,7 +259,21 @@
 
     grid.addEventListener("click", (event) => {
         const button = event.target.closest(".view-profile-btn");
-        if (button) openProfile(button.dataset.id);
+        if (button) {
+            openProfile(button.dataset.id);
+            return;
+        }
+        if (event.target.closest("a, button")) return;
+        const card = event.target.closest(".trainee-card");
+        if (card) openProfile(card.dataset.id);
+    });
+    document.getElementById("modalProjects").addEventListener("click", (event) => {
+        const trigger = event.target.closest(".modal-project-trigger");
+        if (trigger) openProjectsDrawer(Number(trigger.dataset.projectIndex));
+    });
+    projectsDrawerList.addEventListener("click", (event) => {
+        const trigger = event.target.closest(".project-accordion-trigger");
+        if (trigger) toggleProject(trigger);
     });
     document.getElementById("modalClose").addEventListener("click", closeProfile);
     selectedWorkButton.addEventListener("click", openProjectsDrawer);

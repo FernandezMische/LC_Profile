@@ -17,15 +17,11 @@ class DeveloperController {
             $cohort = trim((string) $row['cohort']);
             $role = $row['title'] ?: 'Developer';
 
-            $projectMap = [
-                'Frontend Developer' => ['LC Studio Rebuild', 'Portfolio Experience', 'Client-facing Interface'],
-                'Backend Developer' => ['Platform Architecture', 'API Delivery', 'Data Integration'],
-                'UI/UX Designer' => ['Brand Direction', 'Experience Design', 'Digital Prototypes'],
-                'Full-Stack Developer' => ['LC Studio Rebuild', 'System Build', 'Full Delivery Flow'],
-                'Project Lead' => ['Team Coordination', 'Delivery Planning', 'Launch Support'],
-            ];
-
-            $projects = $projectMap[$role] ?? ['LC Studio Rebuild', 'Project Delivery', 'Collaborative Build'];
+            $firstName = strtolower($name[0] ?? '');
+            $projects = ['LC STUDIO REBUILD'];
+            if (in_array($firstName, ['nina', 'phoenix'], true)) {
+                $projects[] = 'LIFE CHOICES CHRONICLE BLOG';
+            }
 
             return [
                 'id' => (int) $row['id'],
