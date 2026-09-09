@@ -96,8 +96,26 @@
         const details = {
             mische: {
                 "LC STUDIO REBUILD": {
-                    description: "Mische helped shape the structure and visual rhythm of the trainee profile experience, turning the shared idea into a clear working interface.",
-                    focus: ["Interface structure", "Visual direction", "Team delivery"]
+                    description: "For the LC Studio Rebuild, Mische focused on the administrative side of the platform. This involved designing the admin interface, implementing secure authentication, and building the backend logic that allows other admins to be added, have their passwords issued, and manage user profiles directly -- reducing the need for constant developer intervention.",
+                    focus: ["Admin authentication", "Backend management", "Profile management"],
+                    subprojects: [
+                        {
+                            name: "ADMIN AUTHENTICATION & DESIGN",
+                            description: ["Designed the admin interface and implemented secure authentication."]
+                        },
+                        {
+                            name: "BACKEND ADMIN MANAGEMENT SYSTEM",
+                            description: ["Built backend logic for adding admins, issuing passwords, and managing user profiles directly."]
+                        },
+                        {
+                            name: "ADMIN-SIDE PROFILE MANAGEMENT",
+                            description: ["Managed user profiles directly from the admin side of the platform."]
+                        }
+                    ]
+                },
+                "LUMINA QUALITY ASSURANCE": {
+                    description: "For the Lumina project, Mische thoroughly tested the admin side of the application in detail. When bugs were found, they reported and documented them clearly to support fixing issues and ensure a smooth, reliable experience for end-users.",
+                    focus: ["Admin-side QA", "Bug catching", "Bug reporting"]
                 }
             },
             nina: {
