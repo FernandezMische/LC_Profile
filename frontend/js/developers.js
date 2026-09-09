@@ -132,7 +132,7 @@
                         {
                             name: "HERO SECTION ANIMATION",
                             description: [
-                                "Designed and animated the LC Studio website hero splash screen.",
+                                "Designed and animated the LC Studio website hero splash screen for WordPress.",
                                 "Created a more engaging introduction while strengthening the site’s visual identity."
                             ]
                         },
