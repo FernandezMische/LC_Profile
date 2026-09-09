@@ -159,8 +159,12 @@
             },
             zahraa: {
                 "LC STUDIO REBUILD": {
-                    description: "Zahraa helped build and shape the trainee profile experience for the LC Studio rebuild, including the profile page structure, profile model/data flow, and the visual presentation that made the trainee information easier to understand.",
+                    description: "I helped shape the trainee profile experience in the LC Studio rebuild, mostly around the profile page, the profile model, and the front-end structure that pulled trainee information together in a cleaner way.",
                     focus: ["Trainee profile page", "Profile model", "Frontend structure", "Visual presentation"]
+                },
+                "LUMINA QUALITY ASSURANCE": {
+                    description: "On Lumina, I helped with QA and testing the user journey by clicking through the app, checking how different interactions felt, and spotting the small things that could make the experience confusing. I also helped test whether the pages and user flows were easy to understand and use.",
+                    focus: ["QA testing", "User interaction", "Bug spotting", "Experience checks"]
                 }
             }
         };
