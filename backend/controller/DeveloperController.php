@@ -19,7 +19,13 @@ class DeveloperController {
 
             $firstName = strtolower($name[0] ?? '');
             $projects = ['LC STUDIO REBUILD'];
-            if (in_array($firstName, ['nina', 'phoenix'], true)) {
+            if ($firstName === 'phoenix') {
+                $projects = [
+                    'LC STUDIO',
+                    'LUMINA QUALITY ASSURANCE',
+                    'LIFE CHOICES CHRONICLE'
+                ];
+            } elseif ($firstName === 'nina') {
                 $projects[] = 'LIFE CHOICES CHRONICLE BLOG';
             }
 

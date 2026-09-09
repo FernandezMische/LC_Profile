@@ -1,17 +1,32 @@
 (() => {
     const themeToggle = document.getElementById("themeToggle");
+    const mobileThemeToggle = document.querySelector(".mobile-theme-toggle");
+    const themeToggles = [themeToggle, mobileThemeToggle].filter(Boolean);
     const savedTheme = localStorage.getItem("lc-theme");
     const setTheme = (theme) => {
         const isLight = theme === "light";
         document.body.dataset.theme = theme;
-        themeToggle.setAttribute("aria-pressed", String(isLight));
-        themeToggle.innerHTML = isLight ? '<span>Dark Mode</span>' : '<span>Light Mode</span>';
+        themeToggles.forEach((toggle) => {
+            toggle.setAttribute("aria-pressed", String(isLight));
+            toggle.innerHTML = isLight ? '<span>Dark Mode</span>' : '<span>Light Mode</span>';
+        });
     };
     setTheme(savedTheme === "light" ? "light" : "dark");
-    themeToggle.addEventListener("click", () => {
+    themeToggles.forEach((toggle) => toggle.addEventListener("click", () => {
         const nextTheme = document.body.dataset.theme === "light" ? "dark" : "light";
         setTheme(nextTheme);
         localStorage.setItem("lc-theme", nextTheme);
+    }));
+
+    const mobileMenuToggle = document.querySelector(".developer-mobile-menu-toggle");
+    const mobileMenu = document.getElementById("developerMobileMenu");
+    mobileMenuToggle?.addEventListener("click", () => {
+        const isOpen = mobileMenu.getAttribute("aria-hidden") === "false";
+        mobileMenu.setAttribute("aria-hidden", String(isOpen));
+        mobileMenuToggle.setAttribute("aria-expanded", String(!isOpen));
+        mobileMenuToggle.innerHTML = isOpen
+            ? '<i class="fa-solid fa-bars" aria-hidden="true"></i>'
+            : '<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
     });
 
     const grid = document.getElementById("developerGrid");
@@ -51,15 +66,25 @@
     function getProjectList(developer) {
         const firstName = String(developer.first || "").trim().toLowerCase();
         const projects = ["LC STUDIO REBUILD"];
-        if (firstName === "nina" || firstName === "phoenix") {
+        if (firstName === "phoenix") {
+            return ["LC STUDIO", "LUMINA QUALITY ASSURANCE", "LIFE CHOICES CHRONICLE"];
+        }
+        if (firstName === "nina") {
             projects.push("LIFE CHOICES CHRONICLE BLOG");
         }
+        projects.push("LUMINA QUALITY ASSURANCE");
         return projects;
     }
 
     function projectUrl(developer, project) {
         const firstName = String(developer.first || "").trim().toLowerCase();
-        if (project === "LC STUDIO REBUILD") return "https://lcstudiorebuild.lcstudio.co.za";
+        if (firstName === "phoenix" && project === "LC STUDIO") return "https://lcstudiorebuild.lcstudio.co.za";
+        if (firstName === "phoenix" && project === "LUMINA QUALITY ASSURANCE") return "https://lumina.siriusdream.co.za";
+        if (firstName === "phoenix" && project === "LIFE CHOICES CHRONICLE") return "https://chronicle.lifechoices.co.za";
+        if (project === "LUMINA QUALITY ASSURANCE") return "https://lumina.siriusdream.co.za";
+        if (project === "LC STUDIO REBUILD" || project === "WEBSITE ANIMATION" || project === "DEVELOPER PROFILES") {
+            return "https://lcstudiorebuild.lcstudio.co.za";
+        }
         if ((firstName === "nina" || firstName === "phoenix") && project === "LIFE CHOICES CHRONICLE BLOG") {
             return "https://chronicle.lifechoices.co.za";
         }
@@ -86,13 +111,44 @@
                 }
             },
             phoenix: {
-                "LC STUDIO REBUILD": {
-                    description: "Phoenix contributed to the technical build of the profile experience, helping connect the interface, data, and responsive behaviour into one working site.",
-                    focus: ["Web development", "Responsive UI", "Team delivery"]
+                "LC STUDIO": {
+                    description: "Contributed to LC Studio’s design, development, animation, and database features across WordPress, PHP, MySQL, UI/UX, and visual design, helping shape its identity, interactive experience, and showcase of the Life Choices team.",
+                    focus: ["Interactive Profiles", "Responsive Design", "Visual Storytelling", "User Experience", "Front-End Development"],
+                    subprojects: [
+                        {
+                            name: "VISUAL DESIGN AND ILLUSTRATION",
+                            description: "Created temporary avatars and illustrated representations of the developers during the site's production phase, before trainee profiles were introduced. This concept later evolved into a permanent interactive feature, where illustrated portraits transition to real photographs when hovered over.",
+                            focus: ["Illustration", "Interactive imagery", "Visual identity"]
+                        },
+                        {
+                            name: "WORDPRESS DEVELOPMENT AND SITE REFINEMENT",
+                            description: "Implemented ongoing visual and functional refinements across the LC Studio website, including typography, text and image colour corrections, layout adjustments, and general UI consistency.",
+                            focus: ["WordPress", "UI refinement", "Brand consistency"]
+                        },
+                        {
+                            name: "HERO SECTION ANIMATION",
+                            description: "Designed and animated the LC Studio Hero Section splash screen, creating a more engaging introduction to the website and strengthening its visual identity.",
+                            focus: ["Animation", "Motion design", "Visual storytelling"]
+                        },
+                        {
+                            name: "DEVELOPER PROFILES AND DATABASE INTEGRATION",
+                            description: "Designed the Developers/Profiles page and connected trainee information to the website using PHP and MySQL. Built dynamic profile functionality while refining font sizing, layouts, and responsive display behaviour for different screen sizes.",
+                            focus: ["PHP", "MySQL", "Dynamic profiles", "Responsive design"]
+                        },
+                        {
+                            name: "UI/UX AND EXPERIENCE REFINEMENT",
+                            description: "Experimented with different design approaches and display behaviours to improve how profiles, imagery, and content are presented, balancing functionality with the overall visual direction of LC Studio.",
+                            focus: ["UI/UX", "Interaction design", "User experience"]
+                        }
+                    ]
                 },
-                "LIFE CHOICES CHRONICLE BLOG": {
-                    description: "Phoenix helped build the Chronicle experience as a practical publishing space for Life Choices stories and community voices.",
-                    focus: ["Frontend development", "Content systems", "Digital storytelling"]
+                "LUMINA QUALITY ASSURANCE": {
+                    description: "Contributed to the quality assurance and validation of Lumina, Sirius Dream’s end-to-end platform designed to build evidence-backed professional profiles through an intern’s development journey. Tested core functionality across user roles, documented bugs and edge cases, and provided UX-focused recommendations to strengthen the intern experience and profile system. Also helped create an environment where other trainees could independently apply QA documentation to a complex, real-world platform.",
+                    focus: ["Cross-role validation", "Bug documentation", "Edge-case testing", "UX recommendations", "QA enablement"]
+                },
+                "LIFE CHOICES CHRONICLE": {
+                    description: "Contributed to the design and development of the Life Choices Chronicle, helping shape the overall visual experience across the site. Developed era-specific galleries, navigation between historical eras, and tailored page layouts, while maintaining consistency throughout the project. Worked closely with Nina to support the quality and presentation of Life Choices' 21st Anniversary project.",
+                    focus: ["Interactive Experiences", "Visual Consistency", "Navigation", "Anniversary Project"]
                 }
             },
             tylor: {
@@ -110,12 +166,20 @@
         };
         const fallback = {
             description: "A project contributed to by the LC Studio team through research, design, development, and delivery.",
+            roles: [],
             focus: ["Collaboration", "Problem solving", "Delivery"]
         };
+        const placeholder = {
+            description: "Lumina project details coming soon.",
+            roles: [],
+            focus: ["Details coming soon"]
+        };
+        const projectData = details[firstName]?.[project] || (project === "LUMINA QUALITY ASSURANCE" ? placeholder : fallback);
         return {
             name: project,
             url: projectUrl(developer, project),
-            ...(details[firstName]?.[project] || fallback)
+            ...projectData,
+            roles: projectData.roles || []
         };
     }
 
@@ -134,16 +198,18 @@
 
     function projectAccordion(developer, project, index) {
         const details = projectDetails(developer, project);
+        const subprojects = details.subprojects || [];
         return `
             <li class="project-accordion-item">
-                <button class="project-accordion-trigger" type="button" aria-expanded="${index === 0}" aria-controls="project-panel-${index}">
-                    <span class="project-number">0${index + 1}</span>
+                <button class="project-accordion-trigger" type="button" aria-expanded="false" aria-controls="project-panel-${index}">
                     <span>${details.name}</span>
                     <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
                 </button>
-                <div class="project-accordion-panel" id="project-panel-${index}" ${index === 0 ? "" : "hidden"}>
+                <div class="project-accordion-panel" id="project-panel-${index}" hidden>
                     <div class="project-focus">${details.focus.map((focus) => `<span>${focus}</span>`).join("")}</div>
+                    ${details.roles.length ? `<p class="project-roles"><strong>Key roles:</strong> ${details.roles.join(" · ")}</p>` : ""}
                     <p>${details.description}</p>
+                    ${subprojects.length ? `<div class="project-subprojects">${subprojects.map((subproject) => `<article class="project-subproject"><h3>${subproject.name}</h3><div class="project-focus">${subproject.focus.map((focus) => `<span>${focus}</span>`).join("")}</div><p>${subproject.description}</p></article>`).join("")}</div>` : ""}
                     ${projectLink(details)}
                 </div>
             </li>
@@ -239,6 +305,7 @@
     function openProjectsDrawer(projectIndex = null) {
         projectsDrawer.setAttribute("aria-hidden", "false");
         selectedWorkButton.setAttribute("aria-expanded", "true");
+        projectsDrawerList.querySelectorAll(".project-accordion-trigger").forEach((trigger) => toggleProject(trigger, false));
         if (projectIndex !== null) {
             const trigger = projectsDrawerList.querySelectorAll(".project-accordion-trigger")[projectIndex];
             if (trigger) toggleProject(trigger, true);
