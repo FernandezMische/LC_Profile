@@ -96,7 +96,7 @@
         const details = {
             mische: {
                 "LC STUDIO REBUILD": {
-                    description: "For the LC Studio Rebuild, Mische focused on the administrative side of the platform. This involved designing the admin interface, implementing secure authentication, and building the backend logic that allows other admins to be added, have their passwords issued, and manage user profiles directly -- reducing the need for constant developer intervention.",
+                    description: "For the LC Studio Rebuild, focused on the administrative side of the platform. This involved designing the admin interface, implementing secure authentication, and building the backend logic that allows other admins to be added, have their passwords issued, and manage user profiles directly -- reducing the need for constant developer intervention.",
                     focus: ["Admin authentication", "Backend management", "Profile management"],
                     subprojects: [
                         {
@@ -114,23 +114,23 @@
                     ]
                 },
                 "LUMINA QUALITY ASSURANCE": {
-                    description: "For the Lumina project, Mische thoroughly tested the admin side of the application in detail. When bugs were found, they reported and documented them clearly to support fixing issues and ensure a smooth, reliable experience for end-users.",
+                    description: "For the Lumina project, thoroughly tested the admin side of the application in detail. When bugs were found, they were reported and documented clearly to support fixing issues and ensure a smooth, reliable experience for end-users.",
                     focus: ["Admin-side QA", "Bug catching", "Bug reporting"]
                 }
             },
             nina: {
                 "LC STUDIO REBUILD": {
-                    description: "Nina contributed to the profile experience with a focus on making the content feel approachable, organised, and useful to the people visiting it.",
+                    description: "Contributed to the profile experience with a focus on making the content feel approachable, organised, and useful to the people visiting it.",
                     focus: ["Content flow", "User experience", "Collaboration"]
                 },
                 "LIFE CHOICES CHRONICLE BLOG": {
-                    description: "Nina helped develop the Chronicle experience as a place for Life Choices stories, ideas, and community work to be shared online.",
+                    description: "Helped develop the Chronicle experience as a place for Life Choices stories, ideas, and community work to be shared online.",
                     focus: ["Editorial design", "Content systems", "Digital storytelling"]
                 }
             },
             phoenix: {
                 "LC STUDIO REBUILD": {
-                    description: "Contributed to rebuilding the LC Studio website through design, development, animation, and database features across WordPress, PHP, MySQL, UI/UX, and visual design, helping shape its identity, interactive experience, and showcase of the Life Choices team.",
+                    description: "Contributed to rebuilding the LC Studio website through design, development, animation, and database features across the website's design, helping shape its identity, interactive experience, and showcase of the Life Choices team.",
                     focus: ["Interactive Profiles", "Responsive Design", "Visual Storytelling", "User Experience", "Front-End Development"],
                     subprojects: [
                         {
@@ -138,13 +138,6 @@
                             description: [
                                 "Created temporary avatars and illustrated developer portraits during the LC Studio website rebuild.",
                                 "Developed the idea into an interactive feature that transitions portraits into real photographs."
-                            ]
-                        },
-                        {
-                            name: "WORDPRESS DEVELOPMENT AND SITE REFINEMENT",
-                            description: [
-                                "Refined the LC Studio website in WordPress during the rebuild.",
-                                "Improved typography, colours, layouts, and overall visual consistency."
                             ]
                         },
                         {
@@ -171,27 +164,48 @@
                     ]
                 },
                 "LUMINA QUALITY ASSURANCE": {
-
+                    description: [
+                        "Worked as a QA tester for Lumina, testing the Intern experience as one of the platform’s many user roles.",
+                        "Checked user journeys, interactions, data accuracy, performance, and whether the platform was clear and easy to use.",
+                        "Recorded bugs and collaborated on fixes, refinements, and improvements across the platform."
+                    ],
                     focus: ["Cross-role validation", "Bug documentation", "Edge-case testing", "UX recommendations", "QA enablement"]
                 },
                 "LIFE CHOICES CHRONICLE": {
-                    description: "Contributed to the design and development of the Life Choices Chronicle, helping shape the overall visual experience across the site. Developed era-specific galleries, navigation between historical eras, and tailored page layouts, while maintaining consistency throughout the project. Worked closely with Nina to support the quality and presentation of Life Choices' 21st Anniversary project.",
+                    description: "Added onto the design and development of the Life Choices Chronicle, helping shape the overall visual experience across the site. Developed era-specific galleries, navigation between historical eras, and tailored page layouts, while maintaining consistency throughout the project. Worked closely with Nina to support the quality and presentation of Life Choices' 21st Anniversary project.",
                     focus: ["Interactive Experiences", "Visual Consistency", "Navigation", "Anniversary Project"]
                 }
             },
             tylor: {
                 "LC STUDIO REBUILD": {
-                    description: "Tylor contributed to the shared LC Studio build, helping turn the team’s work and capabilities into a polished profile experience.",
-                    focus: ["Frontend development", "Interaction design", "Team delivery"]
+                    description: "Contributed to the shared LC Studio build, helping turn the team’s work and capabilities into a polished profile experience.",
+                    focus: ["Frontend development", "Interaction design", "Team delivery"],
+                    subprojects: [
+                        {
+                            name: "WORDPRESS DEVELOPMENT",
+                            description: [
+                                "Implemented client logos with hover effects that showcase each company’s unique colours.",
+                                "Designed the footer’s interactive credit with a subtle text highlight and clean brand initials."
+                            ]
+                        }
+                    ]
+                },
+                "LUMINA QUALITY ASSURANCE": {
+                    description: [
+                        "Focused primarily on the Employer suite, with additional testing across Intern and Recruiter flows.",
+                        "Worked with the team to identify performance delays and validate intern data across the platform.",
+                        "Helped log issues that needed attention, removal, or refinement."
+                    ],
+                    focus: ["QA collaboration", "Bug documentation", "Employer testing", "Recruiter testing", "Cross-role validation"]
                 }
             },
             zahraa: {
                 "LC STUDIO REBUILD": {
-                    description: "I helped shape the trainee profile experience in the LC Studio rebuild, mostly around the profile page, the profile model, and the front-end structure that pulled trainee information together in a cleaner way.",
+                    description: "Helped shape the trainee profile experience in the LC Studio rebuild, mostly around the profile page, the profile model, and the front-end structure that pulled trainee information together in a cleaner way.",
                     focus: ["Trainee profile page", "Profile model", "Frontend structure", "Visual presentation"]
                 },
                 "LUMINA QUALITY ASSURANCE": {
-                    description: "On Lumina, I helped with QA and testing the user journey by clicking through the app, checking how different interactions felt, and spotting the small things that could make the experience confusing. I also helped test whether the pages and user flows were easy to understand and use.",
+                    description: "On Lumina, assisted with QA and testing the user journey by clicking through the app, checking how different interactions felt, and spotting the small things that could make the experience confusing. Additionally also contributed to help test whether the pages and user flows were easy to understand and use.",
                     focus: ["QA testing", "User interaction", "Bug spotting", "Experience checks"]
                 }
             }
@@ -228,6 +242,11 @@
             : "";
     }
 
+    function projectDescription(description) {
+        const items = Array.isArray(description) ? description : [description];
+        return `<ul class="project-description-list">${items.map((item) => `<li>${item}</li>`).join("")}</ul>`;
+    }
+
     function projectAccordion(developer, project, index) {
         const details = projectDetails(developer, project);
         const subprojects = details.subprojects || [];
@@ -240,7 +259,7 @@
                 <div class="project-accordion-panel" id="project-panel-${index}" hidden>
                     <div class="project-focus">${details.focus.map((focus) => `<span>${focus}</span>`).join("")}</div>
                     ${details.roles.length ? `<p class="project-roles"><strong>Key roles:</strong> ${details.roles.join(" · ")}</p>` : ""}
-                    <p>${details.description}</p>
+                    ${projectDescription(details.description)}
                     ${subprojects.length ? `<div class="project-subprojects">${subprojects.map((subproject) => `<article class="project-subproject"><h3>${subproject.name}</h3><ul>${subproject.description.map((item) => `<li>${item}</li>`).join("")}</ul></article>`).join("")}</div>` : ""}
                     ${projectLink(details)}
                 </div>

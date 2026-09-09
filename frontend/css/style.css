@@ -3280,6 +3280,16 @@ body[data-theme="light"] ::-webkit-scrollbar-track {
     font-size: 10px;
     line-height: 1;
 }
+.project-description-list {
+    margin: 0;
+    padding-left: 16px;
+    color: #e1e1e1;
+    font-size: 15px;
+    line-height: 1.55;
+}
+.project-description-list li + li {
+    margin-top: 5px;
+}
 .project-subprojects {
     display: grid;
     gap: 14px;
@@ -3398,6 +3408,10 @@ body[data-theme="light"].developers-page .projects-drawer h2 {
 
 body[data-theme="light"].developers-page .modal-about p:last-child,
 body[data-theme="light"].developers-page .project-accordion-panel {
+    color: #333;
+}
+
+body[data-theme="light"].developers-page .project-description-list {
     color: #333;
 }
 
