@@ -159,8 +159,8 @@
             },
             zahraa: {
                 "LC STUDIO REBUILD": {
-                    description: "Zahraa helped refine the LC Studio profile experience so the team’s work could be presented clearly across different screens and contexts.",
-                    focus: ["Visual design", "Responsive UI", "Collaboration"]
+                    description: "Zahraa helped build and shape the trainee profile experience for the LC Studio rebuild, including the profile page structure, profile model/data flow, and the visual presentation that made the trainee information easier to understand.",
+                    focus: ["Trainee profile page", "Profile model", "Frontend structure", "Visual presentation"]
                 }
             }
         };
