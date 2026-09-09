@@ -67,7 +67,7 @@
         const firstName = String(developer.first || "").trim().toLowerCase();
         const projects = ["LC STUDIO REBUILD"];
         if (firstName === "phoenix") {
-            return ["LC STUDIO", "LUMINA QUALITY ASSURANCE", "LIFE CHOICES CHRONICLE"];
+            return ["LC STUDIO REBUILD", "LUMINA QUALITY ASSURANCE", "LIFE CHOICES CHRONICLE"];
         }
         if (firstName === "nina") {
             projects.push("LIFE CHOICES CHRONICLE BLOG");
@@ -78,7 +78,7 @@
 
     function projectUrl(developer, project) {
         const firstName = String(developer.first || "").trim().toLowerCase();
-        if (firstName === "phoenix" && project === "LC STUDIO") return "https://lcstudiorebuild.lcstudio.co.za";
+        if (firstName === "phoenix" && project === "LC STUDIO REBUILD") return "https://lcstudiorebuild.lcstudio.co.za";
         if (firstName === "phoenix" && project === "LUMINA QUALITY ASSURANCE") return "https://lumina.siriusdream.co.za";
         if (firstName === "phoenix" && project === "LIFE CHOICES CHRONICLE") return "https://chronicle.lifechoices.co.za";
         if (project === "LUMINA QUALITY ASSURANCE") return "https://lumina.siriusdream.co.za";
@@ -111,39 +111,49 @@
                 }
             },
             phoenix: {
-                "LC STUDIO": {
-                    description: "Contributed to LC Studio’s design, development, animation, and database features across WordPress, PHP, MySQL, UI/UX, and visual design, helping shape its identity, interactive experience, and showcase of the Life Choices team.",
+                "LC STUDIO REBUILD": {
+                    description: "Contributed to rebuilding the LC Studio website through design, development, animation, and database features across WordPress, PHP, MySQL, UI/UX, and visual design, helping shape its identity, interactive experience, and showcase of the Life Choices team.",
                     focus: ["Interactive Profiles", "Responsive Design", "Visual Storytelling", "User Experience", "Front-End Development"],
                     subprojects: [
                         {
                             name: "VISUAL DESIGN AND ILLUSTRATION",
-                            description: "Created temporary avatars and illustrated representations of the developers during the site's production phase, before trainee profiles were introduced. This concept later evolved into a permanent interactive feature, where illustrated portraits transition to real photographs when hovered over.",
-                            focus: ["Illustration", "Interactive imagery", "Visual identity"]
+                            description: [
+                                "Created temporary avatars and illustrated developer portraits during the LC Studio website rebuild.",
+                                "Developed the idea into an interactive feature that transitions portraits into real photographs."
+                            ]
                         },
                         {
                             name: "WORDPRESS DEVELOPMENT AND SITE REFINEMENT",
-                            description: "Implemented ongoing visual and functional refinements across the LC Studio website, including typography, text and image colour corrections, layout adjustments, and general UI consistency.",
-                            focus: ["WordPress", "UI refinement", "Brand consistency"]
+                            description: [
+                                "Refined the LC Studio website in WordPress during the rebuild.",
+                                "Improved typography, colours, layouts, and overall visual consistency."
+                            ]
                         },
                         {
                             name: "HERO SECTION ANIMATION",
-                            description: "Designed and animated the LC Studio Hero Section splash screen, creating a more engaging introduction to the website and strengthening its visual identity.",
-                            focus: ["Animation", "Motion design", "Visual storytelling"]
+                            description: [
+                                "Designed and animated the LC Studio website hero splash screen.",
+                                "Created a more engaging introduction while strengthening the site’s visual identity."
+                            ]
                         },
                         {
                             name: "DEVELOPER PROFILES AND DATABASE INTEGRATION",
-                            description: "Designed the Developers/Profiles page and connected trainee information to the website using PHP and MySQL. Built dynamic profile functionality while refining font sizing, layouts, and responsive display behaviour for different screen sizes.",
-                            focus: ["PHP", "MySQL", "Dynamic profiles", "Responsive design"]
+                            description: [
+                                "Built the Developers/Profiles page with PHP and MySQL during the website rebuild.",
+                                "Connected trainee data and improved responsive layouts across screen sizes."
+                            ]
                         },
                         {
                             name: "UI/UX AND EXPERIENCE REFINEMENT",
-                            description: "Experimented with different design approaches and display behaviours to improve how profiles, imagery, and content are presented, balancing functionality with the overall visual direction of LC Studio.",
-                            focus: ["UI/UX", "Interaction design", "User experience"]
+                            description: [
+                                "Tested different UI/UX approaches while rebuilding the LC Studio website.",
+                                "Improved the presentation and interaction of profiles, imagery, and content."
+                            ]
                         }
                     ]
                 },
                 "LUMINA QUALITY ASSURANCE": {
-                    description: "Contributed to the quality assurance and validation of Lumina, Sirius Dream’s end-to-end platform designed to build evidence-backed professional profiles through an intern’s development journey. Tested core functionality across user roles, documented bugs and edge cases, and provided UX-focused recommendations to strengthen the intern experience and profile system. Also helped create an environment where other trainees could independently apply QA documentation to a complex, real-world platform.",
+
                     focus: ["Cross-role validation", "Bug documentation", "Edge-case testing", "UX recommendations", "QA enablement"]
                 },
                 "LIFE CHOICES CHRONICLE": {
@@ -209,7 +219,7 @@
                     <div class="project-focus">${details.focus.map((focus) => `<span>${focus}</span>`).join("")}</div>
                     ${details.roles.length ? `<p class="project-roles"><strong>Key roles:</strong> ${details.roles.join(" · ")}</p>` : ""}
                     <p>${details.description}</p>
-                    ${subprojects.length ? `<div class="project-subprojects">${subprojects.map((subproject) => `<article class="project-subproject"><h3>${subproject.name}</h3><div class="project-focus">${subproject.focus.map((focus) => `<span>${focus}</span>`).join("")}</div><p>${subproject.description}</p></article>`).join("")}</div>` : ""}
+                    ${subprojects.length ? `<div class="project-subprojects">${subprojects.map((subproject) => `<article class="project-subproject"><h3>${subproject.name}</h3><ul>${subproject.description.map((item) => `<li>${item}</li>`).join("")}</ul></article>`).join("")}</div>` : ""}
                     ${projectLink(details)}
                 </div>
             </li>

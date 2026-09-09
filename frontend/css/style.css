@@ -3299,6 +3299,15 @@ body[data-theme="light"] ::-webkit-scrollbar-track {
     letter-spacing: .06em;
     text-transform: uppercase;
 }
+.project-subproject ul {
+    margin: 0;
+    padding-left: 16px;
+    color: #c8c8c8;
+    font-size: 12px;
+}
+.project-subproject li + li {
+    margin-top: 5px;
+}
 .project-subproject p {
     color: #c8c8c8;
     font-size: 12px;
@@ -3393,7 +3402,8 @@ body[data-theme="light"].developers-page .project-accordion-panel {
 }
 
 body[data-theme="light"].developers-page .project-subproject h3,
-body[data-theme="light"].developers-page .project-subproject p {
+body[data-theme="light"].developers-page .project-subproject p,
+body[data-theme="light"].developers-page .project-subproject ul {
     color: #333;
 }
 

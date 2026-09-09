@@ -21,7 +21,7 @@ class DeveloperController {
             $projects = ['LC STUDIO REBUILD'];
             if ($firstName === 'phoenix') {
                 $projects = [
-                    'LC STUDIO',
+                    'LC STUDIO REBUILD',
                     'LUMINA QUALITY ASSURANCE',
                     'LIFE CHOICES CHRONICLE'
                 ];
