@@ -120,12 +120,86 @@
             },
             nina: {
                 "LC STUDIO REBUILD": {
-                    description: "Contributed to the profile experience with a focus on making the content feel approachable, organised, and useful to the people visiting it.",
-                    focus: ["Content flow", "User experience", "Collaboration"]
+                    description: "Contributed to rebuilding the LC Studio website as Project Lead, managing communication between the manager and the team while focusing on the home page build in WordPress. The project was split into two workstreams, and the site's navigation flow and overall user experience were shaped to align with the institute's direction.",
+                    focus: ["Project leadership", "Communication", "Home page design", "User experience"],
+                    subprojects: [
+                        {
+                            name: "PROJECT LEADERSHIP AND COMMUNICATION",
+                            description: [
+                                "Served as Project Lead on the LC Studio website rebuild, acting as the primary point of communication between my manager and the rest of the team.",
+                                "Coordinated across two workstreams to keep the project aligned and moving forward."
+                            ]
+                        },
+                        {
+                            name: "HOME PAGE DESIGN AND DEVELOPMENT",
+                            description: [
+                                "Primarily focused on the home page during the WordPress rebuild.",
+                                "Redesigned the site's user flow to create a cleaner, more modern navigation structure that aligned with the institute's vision.",
+                                "Implemented these changes directly within WordPress."
+                            ]
+                        },
+                        {
+                            name: "UI/UX AND EXPERIENCE REFINEMENT",
+                            description: [
+                                "Reworked the navigation and layout to improve clarity and usability across the home page.",
+                                "Ensured the updated flow reflected the institute's identity and strategic direction."
+                            ]
+                        }
+                    ]
+                },
+                "LUMINA QUALITY ASSURANCE": {
+                    description: "Contributed to quality assurance testing for the Lumina website, focusing on the mentor user flow and working alongside the team to identify bugs and observe system behaviour across different users when actions were triggered.",
+                    focus: ["Mentor flow testing", "Bug identification", "Cross-user QA", "Team collaboration"],
+                    subprojects: [
+                        {
+                            name: "MENTOR USER FLOW TESTING",
+                            description: [
+                                "Tested the mentor user flow across the Lumina website to ensure a smooth and functional experience.",
+                                "Worked alongside my team to identify and resolve bugs as they surfaced during testing."
+                            ]
+                        },
+                        {
+                            name: "CROSS-USER BEHAVIOUR AND TRIGGER TESTING",
+                            description: [
+                                "Observed how the system responded across multiple user accounts when specific actions were triggered.",
+                                "Flagged inconsistencies and edge cases to improve overall reliability and user experience."
+                            ]
+                        },
+                        {
+                            name: "TEAM COLLABORATION AND BUG RESOLUTION",
+                            description: [
+                                "Collaborated with the team to troubleshoot issues in real time and work out bugs efficiently.",
+                                "Helped ensure the mentor experience remained stable and consistent across different scenarios."
+                            ]
+                        }
+                    ]
                 },
                 "LIFE CHOICES CHRONICLE BLOG": {
-                    description: "Helped develop the Chronicle experience as a place for Life Choices stories, ideas, and community work to be shared online.",
-                    focus: ["Editorial design", "Content systems", "Digital storytelling"]
+                    description: "Contributed to the design and development of the Life Choices Chronicle, a blog site built for Life Choices' 21st Anniversary. The goal was to create an experience that felt like stepping back in time while still remaining coherent with the existing Life Choices website.",
+                    focus: ["Era-page design", "Navigation", "Visual consistency", "Collaboration"],
+                    subprojects: [
+                        {
+                            name: "ERA-PAGE DESIGN AND DEVELOPMENT",
+                            description: [
+                                "Designed and developed era-pages for the Life Choices Chronicle, bringing each historical period to life through tailored layouts.",
+                                "Maintained a consistent visual language across all pages to keep the experience cohesive."
+                            ]
+                        },
+                        {
+                            name: "NAVIGATION AND USER EXPERIENCE",
+                            description: [
+                                "Built the navigation system connecting historical eras, allowing users to move seamlessly through the timeline.",
+                                "Ensured the flow between eras felt intuitive and engaging while staying true to the Life Choices brand."
+                            ]
+                        },
+                        {
+                            name: "VISUAL CONSISTENCY AND COLLABORATION",
+                            description: [
+                                "Worked closely with Phoenix to uphold the quality and presentation of the Life Choices' 21st Anniversary project.",
+                                "Balanced a nostalgic, time-travel feel with the coherence of the existing Life Choices website."
+                            ]
+                        }
+                    ]
                 }
             },
             phoenix: {
@@ -164,12 +238,31 @@
                     ]
                 },
                 "LUMINA QUALITY ASSURANCE": {
-                    description: [
-                        "Worked as a QA tester for Lumina, testing the Intern experience as one of the platform’s many user roles.",
-                        "Checked user journeys, interactions, data accuracy, performance, and whether the platform was clear and easy to use.",
-                        "Recorded bugs and collaborated on fixes, refinements, and improvements across the platform."
-                    ],
-                    focus: ["Cross-role validation", "Bug documentation", "Edge-case testing", "UX recommendations", "QA enablement"]
+                    description: "Contributed to the QA workflow for Lumina by testing the Intern role across the platform and focusing on the day-to-day work experience from onboarding through task completion and reporting. Among the many roles available on Lumina, the Intern experience was QA’d by checking the full ‘work’ workflow, including assigning projects to interns, submitting evidence, and confirming that the correct actions and updates were visible to the relevant roles on the other end.",
+                    focus: ["Cross-role validation", "Bug documentation", "Edge-case testing", "UX recommendations", "QA enablement"],
+                    subprojects: [
+                        {
+                            name: "INTERN WORKFLOW TESTING",
+                            description: [
+                                "Checked the full Intern workflow, from onboarding and daily operations to task completion, approvals, and reporting.",
+                                "Verified that assigned projects, submissions, and system updates were functioning correctly across the relevant user roles."
+                            ]
+                        },
+                        {
+                            name: "ATTENDANCE, LEAVE, AND TEAM OPERATIONS",
+                            description: [
+                                "Validated leave requests, clock-in sessions, and time-related actions to confirm the system was behaving as intended.",
+                                "Reviewed team assignments, Kanban task flows, and separation between personal and team work to catch inconsistencies and edge cases."
+                            ]
+                        },
+                        {
+                            name: "QA COVERAGE AND BUG IDENTIFICATION",
+                            description: [
+                                "Extended testing beyond the core documentation to cover onboarding, dashboard integrity, role management, portfolio access, and mobile or accessibility-related behaviour.",
+                                "Supported the team in identifying issues early, improving workflow clarity, and strengthening the reliability of the platform."
+                            ]
+                        }
+                    ]
                 },
                 "LIFE CHOICES CHRONICLE": {
                     description: "Added onto the design and development of the Life Choices Chronicle, helping shape the overall visual experience across the site. Developed era-specific galleries, navigation between historical eras, and tailored page layouts, while maintaining consistency throughout the project. Worked closely with Nina to support the quality and presentation of Life Choices' 21st Anniversary project.",
