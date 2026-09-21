@@ -3280,15 +3280,14 @@ body[data-theme="light"] ::-webkit-scrollbar-track {
     font-size: 10px;
     line-height: 1;
 }
-.project-description-list {
+.project-description-text {
     margin: 0;
-    padding-left: 16px;
     color: #e1e1e1;
     font-size: 15px;
     line-height: 1.55;
 }
-.project-description-list li + li {
-    margin-top: 5px;
+.project-description-text + .project-description-text {
+    margin-top: 8px;
 }
 .project-subprojects {
     display: grid;
@@ -3309,18 +3308,14 @@ body[data-theme="light"] ::-webkit-scrollbar-track {
     letter-spacing: .06em;
     text-transform: uppercase;
 }
-.project-subproject ul {
-    margin: 0;
-    padding-left: 16px;
-    color: #c8c8c8;
-    font-size: 12px;
-}
-.project-subproject li + li {
-    margin-top: 5px;
-}
 .project-subproject p {
+    margin: 0;
     color: #c8c8c8;
     font-size: 12px;
+    line-height: 1.55;
+}
+.project-subproject p + p {
+    margin-top: 6px;
 }
 .project-link {
     display: inline-block;

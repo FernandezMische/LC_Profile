@@ -337,7 +337,7 @@
 
     function projectDescription(description) {
         const items = Array.isArray(description) ? description : [description];
-        return `<ul class="project-description-list">${items.map((item) => `<li>${item}</li>`).join("")}</ul>`;
+        return items.map((item) => `<p class="project-description-text">${item}</p>`).join("");
     }
 
     function projectAccordion(developer, project, index) {
@@ -353,7 +353,7 @@
                     <div class="project-focus">${details.focus.map((focus) => `<span>${focus}</span>`).join("")}</div>
                     ${details.roles.length ? `<p class="project-roles"><strong>Key roles:</strong> ${details.roles.join(" · ")}</p>` : ""}
                     ${projectDescription(details.description)}
-                    ${subprojects.length ? `<div class="project-subprojects">${subprojects.map((subproject) => `<article class="project-subproject"><h3>${subproject.name}</h3><ul>${subproject.description.map((item) => `<li>${item}</li>`).join("")}</ul></article>`).join("")}</div>` : ""}
+                    ${subprojects.length ? `<div class="project-subprojects">${subprojects.map((subproject) => `<article class="project-subproject"><h3>${subproject.name}</h3>${subproject.description.map((item) => `<p>${item}</p>`).join("")}</article>`).join("")}</div>` : ""}
                     ${projectLink(details)}
                 </div>
             </li>
