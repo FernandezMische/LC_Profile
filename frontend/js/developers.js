@@ -1,4 +1,4 @@
-(() => {
+c(() => {
     const themeToggle = document.getElementById("themeToggle");
     const mobileThemeToggle = document.querySelector(".mobile-theme-toggle");
     const themeToggles = [themeToggle, mobileThemeToggle].filter(Boolean);

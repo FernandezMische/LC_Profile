@@ -332,6 +332,11 @@ h3 {
     margin-top: 18px;
 }
 
+.developers-page .eyebrow,
+.developers-page .hero h1 span {
+    color: #95C9D6;
+}
+
 .eyebrow {
 
     margin-bottom: 18px;
