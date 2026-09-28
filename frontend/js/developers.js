@@ -1,4 +1,4 @@
-c(() => {
+(() => {
     const themeToggle = document.getElementById("themeToggle");
     const mobileThemeToggle = document.querySelector(".mobile-theme-toggle");
     const themeToggles = [themeToggle, mobileThemeToggle].filter(Boolean);
@@ -67,7 +67,9 @@ c(() => {
         const firstName = String(developer.first || "").trim().toLowerCase();
         const projects = ["LC STUDIO REBUILD"];
         if (firstName === "phoenix") {
-            return ["LC STUDIO REBUILD", "LUMINA QUALITY ASSURANCE", "LIFE CHOICES CHRONICLE"];
+            projects.push("LIFE CHOICES CHRONICLE BLOG");
+            projects.push("LUMINA QUALITY ASSURANCE");
+            return projects;
         }
         if (firstName === "nina") {
             projects.push("LIFE CHOICES CHRONICLE BLOG");
@@ -78,12 +80,12 @@ c(() => {
 
     function projectUrl(developer, project) {
         const firstName = String(developer.first || "").trim().toLowerCase();
-        if (firstName === "phoenix" && project === "LC STUDIO REBUILD") return "https://lcstudiorebuild.lcstudio.co.za";
+        if (firstName === "phoenix" && project === "LC STUDIO REBUILD") return "https://lcstudio.co.za";
         if (firstName === "phoenix" && project === "LUMINA QUALITY ASSURANCE") return "https://lumina.siriusdream.co.za";
-        if (firstName === "phoenix" && project === "LIFE CHOICES CHRONICLE") return "https://chronicle.lifechoices.co.za";
+        if (firstName === "phoenix" && project === "LIFE CHOICES CHRONICLE BLOG") return "https://chronicle.lifechoices.co.za";
         if (project === "LUMINA QUALITY ASSURANCE") return "https://lumina.siriusdream.co.za";
         if (project === "LC STUDIO REBUILD" || project === "WEBSITE ANIMATION" || project === "DEVELOPER PROFILES") {
-            return "https://lcstudiorebuild.lcstudio.co.za";
+            return "https://lcstudio.co.za";
         }
         if ((firstName === "nina" || firstName === "phoenix") && project === "LIFE CHOICES CHRONICLE BLOG") {
             return "https://chronicle.lifechoices.co.za";
@@ -264,7 +266,7 @@ c(() => {
                         }
                     ]
                 },
-                "LIFE CHOICES CHRONICLE": {
+                "LIFE CHOICES CHRONICLE BLOG": {
                     description: "Added onto the design and development of the Life Choices Chronicle, helping shape the overall visual experience across the site. Developed era-specific galleries, navigation between historical eras, and tailored page layouts, while maintaining consistency throughout the project. Worked closely with Nina to support the quality and presentation of Life Choices' 21st Anniversary project.",
                     focus: ["Interactive Experiences", "Visual Consistency", "Navigation", "Anniversary Project"]
                 }

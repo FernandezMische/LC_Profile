@@ -22,8 +22,8 @@ class DeveloperController {
             if ($firstName === 'phoenix') {
                 $projects = [
                     'LC STUDIO REBUILD',
-                    'LUMINA QUALITY ASSURANCE',
-                    'LIFE CHOICES CHRONICLE'
+                    'LIFE CHOICES CHRONICLE BLOG',
+                    'LUMINA QUALITY ASSURANCE'
                 ];
             } elseif ($firstName === 'nina') {
                 $projects[] = 'LIFE CHOICES CHRONICLE BLOG';
