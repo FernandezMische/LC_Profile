@@ -43,11 +43,22 @@ class TraineeController {
         if (!$this->requireAdmin() || !$this->requirePostCsrf()) return;
         $input = $_POST; $id = $this->normalizeId($input);
         if (!$id || $id < 1) { $this->error('A valid trainee ID is required'); return; }
+        $removals = [];
+        foreach (['removeAvatar' => 'avatar', 'removeProfileImage' => 'profileImage'] as $key => $column) {
+            if (isset($input[$key])) {
+                if ($input[$key] !== '1') { $this->error('Invalid image removal request'); return; }
+                $removals[$column] = true;
+            }
+        }
         try {
-            $images = $this->saveUploadedImages($id, $_FILES);
+            $images = $this->saveUploadedImages($id, $_FILES, true);
         } catch (InvalidArgumentException $e) {
             $this->error($e->getMessage()); return;
         }
+        foreach ($removals as $column => $remove) {
+            if (!isset($images[$column])) $images[$column] = null;
+        }
+        if (!$images) { $this->error('Choose an image to upload or remove'); return; }
         try {
             // Build the keep-list BEFORE writing: the new files being saved,
             // plus any image the database still references that is NOT being
@@ -56,11 +67,10 @@ class TraineeController {
             // (and two parallel per-image requests would delete each other's
             // freshly saved files).
             $current = $this->model->getImageUrls($id);
-            $keep = array_values($images);
+            $keep = [];
             foreach (['avatar' => 'avatar_url', 'profileImage' => 'profile_image_url'] as $column => $field) {
-                if (!isset($images[$column]) && !empty($current[$field])) {
-                    $keep[] = $current[$field];
-                }
+                $url = array_key_exists($column, $images) ? $images[$column] : ($current[$field] ?? null);
+                if (!empty($url)) $keep[] = $url;
             }
             $this->model->updateImages($id, $images);
             $this->removeStoredImages($id, $keep);
@@ -70,7 +80,7 @@ class TraineeController {
         echo json_encode(['success' => true, 'images' => $images]);
     }
 
-    private function saveUploadedImages($id, $files) {
+    private function saveUploadedImages($id, $files, $allowEmpty = false) {
         $uploads = ['avatar' => 'avatar', 'profileImage' => 'profileImage'];
         $images = [];
         $directory = __DIR__ . '/../../images/trainees';
@@ -117,7 +127,7 @@ class TraineeController {
                 $images[$column] = '/images/trainees/' . $filename;
             }
         }
-        if (count($images) === 0) throw new InvalidArgumentException('At least one image is required');
+        if (count($images) === 0 && !$allowEmpty) throw new InvalidArgumentException('At least one image is required');
         return $images;
     }
 

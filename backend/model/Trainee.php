@@ -49,9 +49,9 @@ class Trainee {
                 'id' => (int) $row['id'],
                 'first' => $name[0] ?? '', 'last' => $name[1] ?? '',
                 'role' => $row['title'], 'cohort' => (int) $row['cohort'], 'status' => $row['status'],
-                'image' => cacheBustedImageUrl($row['avatar_url'] ?: ''), 'profileImage' => cacheBustedImageUrl($row['profile_image_url'] ?: ($row['avatar_url'] ?: '')), 'cv' => $row['cv_link'] ?: '#',
-                'portfolio' => $row['portfolio_link'] ?: '#', 'linkedin' => $row['linkedin_link'] ?: '#',
-                'github' => $row['github_link'] ?: '#', 'email' => '#'
+                'image' => cacheBustedImageUrl($row['avatar_url'] ?: ''), 'profileImage' => cacheBustedImageUrl($row['profile_image_url'] ?: ($row['avatar_url'] ?: '')), 'cv' => $row['cv_link'] ?: '',
+                'portfolio' => $row['portfolio_link'] ?: '', 'linkedin' => $row['linkedin_link'] ?: '',
+                'github' => $row['github_link'] ?: '', 'email' => '#'
             ];
         }, $rows);
     }

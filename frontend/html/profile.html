@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../css/profile.css?v=2" />
-    <link rel="stylesheet" href="../css/trainee-modal.css?v=2" />
+    <link rel="stylesheet" href="../css/trainee-modal.css?v=3" />
 </head>
 <body class="min-h-screen bg-background transition-colors duration-300">
     <!-- TOP BAR -->
@@ -193,7 +193,7 @@
                     <div class="modal-row">
                         <div class="modal-field">
                             <label>Full Name<span class="required">*</span></label>
-                            <input type="text" id="addName" placeholder="e.g. Zahraa Thompson" />
+                            <input type="text" id="addName" placeholder="e.g. John Smith" />
                             <div class="error-text" id="addNameError"></div>
                         </div>
                         <div class="modal-field">
@@ -281,29 +281,31 @@
                 <div class="modal-body">
                     <div class="modal-row image-upload-row">
                     <div class="modal-field">
-                        <label>Grid Illustration <span class="required">*</span></label>
+                        <label>Grid Illustration</label>
                         <div class="image-upload" id="editImageUploadArea">
                             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="upload-icon"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
                             <p>Click to upload<br/>JPG, PNG or WEBP<br/>(Max. 5MB)</p>
                             <img id="editImagePreview" style="display:none;" alt="Preview" />
                             <input type="file" id="editImageInput" accept="image/jpeg,image/png,image/webp" />
                         </div>
+                        <button type="button" class="btn-ghost image-remove-button" id="removeEditIllustrationBtn" hidden>Remove illustration</button>
                     </div>
                     <div class="modal-field">
-                        <label>Profile Photo <span class="required">*</span></label>
+                        <label>Profile Photo</label>
                         <div class="image-upload" id="editProfileImageUploadArea">
                             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="upload-icon"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2 2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
                             <p>Click to upload<br/>JPG, PNG or WEBP<br/>(Max. 5MB)</p>
                             <img id="editProfileImagePreview" style="display:none;" alt="Profile photo preview" />
                             <input type="file" id="editProfileImageInput" accept="image/jpeg,image/png,image/webp" />
                         </div>
+                        <button type="button" class="btn-ghost image-remove-button" id="removeEditProfilePhotoBtn" hidden>Remove photo</button>
                     </div>
                     </div>
 
                     <div class="modal-row">
                         <div class="modal-field">
                             <label>Full Name <span class="required">*</span></label>
-                            <input type="text" id="editName" placeholder="e.g. Zahraa Thompson" />
+                            <input type="text" id="editName" placeholder="e.g. John Smith" />
                             <div class="error-text" id="editNameError"></div>
                         </div>
                         <div class="modal-field">
@@ -407,6 +409,6 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- External JavaScript -->
-    <script src="../js/profile.js?v=20"></script>
+    <script src="../js/profile.js?v=21"></script>
 </body>
 </html>

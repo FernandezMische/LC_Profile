@@ -5,6 +5,15 @@
   var tbody = $('adminTableBody'), count = $('adminCount'), empty = $('adminEmptyState');
   var error = $('adminLoadError'), search = $('adminSearch'), pagination = $('adminPagination');
   var modal = $('addAdminModal'), form = $('addAdminForm'), submit = $('submitAddAdminBtn');
+  var adminPassword = $('adminPassword'), togglePassword = $('togglePassword'), passwordIcon = $('passwordIcon');
+
+  function setPasswordVisibility(visible) {
+    adminPassword.type = visible ? 'text' : 'password';
+    togglePassword.setAttribute('aria-label', visible ? 'Hide password' : 'Show password');
+    passwordIcon.innerHTML = visible
+      ? '<path d="M3 3l18 18"/><path d="M10.58 10.58a2 2 0 0 0 2.83 2.83"/><path d="M9.88 5.09A10.94 10.94 0 0 1 12 4.9c5 0 9 7.1 9 7.1a16.7 16.7 0 0 1-2.1 2.9"/><path d="M6.61 6.61C4.07 8.33 3 12 3 12s4 7.1 9 7.1a9.9 9.9 0 0 0 4.39-1.11"/>'
+      : '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>';
+  }
 
   function setTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
@@ -67,7 +76,8 @@
   function init() {
     setTheme(localStorage.getItem('traineehub-theme') === 'dark' ? 'dark' : 'light');
     api('check').then(function (data) { if (!data.authenticated) throw new Error(); csrfToken = data.csrfToken; text($('currentAdminEmail'), data.email || 'Administrator'); load(1); }).catch(function () { window.location.href = 'admin-login.html'; });
-    $('openAddAdminBtn').addEventListener('click', function () { form.reset(); modal.classList.add('open'); });
+    $('openAddAdminBtn').addEventListener('click', function () { form.reset(); setPasswordVisibility(false); modal.classList.add('open'); });
+    togglePassword.addEventListener('click', function () { setPasswordVisibility(adminPassword.type === 'password'); });
     $('closeAddAdminBtn').addEventListener('click', function () { modal.classList.remove('open'); });
     $('cancelAddAdminBtn').addEventListener('click', function () { modal.classList.remove('open'); });
     form.addEventListener('submit', addAdmin);

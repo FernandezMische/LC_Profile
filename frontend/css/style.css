@@ -731,7 +731,8 @@ h3 {
 
     display: none;
     width: 100%;
-    overflow: hidden;
+    max-height: 60vh;
+    overflow-y: auto;
 
     border: 1px solid #f51c26;
     border-radius: 6px;
@@ -1710,6 +1711,13 @@ body[data-theme="light"] .status-badge.status-not-employed { color: #c2410c; }
     font-size: 20px;
 
     transition: .25s;
+
+}
+
+.social-links a[hidden],
+.modal-download[hidden] {
+
+    display: none;
 
 }
 

@@ -58,6 +58,21 @@
         };
     }
 
+    function setProfileLink(id, url) {
+        const link = document.getElementById(id);
+        const href = typeof url === "string" ? url.trim() : "";
+        const available = href !== "" && href !== "#";
+
+        link.hidden = !available;
+        if (available) {
+            link.href = href;
+        } else {
+            link.removeAttribute("href");
+        }
+
+        return available;
+    }
+
     const formatCohort = (value) => {
         const n = parseInt(value, 10);
         if (Number.isNaN(n) || n < 0) return "";
@@ -89,6 +104,8 @@
     const grid = document.getElementById("traineeGrid");
     const search = document.getElementById("searchInput");
     const sortSelect = document.getElementById("sortSelect");
+    const cohortFilter = document.getElementById("cohortFilter");
+    const cohortFilterWrap = document.getElementById("cohortFilterWrap");
     const loading = document.getElementById("loading");
     const emptyState = document.getElementById("emptyState");
     const modal = document.getElementById("profileModal");
@@ -97,7 +114,7 @@
         const select = filterSelect.querySelector("select");
         const trigger = filterSelect.querySelector(".filter-select-trigger");
         const triggerLabel = trigger.querySelector("span");
-        const options = filterSelect.querySelectorAll("[role='option']");
+        const menu = filterSelect.querySelector(".filter-select-menu");
 
         const close = () => {
             filterSelect.classList.remove("is-open");
@@ -109,16 +126,17 @@
             trigger.setAttribute("aria-expanded", String(isOpen));
         });
 
-        options.forEach((option) => {
-            option.addEventListener("click", () => {
+        menu.addEventListener("click", (event) => {
+            const option = event.target.closest("[role='option']");
+            if (option) {
                 select.value = option.dataset.value;
                 triggerLabel.textContent = option.textContent;
-                options.forEach((item) => {
+                menu.querySelectorAll("[role='option']").forEach((item) => {
                     item.setAttribute("aria-selected", String(item === option));
                 });
                 select.dispatchEvent(new Event("change"));
                 close();
-            });
+            }
         });
 
         document.addEventListener("click", (e) => {
@@ -167,6 +185,41 @@
         }).join("");
     }
 
+    function populateCohortFilter() {
+        const selectedValue = cohortFilter.value;
+        const cohortValues = [...new Set(trainees.map((trainee) => String(trainee.cohort)))]
+            .filter((value) => /^\d+$/.test(value))
+            .sort((a, b) => Number(a) - Number(b));
+        const choices = [
+            { value: "all", label: "All Cohorts" },
+            ...cohortValues.map((cohort) => ({ value: cohort, label: `Cohort ${formatCohort(cohort)}` }))
+        ];
+
+        cohortFilter.replaceChildren(...choices.map(({ value, label }) => {
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = label;
+            return option;
+        }));
+        const menu = cohortFilterWrap.querySelector(".filter-select-menu");
+        menu.replaceChildren(...choices.map(({ value, label }) => {
+            const option = document.createElement("button");
+            option.type = "button";
+            option.setAttribute("role", "option");
+            option.dataset.value = value;
+            option.textContent = label;
+            option.setAttribute("aria-selected", String(value === selectedValue));
+            return option;
+        }));
+
+        cohortFilter.value = choices.some((choice) => choice.value === selectedValue) ? selectedValue : "all";
+        const label = cohortFilterWrap.querySelector(".filter-select-trigger span");
+        label.textContent = choices.find((choice) => choice.value === cohortFilter.value).label;
+        menu.querySelectorAll("[role='option']").forEach((option) => {
+            option.setAttribute("aria-selected", String(option.dataset.value === cohortFilter.value));
+        });
+    }
+
     function updateGrid() {
         if (!search || !sortSelect) return;
 
@@ -178,16 +231,14 @@
                 `${t.first} ${t.last} ${t.role}`.toLowerCase().includes(query)
             );
         }
+        if (sortSelect.value === "cohort" && cohortFilter.value !== "all") {
+            filtered = filtered.filter((trainee) => String(trainee.cohort) === cohortFilter.value);
+        }
 
-        switch (sortSelect.value) {
-            case "name":
-                filtered.sort((a, b) => `${a.first} ${a.last}`.localeCompare(`${b.first} ${b.last}`));
-                break;
-            case "cohort":
-                filtered.sort((a, b) => a.cohort - b.cohort);
-                break;
-            default:
-                break;
+        if (sortSelect.value === "name") {
+            filtered.sort((a, b) => `${a.first} ${a.last}`.localeCompare(`${b.first} ${b.last}`));
+        } else if (sortSelect.value === "cohort") {
+            filtered.sort((a, b) => a.cohort - b.cohort);
         }
 
         render(filtered);
@@ -212,17 +263,15 @@
         document.getElementById("modalName").innerHTML = `${trainee.first}<br><span>${trainee.last}</span>`;
         document.getElementById("modalRole").textContent = trainee.role;
         document.getElementById("modalCohort").textContent = `COHORT ${formatCohort(trainee.cohort)}`;
-        document.getElementById("linkedinLink").href = trainee.linkedin;
-        document.getElementById("githubLink").href = trainee.github;
-        document.getElementById("portfolioLink").href = trainee.portfolio;
+        setProfileLink("linkedinLink", trainee.linkedin);
+        setProfileLink("githubLink", trainee.github);
+        setProfileLink("portfolioLink", trainee.portfolio);
 
-        document.getElementById("modalDownload").onclick = () => {
-            if (trainee.cv && trainee.cv !== "#") {
-                window.open(trainee.cv);
-            } else {
-                alert("CV not available yet.");
-            }
-        };
+        const cvLink = typeof trainee.cv === "string" ? trainee.cv.trim() : "";
+        const hasCv = cvLink !== "" && cvLink !== "#";
+        const downloadButton = document.getElementById("modalDownload");
+        downloadButton.hidden = !hasCv;
+        downloadButton.onclick = hasCv ? () => window.open(cvLink) : null;
 
         modal.classList.add("show");
         modal.setAttribute("aria-hidden", "false");
@@ -265,7 +314,20 @@
     });
 
     search.addEventListener("input", updateGrid);
-    sortSelect.addEventListener("change", updateGrid);
+    sortSelect.addEventListener("change", () => {
+        const isCohortSort = sortSelect.value === "cohort";
+        cohortFilterWrap.hidden = !isCohortSort;
+        if (!isCohortSort) {
+            cohortFilter.value = "all";
+            const menu = cohortFilterWrap.querySelector(".filter-select-menu");
+            menu.querySelectorAll("[role='option']").forEach((option) => {
+                option.setAttribute("aria-selected", String(option.dataset.value === "all"));
+            });
+            cohortFilterWrap.querySelector(".filter-select-trigger span").textContent = "All Cohorts";
+        }
+        updateGrid();
+    });
+    cohortFilter.addEventListener("change", updateGrid);
 
     async function loadTrainees() {
         try {
@@ -273,6 +335,7 @@
             const data = await response.json();
             if (!response.ok || !data.success) throw new Error(data.error || 'Could not load trainees');
             trainees = data.trainees;
+            populateCohortFilter();
             updateGrid();
         } catch (error) {
             grid.innerHTML = '';

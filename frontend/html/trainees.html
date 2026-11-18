@@ -125,6 +125,24 @@
 
                 </div>
 
+                <div class="filter-select" id="cohortFilterWrap" hidden>
+
+                    <select id="cohortFilter" class="native-select" tabindex="-1" aria-hidden="true">
+                        <option value="all">All Cohorts</option>
+                    </select>
+
+                    <button class="filter-select-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+                        <span>All Cohorts</span>
+                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+
+                    <div class="filter-select-menu" role="listbox" aria-label="Filter by cohort">
+                        <button type="button" role="option" aria-selected="true" data-value="all">All Cohorts</button>
+                    </div>
+
+                </div>
+
+
             </div>
 
             <div id="loading" class="loading">

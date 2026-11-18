@@ -66,6 +66,17 @@
     flex: 1 1 0;
 }
 
+.image-remove-button {
+    margin-top: 8px;
+    padding: 6px 12px;
+    color: var(--primary);
+    font-size: 13px;
+}
+
+.image-remove-button[hidden] {
+    display: none;
+}
+
 #addModal .image-upload:hover,
 #editModal .image-upload:hover {
     border-color: var(--primary);

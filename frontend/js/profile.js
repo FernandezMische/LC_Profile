@@ -111,6 +111,8 @@
     var editProfileImageDataUrl = '';
     var editAvatarChanged = false;
     var editProfileImageChanged = false;
+    var editAvatarRemoved = false;
+    var editProfileImageRemoved = false;
     var ROWS_PER_PAGE = 8;
 
     // ============================================================
@@ -181,9 +183,11 @@
     var editImageInput = $('editImageInput');
     var editImagePreview = $('editImagePreview');
     var editImageUploadArea = $('editImageUploadArea');
+    var removeEditIllustrationBtn = $('removeEditIllustrationBtn');
     var editProfileImageInput = $('editProfileImageInput');
     var editProfileImagePreview = $('editProfileImagePreview');
     var editProfileImageUploadArea = $('editProfileImageUploadArea');
+    var removeEditProfilePhotoBtn = $('removeEditProfilePhotoBtn');
 
     var deleteModal = $('deleteModal');
     var closeDeleteBtn = $('closeDeleteBtn');
@@ -674,9 +678,13 @@
         syncModalStatusSelection('edit');
 
         editAvatarDataUrl = trainee.avatar || trainee.image || '';
-        editProfileImageDataUrl = trainee.profileImage || trainee.avatar || trainee.image || '';
+        editProfileImageDataUrl = trainee.profileImage || '';
         editAvatarChanged = false;
         editProfileImageChanged = false;
+        editAvatarRemoved = false;
+        editProfileImageRemoved = false;
+        if (removeEditIllustrationBtn) removeEditIllustrationBtn.hidden = !editAvatarDataUrl;
+        if (removeEditProfilePhotoBtn) removeEditProfilePhotoBtn.hidden = !editProfileImageDataUrl;
         if (editImagePreview && editAvatarDataUrl) {
             editImagePreview.src = editAvatarDataUrl;
             editImagePreview.style.display = 'block';
@@ -724,18 +732,19 @@
         else if (!/^\d+$/.test(cohort)) { editCohortError.textContent = 'Please enter a valid cohort number (e.g. 17)'; errors = true; }
         else { editCohortError.textContent = ''; }
         if (!status) { editStatusError.textContent = 'Select at least one status'; errors = true; } else { editStatusError.textContent = ''; }
-        if (!editAvatarDataUrl || !editProfileImageDataUrl) { showToast('Both images are required.', 'error'); errors = true; }
         if (errors) return;
 
         var updatedTrainee = { id: String(id), name: name, title: title, cohort: parseInt(cohort, 10), status: status };
         var links = { cvLink: normalizeLink(editCvLink.value), portfolioLink: normalizeLink(editPortfolioLink.value), linkedIn: normalizeLink(editLinkedIn.value), github: normalizeLink(editGithub.value) };
         if (!linksAreValid(links)) { showToast('Links are not valid. Please check each URL.', 'error'); return; }
         api('trainee-update-details', 'POST', updatedTrainee, 'Profile details could not be saved.').then(function () {
-            if (!editAvatarChanged && !editProfileImageChanged) return null;
+            if (!editAvatarChanged && !editProfileImageChanged && !editAvatarRemoved && !editProfileImageRemoved) return null;
             var imageUpload = new FormData();
             imageUpload.append('id', id);
             if (editAvatarChanged) imageUpload.append('avatar', dataUrlToFile(editAvatarDataUrl, 'avatar.png'));
             if (editProfileImageChanged) imageUpload.append('profileImage', dataUrlToFile(editProfileImageDataUrl, 'profileImage.png'));
+            if (editAvatarRemoved) imageUpload.append('removeAvatar', '1');
+            if (editProfileImageRemoved) imageUpload.append('removeProfileImage', '1');
             return api('trainee-update-images', 'POST', imageUpload, 'One of the image files is too large.');
         }).then(function () {
             return api('trainee-update-links', 'POST', { id: id, cvLink: links.cvLink, portfolioLink: links.portfolioLink, linkedIn: links.linkedIn, github: links.github }, 'Links could not be saved. Please check that the links are valid.');
@@ -756,6 +765,25 @@
         var icon = areaEl.querySelector('.upload-icon');
         if (label) label.style.display = dataUrl ? 'none' : 'block';
         if (icon) icon.style.display = dataUrl ? 'none' : 'block';
+    }
+
+    function removeEditImage(isProfilePhoto) {
+        var inputEl = isProfilePhoto ? editProfileImageInput : editImageInput;
+        var previewEl = isProfilePhoto ? editProfileImagePreview : editImagePreview;
+        var areaEl = isProfilePhoto ? editProfileImageUploadArea : editImageUploadArea;
+        if (inputEl) inputEl.value = '';
+        setImagePreview(previewEl, areaEl, '');
+        if (isProfilePhoto) {
+            editProfileImageDataUrl = '';
+            editProfileImageChanged = false;
+            editProfileImageRemoved = true;
+            if (removeEditProfilePhotoBtn) removeEditProfilePhotoBtn.hidden = true;
+        } else {
+            editAvatarDataUrl = '';
+            editAvatarChanged = false;
+            editAvatarRemoved = true;
+            if (removeEditIllustrationBtn) removeEditIllustrationBtn.hidden = true;
+        }
     }
 
     // ============================================================
@@ -927,8 +955,16 @@
         setupStatusMultiSelect('edit');
         setupImageUpload(imageInput, imagePreview, imageUploadArea, function (dataUrl) { addAvatarDataUrl = dataUrl; });
         setupImageUpload(profileImageInput, profileImagePreview, profileImageUploadArea, function (dataUrl) { addProfileImageDataUrl = dataUrl; });
-        setupImageUpload(editImageInput, editImagePreview, editImageUploadArea, function (dataUrl) { editAvatarDataUrl = dataUrl; editAvatarChanged = true; });
-        setupImageUpload(editProfileImageInput, editProfileImagePreview, editProfileImageUploadArea, function (dataUrl) { editProfileImageDataUrl = dataUrl; editProfileImageChanged = true; });
+        setupImageUpload(editImageInput, editImagePreview, editImageUploadArea, function (dataUrl) {
+            editAvatarDataUrl = dataUrl; editAvatarChanged = true; editAvatarRemoved = false;
+            if (removeEditIllustrationBtn) removeEditIllustrationBtn.hidden = false;
+        });
+        setupImageUpload(editProfileImageInput, editProfileImagePreview, editProfileImageUploadArea, function (dataUrl) {
+            editProfileImageDataUrl = dataUrl; editProfileImageChanged = true; editProfileImageRemoved = false;
+            if (removeEditProfilePhotoBtn) removeEditProfilePhotoBtn.hidden = false;
+        });
+        if (removeEditIllustrationBtn) removeEditIllustrationBtn.addEventListener('click', function () { removeEditImage(false); });
+        if (removeEditProfilePhotoBtn) removeEditProfilePhotoBtn.addEventListener('click', function () { removeEditImage(true); });
         console.log('TraineeHub Dashboard initialized.');
     }
 
